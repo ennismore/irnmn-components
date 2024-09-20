@@ -1,7 +1,7 @@
 {
-    "name": "irnmn-video",
+    "name": "irnmn-components",
     "version": "1.0.0",
-    "description": "Renders a video player compatible with Hls",
+    "description": "Irnmn Web Components",
     "main": "index.js",
     "author": {
 		"name": "Ennismore",
