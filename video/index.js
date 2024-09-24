@@ -14,21 +14,31 @@ class IrnmnVideo extends HTMLElement {
     }
 
     render() {
-        this.shadowRoot.innerHTML = `
-            <video
-                autoplay="${this.getAttribute('autoplay') === 'true'}"
-                id="${this.getAttribute('video-id') || ''}"
-                controls
-                ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
-                ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
-                ${this.hasAttribute('muted') ? 'muted' : ''}
-                ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
-                poster="${this.getAttribute('poster') || ''}"
-                src="${this.getAttribute('src') || ''}" 
-            >
-            </video>
-            <slot></slot>
+        
+        let template = `
+        <video
+            autoplay="${this.getAttribute('autoplay') === 'true'}"
+            id="${this.getAttribute('video-id') || ''}"
+            controls
+            ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
+            ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
+            ${this.hasAttribute('muted') ? 'muted' : ''}
+            ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
+            poster="${this.getAttribute('poster') || ''}"
+            src="${this.getAttribute('src') || ''}"
+        >
+        </video>
+        <slot></slot>
         `;
+
+        const stylesheetHref = this.getAttribute('stylesheet-href');
+
+        if (stylesheetHref) {
+            template = `<link rel="stylesheet" href="${stylesheetHref}">` + template;
+        }
+
+        this.shadowRoot.innerHTML = template;
+
     }
 
     /**

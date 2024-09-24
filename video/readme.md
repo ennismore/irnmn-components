@@ -33,6 +33,7 @@ This component renders a video player with customizable features like autoplay, 
     className="wp-block-delano-hero-2__video" 
     src="https://example.com/video.m3u8" 
     poster="https://example.com/poster.jpg"
+    stylesheet-href="https://example.com/stylesheet.css"
 >
     <button
         title="Pause video"
