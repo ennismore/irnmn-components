@@ -15,30 +15,32 @@ class IrnmnVideo extends HTMLElement {
 
     render() {
         
-        let template = `
-        <video
-            autoplay="${this.getAttribute('autoplay') === 'true'}"
-            id="${this.getAttribute('video-id') || ''}"
-            controls
-            ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
-            ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
-            ${this.hasAttribute('muted') ? 'muted' : ''}
-            ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
-            poster="${this.getAttribute('poster') || ''}"
-            src="${this.getAttribute('src') || ''}"
-        >
-        </video>
-        <slot></slot>
+        this.shadowRoot.innerHTML = `
+            <style>
+                video{
+                    width: 100%;
+                    min-height: 100%;
+                    min-width: 100%;
+                    -o-object-fit: cover;
+                    object-fit: cover;
+                    overflow: hidden;
+                    position: relative;
+                }
+            </style>
+            <video
+                ${this.getAttribute('autoplay') === 'true' ? 'autoplay' : ''}
+                id="${this.getAttribute('video-id') || ''}"
+                ${this.getAttribute('controls') === 'true' ? 'controls' : ''}
+                ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
+                ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
+                ${this.hasAttribute('muted') ? 'muted' : ''}
+                ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
+                poster="${this.getAttribute('poster') || ''}"
+                src="${this.getAttribute('src') || ''}" 
+            >
+            </video>
+            <slot></slot>
         `;
-
-        const stylesheetHref = this.getAttribute('stylesheet-href');
-
-        if (stylesheetHref) {
-            template = `<link rel="stylesheet" href="${stylesheetHref}">` + template;
-        }
-
-        this.shadowRoot.innerHTML = template;
-
     }
 
     /**
