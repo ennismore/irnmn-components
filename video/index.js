@@ -62,6 +62,10 @@ class IrnmnVideo extends HTMLElement {
         hls.loadSource(video.src);
         hls.attachMedia(video);
 
+        if( this.getAttribute('video-autoplay') === 'true' ) {
+            video.play();
+        }
+
     }
 
     /**
