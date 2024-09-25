@@ -28,12 +28,12 @@ class IrnmnVideo extends HTMLElement {
                 }
             </style>
             <video
-                ${this.getAttribute('video-autoplay') === 'true' ? 'autoplay' : ''}
+                ${this.getAttribute('video-autoplay') ? 'autoplay' : ''}
                 id="${this.getAttribute('video-id') || ''}"
-                ${this.getAttribute('video-controls') === 'true' ? 'controls' : ''}
+                ${this.getAttribute('video-controls') ? 'controls' : ''}
                 ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
-                ${this.getAttribute('video-loop') === 'true' ? 'loop' : ''}
-                ${this.hasAttribute('muted') ? 'muted' : ''}
+                ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
+                ${this.hasAttribute('video-muted') ? 'muted' : ''}
                 ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
                 poster="${this.getAttribute('poster') || ''}"
                 src="${this.getAttribute('src') || ''}" 
