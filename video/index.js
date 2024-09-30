@@ -2,6 +2,11 @@
 import Hls from './vendor/hls.light.min.js';
 
 class IrnmnVideo extends HTMLElement {
+
+    static get observedAttributes() {
+        return ['src'];
+    }
+
     constructor() {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
@@ -11,6 +16,12 @@ class IrnmnVideo extends HTMLElement {
         this.render();
         this.setupVideo();
         this.setupButton();
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'src' && oldValue !== newValue) {
+            this.connectedCallback();
+        }
     }
 
     render() {
