@@ -43,7 +43,7 @@ class IrnmnVideo extends HTMLElement {
                 id="${this.getAttribute('video-id') || ''}"
                 ${this.getAttribute('video-controls') ? 'controls' : ''}
                 ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
-                ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
+                ${this.getAttribute('video-loop') === 'true' ? 'loop' : ''}
                 ${this.hasAttribute('video-muted') ? 'muted' : ''}
                 ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
                 poster="${this.getAttribute('poster') || ''}"
