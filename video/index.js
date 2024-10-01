@@ -18,7 +18,18 @@ class IrnmnVideo extends HTMLElement {
         this.setupButton();
     }
 
+    /**
+     * Handles changes to observed attributes and triggers necessary updates.
+     *
+     * This method is called whenever one of the observed attributes changes.
+     * It ensures the component is updated accordingly.
+     *
+     * @param {string} name - The name of the attribute being changed (e.g., 'src').
+     * @param {string} oldValue - The previous value of the attribute.
+     * @param {string} newValue - The new value of the attribute.
+     */
     attributeChangedCallback(name, oldValue, newValue) {
+        // If the 'src' attribute changes, re-trigger connectedCallback to reinitialize the video. This is useful when dynamically switching video sources, such as loading a different version for mobile.
         if (name === 'src' && oldValue !== newValue) {
             this.connectedCallback();
         }
