@@ -2,6 +2,11 @@
 import Hls from './vendor/hls.light.min.js';
 
 class IrnmnVideo extends HTMLElement {
+
+    static get observedAttributes() {
+        return ['src'];
+    }
+
     constructor() {
         super();
         const shadow = this.attachShadow({ mode: 'open' });
@@ -11,6 +16,22 @@ class IrnmnVideo extends HTMLElement {
         this.render();
         this.setupVideo();
         this.setupButton();
+    }
+
+    /**
+     * Handles changes to observed attributes and triggers necessary updates.
+     *
+     * This method is called whenever one of the observed attributes changes.
+     * It ensures the component is updated accordingly.
+     *
+     * @param {string} name - The name of the attribute being changed (e.g., 'src').
+     * @param {string} oldValue - The previous value of the attribute.
+     * @param {string} newValue - The new value of the attribute.
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.connectedCallback();
+        }
     }
 
     render() {
@@ -32,7 +53,7 @@ class IrnmnVideo extends HTMLElement {
                 id="${this.getAttribute('video-id') || ''}"
                 ${this.getAttribute('video-controls') ? 'controls' : ''}
                 ${this.getAttribute('plays-inline') === 'true' ? 'playsinline' : ''}
-                ${this.getAttribute('loop') === 'true' ? 'loop' : ''}
+                ${this.getAttribute('video-loop') === 'true' ? 'loop' : ''}
                 ${this.hasAttribute('video-muted') ? 'muted' : ''}
                 ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
                 poster="${this.getAttribute('poster') || ''}"
