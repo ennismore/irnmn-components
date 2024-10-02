@@ -19,6 +19,10 @@ This component renders a video player with customizable features like autoplay, 
 
 - `<button>`: A play/pause button inside the `<irnmn-video>` component that allows users to control the playback of the video.
 
+## Observed Attributes
+
+- `src`: When the `src` attribute changes, the `attributeChangedCallback` is triggered, which runs the `connectedCallback()` method to reinitialize the video setup. This is particularly important for HLS streaming, as the HLS video library needs to reload the video source whenever the `src` changes. For instance, the `src` might change dynamically in response to a window resize, device orientation change, or fluctuations in network bandwidth.
+
 ## Example Usage
 
 ```html
