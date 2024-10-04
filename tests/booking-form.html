@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Web components</title>
+    <script src="../calendar/index.js" type="module"></script>
+</head>
+<body>
+    <h1>Calendar</h1>
+    <irnmn-calendar
+        id="booking-calendar" 
+        label="Booking Dates" 
+        name="booking" 
+        placeholder="Choose your date" 
+        dateFormat="YYYY-MM-DD" 
+        dateDisplayFormat="DD/MM/YYYY"
+        openDate="2024-10-04"
+        open-date-message="You can't select before the opening date"
+        errorMessage="Please pick a valid date"
+        input-name="date-selection"
+        checkin-date-name="startDate"
+        checkout-date-name="endDate"
+        />
+    </irnmn-calendar>
+
+    
+</body>
+
+</html>
