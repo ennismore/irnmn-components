@@ -136,12 +136,19 @@ class IRNMNCalendar extends HTMLElement {
             this.state = newState;
             this.updateInputField();
             clearHighlights(this.dayButtons, [CLASS_NAMES.checkin, CLASS_NAMES.checkout, CLASS_NAMES.inRange]);
-            this.highlightDayForTime(this.state.checkin, CLASS_NAMES.checkin);
-            if (this.state.checkout) {
-                this.highlightDayForTime(this.state.checkout, CLASS_NAMES.checkout);
-                this.highlightRange(this.state.checkin, this.state.checkout);
-            }
+            this.applyHighlights();
         });
+    }
+
+    applyHighlights() {
+        if (this.state.checkin) {
+            this.highlightDayForTime(this.state.checkin, CLASS_NAMES.checkin);
+        }
+
+        if (this.state.checkout) {
+            this.highlightDayForTime(this.state.checkout, CLASS_NAMES.checkout);
+            this.highlightRange(this.state.checkin, this.state.checkout);
+        }
     }
 
     updateInputField(reset = false) {
@@ -233,6 +240,8 @@ class IRNMNCalendar extends HTMLElement {
             this.endInput.value = storedCheckout;
             this.inputElement.value = `${storedCheckin} - ${storedCheckout}`;
         }
+
+        this.applyHighlights();  // Apply the saved highlights
     }
 
     createElementWithClasses(tag, classNames = []) {
