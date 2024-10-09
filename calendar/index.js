@@ -2,12 +2,12 @@ import {
     createMonthElement, 
     createDayButton, 
     toggleElementDisplay 
-} from './utils/domUtils.js'; 
+} from './utils/dom.js'; 
 
 import { 
     getNext12Months, 
-    formatDate 
-} from './utils/dateUtils.js'; 
+    formatDate
+} from './utils/dates.js'; 
 
 import { CLASS_NAMES } from './utils/constants.js';  
 
@@ -20,7 +20,7 @@ import {
     toggleVisibility, 
     highlightButton, 
     clearHighlights 
-} from '../utils/componentsUtils.js';  // Utility functions for general component behavior
+} from '../utils/components.js';  // Utility functions for general component behavior
 
 class IRNMNCalendar extends HTMLElement {
     constructor() {
@@ -31,7 +31,7 @@ class IRNMNCalendar extends HTMLElement {
         this.openDate = new Date(this.getAttribute('openDate') || Date.now());
         this.startName = this.getAttribute('checkin-date-name') || 'startDate';
         this.endName = this.getAttribute('checkout-date-name') || 'endDate';
-
+        this.weekDays = this.getAttribute('weekdays') ? this.getAttribute('weekdays').split(',') :  false;
         this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
         this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
 
@@ -45,7 +45,7 @@ class IRNMNCalendar extends HTMLElement {
 
     connectedCallback() {
         this.render();
-        this.loadFromSessionStorage();
+        this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
         document.addEventListener(`checkin-selected-${this.name}`, (e) => this.syncState(e));
@@ -78,7 +78,7 @@ class IRNMNCalendar extends HTMLElement {
 
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
-        this.panel.style.display = 'none';  // Initially hide
+        this.panel.style.display = 'none'; 
         const resetBtn = this.createElementWithText('button', 'Reset Dates', [CLASS_NAMES.resetBtn]);
 
         resetBtn.addEventListener('click', () => this.resetDates());
@@ -95,7 +95,7 @@ class IRNMNCalendar extends HTMLElement {
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
         months.forEach(month => {
-            const monthEl = createMonthElement(month);
+            const monthEl = createMonthElement(month, this.weekDays);
             this.panel.appendChild(monthEl);
 
             month.days.forEach(day => {
@@ -222,7 +222,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     handleEscKey(event) {
-        if (event.key === 'Escape') this.toggleCalendar();
+        if (event.key === 'Escape') toggleVisibility(this.panel, false);
     }
 
     loadFromSessionStorage() {

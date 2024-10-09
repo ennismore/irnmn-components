@@ -10,6 +10,7 @@
 
     <h2>Booking Form 1</h2>
     <form method="GET" action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
+        <irnmn-text label="First Name" placeholder="First Name" name="firstName"></irnmn-text>
         <irnmn-calendar
             id="booking-calendar1" 
             label="Booking Dates" 
@@ -23,6 +24,8 @@
             input-name="date-selection"
             checkin-date-name="startDate"
             checkout-date-name="endDate"
+            name="checkInOutDates"
+            weekDays="Sun,Mon,Tue,Wed,Thu,Fri,Sat"
             />
         </irnmn-calendar>
         <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>

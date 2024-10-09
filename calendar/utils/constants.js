@@ -8,5 +8,7 @@ export const CLASS_NAMES = {
     checkin: 'is-checkin',
     checkout: 'is-checkout',
     inRange: 'is-in-range',
-    resetBtn: 'irnmn-calendar__reset-btn'
+    resetBtn: 'irnmn-calendar__reset-btn',
+    weekDay: 'irnmn-calendar__weekday',
+    weekDayHeader: 'irnmn-calendar__weekday-header'
 };
