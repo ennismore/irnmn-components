@@ -76,3 +76,22 @@ export function clearHighlights(buttons, classNames = []) {
         classNames.forEach(className => button.classList.remove(className));
     });
 }
+
+/**
+ * Fetches CSS from an external file and returns it as a string to be used in components.
+ * @param {string} url - The URL path to the CSS file.
+ * @returns {Promise<string>} - A promise that resolves to the CSS content.
+ */
+export async function loadAndInjectCSS(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`Failed to load CSS: ${response.statusText}`);
+        }
+        const cssText = await response.text();
+        return cssText;
+    } catch (error) {
+        console.error('Error loading CSS:', error);
+        return ''; // Return an empty string if the CSS fails to load
+    }
+}

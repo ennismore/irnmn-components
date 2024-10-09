@@ -14,20 +14,27 @@ export function createMonthElement(month, weekDays) {
     );
     monthTitle.setAttribute('aria-label', `Month of ${monthTitle.textContent}`); // Label for screen readers
 
+    // Create the main container for the days of the month
+    const daysWrapper = document.createElement('div');
+    daysWrapper.className = CLASS_NAMES.daysWrapper; // New class for the day wrapper
+
     const daysContainer = document.createElement('div');
     daysContainer.className = CLASS_NAMES.daysContainer;
     daysContainer.setAttribute('role', 'grid'); // Indicate that it contains a grid of days
 
-    if(weekDays) {
-        // Create the weekdays header row
+    if (weekDays) {
+        // Create the weekdays header row if the weekDays parameter is provided
         const weekdayHeader = createWeekdayHeader(weekDays);
-        daysContainer.appendChild(weekdayHeader);
+        daysWrapper.appendChild(weekdayHeader);
     }
+
+    daysWrapper.appendChild(daysContainer);
     monthEl.appendChild(monthTitle);
-    monthEl.appendChild(daysContainer);
+    monthEl.appendChild(daysWrapper);
 
     return monthEl;
 }
+
 
 export function createDayButton(day) {
     const dayBtn = document.createElement('button');

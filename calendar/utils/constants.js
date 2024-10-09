@@ -10,5 +10,6 @@ export const CLASS_NAMES = {
     inRange: 'is-in-range',
     resetBtn: 'irnmn-calendar__reset-btn',
     weekDay: 'irnmn-calendar__weekday',
-    weekDayHeader: 'irnmn-calendar__weekday-header'
+    weekDayHeader: 'irnmn-calendar__weekday-header',
+    daysWrapper: 'irnmn-calendar__days-wrapper'
 };

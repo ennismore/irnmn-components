@@ -3,7 +3,7 @@ import {
     handleSyncEvent, 
     saveToSessionStorage, 
     getFromSessionStorage 
-} from '../utils/componentsUtils.js';
+} from '../utils/components.js';
 
 class IRNMNText extends HTMLElement {
     constructor() {

@@ -19,7 +19,8 @@ import {
     clearSessionData, 
     toggleVisibility, 
     highlightButton, 
-    clearHighlights 
+    clearHighlights,
+    loadAndInjectCSS
 } from '../utils/components.js';  // Utility functions for general component behavior
 
 class IRNMNCalendar extends HTMLElement {
@@ -43,8 +44,9 @@ class IRNMNCalendar extends HTMLElement {
         this.dayButtons = [];
     }
 
-    connectedCallback() {
-        this.render();
+    async connectedCallback() {
+        const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
+        this.render(renderedCss);
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
@@ -57,8 +59,8 @@ class IRNMNCalendar extends HTMLElement {
         document.removeEventListener(`checkout-selected-${this.name}`, this.syncState);
     }
 
-    render() {
-        this.innerHTML = '';  // Clear previous content
+    render(css) {
+        this.innerHTML = `<style>${css}</style>`;
         this.renderInputGroup();
         this.renderCalendarPanel();
         this.renderHiddenInputs();
@@ -75,16 +77,13 @@ class IRNMNCalendar extends HTMLElement {
         inputGroup.addEventListener('click', () => this.toggleCalendar());
         this.appendChild(inputGroup);
     }
-
+    
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
-        this.panel.style.display = 'none'; 
-        const resetBtn = this.createElementWithText('button', 'Reset Dates', [CLASS_NAMES.resetBtn]);
-
-        resetBtn.addEventListener('click', () => this.resetDates());
-        this.panel.appendChild(resetBtn);
+        this.panel.style.display = 'none';
         this.appendChild(this.panel);
     }
+    
 
     renderHiddenInputs() {
         this.startInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.startName });
