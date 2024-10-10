@@ -1,7 +1,6 @@
 import { 
     createMonthElement, 
-    createDayButton, 
-    toggleElementDisplay 
+    createDayButton 
 } from './utils/dom.js'; 
 
 import { 

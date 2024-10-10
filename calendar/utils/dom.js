@@ -1,5 +1,13 @@
 import { CLASS_NAMES } from './constants.js';
 
+
+/**
+ * Creates a month element with the provided month data (button days and weekdays header)
+ * @param {Object} month The month data object
+ * @param {Array} weekDays The list of week days to display (optional)
+ * @param {String} dateLocale The locale to format the date
+ * @return {HTMLElement} The month element
+ */
 export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     const monthEl = document.createElement('div');
     monthEl.classList.add(CLASS_NAMES.month);
@@ -35,7 +43,12 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     return monthEl;
 }
 
-
+/**
+ * Creates a button element for the provided day
+ * @param {Object} day The day object
+ * @param {String} dateLocale The locale to format the date
+ * @return {HTMLElement} The button element
+ */
 export function createDayButton(day, dateLocale = 'en-gb') {
     const dayBtn = document.createElement('button');
     dayBtn.type = 'button';
@@ -49,6 +62,11 @@ export function createDayButton(day, dateLocale = 'en-gb') {
     return dayBtn;
 }
 
+/**
+ * Creates the weekday header - row element
+ * @param {Array} weekDays The list of week days to display
+ * @return {HTMLElement} The weekday header row element
+ */
 function createWeekdayHeader(weekDays) {
     const headerRow = document.createElement('div');
     headerRow.classList.add(CLASS_NAMES.weekDayHeader);
@@ -63,9 +81,4 @@ function createWeekdayHeader(weekDays) {
     });
 
     return headerRow;
-}
-
-export function toggleElementDisplay(element, isVisible) {
-    element.style.display = isVisible ? 'block' : 'none';
-    element.setAttribute('aria-hidden', !isVisible); 
 }
