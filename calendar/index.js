@@ -35,6 +35,7 @@ class IRNMNCalendar extends HTMLElement {
         this.weekDays = this.getAttribute('weekdays') ? this.getAttribute('weekdays').split(',') :  false;
         this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
         this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
+        this.dateLocale = this.getAttribute('date-locale') || 'en-gb';
 
         this.state = {
             checkin: null,
@@ -94,11 +95,11 @@ class IRNMNCalendar extends HTMLElement {
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
         months.forEach(month => {
-            const monthEl = createMonthElement(month, this.weekDays);
+            const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
             this.panel.appendChild(monthEl);
 
             month.days.forEach(day => {
-                const dayBtn = createDayButton(day);
+                const dayBtn = createDayButton(day, this.dateLocale);
                 if (day.date < this.openDate) dayBtn.disabled = true;
 
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(e, dayBtn));
@@ -162,26 +163,29 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     setRangeInputFields() {
-        const checkinDate = formatDate(new Date(this.state.checkin));
-        const checkoutDate = formatDate(new Date(this.state.checkout));
-
-        this.inputElement.value = `${checkinDate} - ${checkoutDate}`;
-        this.startInput.value = checkinDate;
-        this.endInput.value = checkoutDate;
+        const checkinDate = new Date(this.state.checkin);
+        const checkoutDate = new Date(this.state.checkout);
+    
+        this.inputElement.value = `${formatDate(checkinDate, this.dateLocale)} - ${formatDate(checkoutDate, this.dateLocale)}`;
+        this.startInput.value = checkinDate.toISOString();  // Save as ISO string
+        this.endInput.value = checkoutDate.toISOString();   // Save as ISO string
+    
         saveToSessionStorage(this.startStorageKey, this.startInput.value);
         saveToSessionStorage(this.endStorageKey, this.endInput.value);
     }
+    
 
     setSingleInputField() {
-        const checkinDate = formatDate(new Date(this.state.checkin));
-
-        this.inputElement.value = checkinDate;
-        this.startInput.value = checkinDate;
+        const checkinDate = new Date(this.state.checkin);
+    
+        this.inputElement.value = formatDate(checkinDate, this.dateLocale);
+        this.startInput.value = checkinDate.toISOString();  // Save as ISO string
         this.endInput.value = '';
+    
         saveToSessionStorage(this.startStorageKey, this.startInput.value);
         clearSessionData(this.endStorageKey);
     }
-
+    
     clearInputFields() {
         this.inputElement.value = '';
         this.startInput.value = '';
@@ -227,22 +231,27 @@ class IRNMNCalendar extends HTMLElement {
     loadFromSessionStorage() {
         const storedCheckin = getFromSessionStorage(this.startStorageKey);
         const storedCheckout = getFromSessionStorage(this.endStorageKey);
-
+    
         if (storedCheckin) {
-            this.state.checkin = new Date(storedCheckin).getTime();
-            this.startInput.value = storedCheckin;
-            this.inputElement.value = storedCheckin;
+            this.state.checkin = new Date(storedCheckin).getTime();  // Convert ISO string to timestamp
+            this.startInput.value = formatDate(new Date(this.state.checkin), this.dateLocale);
         }
-
+    
         if (storedCheckout) {
-            this.state.checkout = new Date(storedCheckout).getTime();
-            this.endInput.value = storedCheckout;
-            this.inputElement.value = `${storedCheckin} - ${storedCheckout}`;
+            this.state.checkout = new Date(storedCheckout).getTime();  // Convert ISO string to timestamp
+            this.endInput.value = formatDate(new Date(this.state.checkout), this.dateLocale);
         }
-
-        this.applyHighlights();  // Apply the saved highlights
+    
+        // Display the date range in the input field
+        if (this.state.checkin && this.state.checkout) {
+            this.inputElement.value = `${this.startInput.value} - ${this.endInput.value}`;
+        } else if (this.state.checkin) {
+            this.inputElement.value = this.startInput.value;
+        }
+    
+        this.applyHighlights();  // Apply the saved highlights to the calendar
     }
-
+    
     createElementWithClasses(tag, classNames = []) {
         const element = document.createElement(tag);
         classNames.forEach(className => element.classList.add(className));

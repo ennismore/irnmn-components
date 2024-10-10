@@ -1,6 +1,6 @@
 import { CLASS_NAMES } from './constants.js';
 
-export function createMonthElement(month, weekDays) {
+export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     const monthEl = document.createElement('div');
     monthEl.classList.add(CLASS_NAMES.month);
     monthEl.setAttribute('role', 'region'); // Define it as a region for better accessibility
@@ -9,7 +9,7 @@ export function createMonthElement(month, weekDays) {
     const monthTitle = document.createElement('p');
     monthTitle.classList.add(CLASS_NAMES.monthTitle);
     monthTitle.id = `month-${month.year}-${month.month}`;
-    monthTitle.textContent = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric' }).format(
+    monthTitle.textContent = new Intl.DateTimeFormat(dateLocale, { month: 'long', year: 'numeric' }).format(
         new Date(month.year, month.month)
     );
     monthTitle.setAttribute('aria-label', `Month of ${monthTitle.textContent}`); // Label for screen readers
@@ -36,7 +36,7 @@ export function createMonthElement(month, weekDays) {
 }
 
 
-export function createDayButton(day) {
+export function createDayButton(day, dateLocale = 'en-gb') {
     const dayBtn = document.createElement('button');
     dayBtn.type = 'button';
     dayBtn.textContent = day.day;
@@ -44,7 +44,7 @@ export function createDayButton(day) {
     dayBtn.classList.add(CLASS_NAMES.dayBtn);
     dayBtn.setAttribute('role', 'gridcell');
 
-    dayBtn.setAttribute('aria-label', `Select date ${new Intl.DateTimeFormat('en-GB', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(day.date)}`);
+    dayBtn.setAttribute('aria-label', `Select date ${new Intl.DateTimeFormat(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(day.date)}`);
 
     return dayBtn;
 }

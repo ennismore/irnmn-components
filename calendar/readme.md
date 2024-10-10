@@ -16,6 +16,7 @@ The following attributes can be added to the `IRNMNCalendar` element to customiz
 | `checkin-date-name`      | Name for the hidden check-in date input field.                    | `startDate`          |
 | `checkout-date-name`     | Name for the hidden check-out date input field.                   | `endDate`            |
 | `weekdays`               | Comma-separated list of weekday names (e.g., `Mon,Tue,...`).      | Disabled by default  |
+| `date-locale`               | The date format      | en-GB default  |
 
 ## Methods
 The following methods are exposed by the component for internal logic and can be extended if needed:

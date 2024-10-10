@@ -33,13 +33,14 @@ export function getNext12Months(openDate) {
 }
 
 /**
- * Format a date as a string in the format "dd/mm/yyyy"
+ * Format a date as a string in the requested format
  * (change it later based on the component attribute)
  * @param {Date} date The date to format
+ * @param {String} dateLocale The locale to format the date
  * @return {String} The formated date
  */
-export function formatDate(date) {
-    return new Intl.DateTimeFormat('en-GB', {
+export function formatDate(date, dateLocale = 'en-gb') {
+    return new Intl.DateTimeFormat(dateLocale, {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
