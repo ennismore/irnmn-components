@@ -1,6 +1,6 @@
 import {
     loadAndInjectCSS
-} from '../utils/components.js';  // Utility functions for general component behavior
+} from '../utils/components.js';
 
 class IrnmnSelect extends HTMLElement {
     constructor() {
@@ -9,7 +9,9 @@ class IrnmnSelect extends HTMLElement {
         this.isOpen = false;
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.setPreselectedOption();
+        this.setupEventListeners();
         try {
             const renderedCss = await loadAndInjectCSS('../select/css/select.css');
             this.render(renderedCss);
@@ -17,10 +19,6 @@ class IrnmnSelect extends HTMLElement {
             console.error('Error loading and injecting CSS:', error);
             return;
         }
-
-        this.setPreselectedOption();
-        this.render();
-        this.setupEventListeners();
     }
 
     get headingText() {
@@ -52,7 +50,7 @@ class IrnmnSelect extends HTMLElement {
         }
     }
 
-    render() {
+    render(css) {
         this.innerHTML = `
             <style>${css}</style>
             <div class="irnmn-select ${this.selectedOption === null ? 'irnmn-select--unselected' : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">

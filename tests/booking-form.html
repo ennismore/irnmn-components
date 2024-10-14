@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Web components</title>
+    <script src="../calendar/index.js" type="module"></script>
+    <script src="../text/index.js" type="module"></script>
+</head>
+<body>
+    <h1>Calendar</h1>
+
+    <h2>Booking Form 1</h2>
+    <form method="GET" action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
+        <irnmn-text label="First Name" placeholder="First Name" name="firstName"></irnmn-text>
+        <irnmn-calendar
+            id="booking-calendar1" 
+            label="Booking Dates" 
+            name="booking_another" 
+            placeholder="Choose your date" 
+            dateFormat="YYYY-MM-DD" 
+            dateDisplayFormat="DD/MM/YYYY"
+            openDate="2024-10-04"
+            open-date-message="You can't select before the opening date"
+            errorMessage="Please pick a valid date"
+            input-name="date-selection"
+            checkin-date-name="startDate"
+            checkout-date-name="endDate"
+            name="checkInOutDates"
+            weekDays="Sun,Mon,Tue,Wed,Thu,Fri,Sat"
+            date-locale="en-us"
+            />
+        </irnmn-calendar>
+        <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>
+        <button type="submit">Submit</button>
+    </form>
+    <form method="GET" action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
+        <h2>Booking Form 2</h2>
+        <irnmn-calendar
+        id="booking-calendar2" 
+        label="Booking Dates" 
+        name="booking_another" 
+        placeholder="Choose your date" 
+        dateFormat="YYYY-MM-DD" 
+        dateDisplayFormat="DD/MM/YYYY"
+        openDate="2024-10-04"
+        open-date-message="You can't select before the opening date"
+        errorMessage="Please pick a valid date"
+        input-name="date-selection"
+        checkin-date-name="startDate"
+        checkout-date-name="endDate"
+        date-locale="en-us"
+        />
+        </irnmn-calendar>
+        <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>
+        <button type="submit">Submit</button>
+    </form>
+    
+</body>
+
+</html>

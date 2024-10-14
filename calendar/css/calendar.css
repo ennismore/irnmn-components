@@ -1,0 +1,66 @@
+
+.irnmn-calendar__weekday-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 : days per row (one week) */
+    text-align: center;
+    padding: 0.5rem 0;
+    font-weight: bold;
+}
+
+.irnmn-calendar__weekday {
+    padding: 0.2rem;
+}
+
+/* Day Buttons Container Styling */
+.irnmn-calendar__days {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); 
+    gap: 0.2rem; /* Spacing between day buttons */
+    text-align: center;
+    margin-top: 0.5rem;
+}
+
+.irnmn-calendar__day-btn {
+    padding: 0.5rem;
+    background-color: #ffffff;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+}
+
+.irnmn-calendar__day-btn:hover {
+    transform: scale(1.05); /* Slightly enlarge the button on hover for a better UX */
+}
+
+.irnmn-calendar__day-btn:disabled {
+    color: #aaa;
+    cursor: not-allowed;
+}
+
+/* Selected and Range Highlighting */
+.is-checkin,
+.is-checkout {
+    background-color: #202020; 
+    color: white;
+}
+
+.is-in-range {
+    background-color: #d2d2d2; /* Light green color for dates in the selected range */
+}
+
+/* Month Container Styling */
+.irnmn-calendar__month {
+    margin-bottom: 1rem;
+}
+
+.irnmn-calendar__month-title {
+    text-align: center;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+/* Calendar Panel and Input Group */
+.irnmn-calendar__panel {
+    background-color: #ffffff;
+    padding: 1rem;
+}
