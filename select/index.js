@@ -1,6 +1,4 @@
-import {
-    loadAndInjectCSS
-} from '../utils/components.js';
+import { selectStyles } from './select-styles.js';
 
 class IrnmnSelect extends HTMLElement {
     constructor() {
@@ -9,16 +7,10 @@ class IrnmnSelect extends HTMLElement {
         this.isOpen = false;
     }
 
-    async connectedCallback() {
+    connectedCallback() {
         this.setPreselectedOption();
+        this.render();
         this.setupEventListeners();
-        try {
-            const renderedCss = await loadAndInjectCSS('../select/css/select.css');
-            this.render(renderedCss);
-        } catch (error) {
-            console.error('Error loading and injecting CSS:', error);
-            return;
-        }
     }
 
     get headingText() {
@@ -50,9 +42,9 @@ class IrnmnSelect extends HTMLElement {
         }
     }
 
-    render(css) {
+    render() {
         this.innerHTML = `
-            <style>${css}</style>
+            <style>${selectStyles}</style>
             <div class="irnmn-select ${this.selectedOption === null ? 'irnmn-select--unselected' : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
                 <div id="irnmn-select-header" class="irnmn-select__header" tabindex="0">
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
@@ -165,6 +157,7 @@ class IrnmnSelect extends HTMLElement {
         this.focusItem(newIndex);
     };
     
+
     toggleList() {
         this.isOpen = !this.isOpen;
     
