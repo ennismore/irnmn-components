@@ -45,8 +45,15 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     async connectedCallback() {
-        const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
-        this.render(renderedCss);
+
+        try {
+            const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
+            this.render(renderedCss);
+        } catch (error) {
+            console.error('Error loading and injecting CSS:', error);
+            return;
+        }
+
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
@@ -101,26 +108,38 @@ class IRNMNCalendar extends HTMLElement {
                 const dayBtn = createDayButton(day, this.dateLocale);
                 if (day.date < this.openDate) dayBtn.disabled = true;
 
-                dayBtn.addEventListener('click', (e) => this.handleDayClick(e, dayBtn));
+                dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
                 monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`).appendChild(dayBtn);
                 this.dayButtons.push(dayBtn);
             });
         });
     }
 
-    handleDayClick(event, dayBtn) {
+    /**
+     * Handle the click event on a day button
+     * 
+     * @param {HTMLButtonElement} dayBtn - The button element that was clicked
+     * @return {void}
+     */
+    handleDayClick(dayBtn) {
         const time = parseInt(dayBtn.dataset.time);
-
+    
+        // If no check-in is set, set it
         if (!this.state.checkin) {
             this.setDate('checkin', time, dayBtn, `checkin-selected-${this.name}`);
-        } else if (!this.state.checkout && time > this.state.checkin) {
+        } 
+        // If no checkout is set and the selected time is after check-in, set checkout
+        else if (!this.state.checkout && time > this.state.checkin) {
             this.setDate('checkout', time, dayBtn, `checkout-selected-${this.name}`);
             this.highlightRange(this.state.checkin, this.state.checkout);
             this.toggleCalendar();
-        } else {
+        } 
+        // Otherwise, reset and set a new check-in
+        else {
             this.resetDates();
             this.setDate('checkin', time, dayBtn, `checkin-selected-${this.name}`);
         }
+    
         this.updateInputField();
     }
 
@@ -227,27 +246,34 @@ class IRNMNCalendar extends HTMLElement {
         if (event.key === 'Escape') toggleVisibility(this.panel, false);
     }
 
+    /**
+     * Load the date from sessionStorage and set the input field
+     * @param {String} storedDate - The date stored in sessionStorage
+     * @param {String} stateKey - The key in the state object
+     * @param {HTMLInputElement} inputElement - The input element to set the value
+     * @return {void}
+     */
+    setDateFromStorage(storedDate, stateKey, inputElement) {
+        if (storedDate) {
+            this.state[stateKey] = new Date(storedDate).getTime();  // Convert ISO string to timestamp
+            inputElement.value = formatDate(new Date(this.state[stateKey]), this.dateLocale);
+        }
+    }
+
     loadFromSessionStorage() {
         const storedCheckin = getFromSessionStorage(this.startStorageKey);
         const storedCheckout = getFromSessionStorage(this.endStorageKey);
-    
-        if (storedCheckin) {
-            this.state.checkin = new Date(storedCheckin).getTime();  // Convert ISO string to timestamp
-            this.startInput.value = formatDate(new Date(this.state.checkin), this.dateLocale);
-        }
-    
-        if (storedCheckout) {
-            this.state.checkout = new Date(storedCheckout).getTime();  // Convert ISO string to timestamp
-            this.endInput.value = formatDate(new Date(this.state.checkout), this.dateLocale);
-        }
-    
+
+        this.setDateFromStorage(storedCheckin, 'checkin', this.startInput);
+        this.setDateFromStorage(storedCheckout, 'checkout', this.endInput);
+
         // Display the date range in the input field
         if (this.state.checkin && this.state.checkout) {
             this.inputElement.value = `${this.startInput.value} - ${this.endInput.value}`;
         } else if (this.state.checkin) {
             this.inputElement.value = this.startInput.value;
         }
-    
+
         this.applyHighlights();  // Apply the saved highlights to the calendar
     }
     
