@@ -44,6 +44,9 @@ class IrnmnSelect extends HTMLElement {
     render() {
         this.innerHTML = `
             <style>
+                .irnmn-select {
+                    position: relative;
+                }
                 .irnmn-select__header {
                     padding: 15px;
                     font-size: 1rem;
