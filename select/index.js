@@ -43,6 +43,76 @@ class IrnmnSelect extends HTMLElement {
 
     render() {
         this.innerHTML = `
+            <style>
+                .irnmn-select__header {
+                    padding: 15px;
+                    font-size: 1rem;
+                    color: #000;
+                    background-color: #f8f8f8;
+                    border: 1px solid #000;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    cursor: pointer;
+                }
+                .irnmn-select__header:hover,
+                .irnmn-select__header:focus {
+                    background-color: #e6e6e6;
+                }
+                .irnmn-select__header::after {
+                    content: '▼';
+                    font-size: 0.8em;
+                }
+                .irnmn-select__item {
+                    padding: 15px;
+                    border-bottom: 1px solid #e0e0e0;
+                    cursor: pointer;
+                }
+                .irnmn-select__item:hover,
+                .irnmn-select__item:focus {
+                    background-color: #D3F5FF;
+                }
+                .irnmn-select__item:last-child {
+                    border-bottom: none;
+                }
+                .irnmn-select__item--selected {
+                    background-color: #e6f3ff;
+                }
+                .irnmn-select__item--unselectable {
+                    color: #999;
+                    pointer-events: none;
+                    cursor: default;
+                }
+                .irnmn-select__item[aria-selected="true"] {
+                    font-weight: bold;
+                }
+                .irnmn-select__list {
+                    position: absolute;
+                    display: none;
+                    width: 100%;
+                    padding: 0;
+                    margin: 0;
+                    list-style-type: none;
+                    background-color: #fff;
+                    overflow: hidden;
+                    z-index: 1;
+                }
+                .irnmn-select__list--open {
+                    display: block;
+                    max-height: 400px;
+                    overflow: auto;
+                    top: 100%;
+                    bottom: auto;
+                }
+                .irnmn-select__list--open.open-upwards {
+                    top: auto;
+                    bottom: 100%;
+                }
+                .irnmn-select__item {
+                    border: 0;
+                    padding: 12px 24px;
+                }
+            </style>
             <div class="irnmn-select" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
                 <div id="irnmn-select-header" class="irnmn-select__header" tabindex="0">
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
