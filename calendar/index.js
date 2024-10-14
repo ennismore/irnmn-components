@@ -25,6 +25,13 @@ import {
 class IRNMNCalendar extends HTMLElement {
     constructor() {
         super();
+    }
+
+    /**
+     * Initialize the properties of the component
+     * @return {void}
+     */
+    initProperties() {
         this.label = this.getAttribute('label') || 'Check-in';
         this.placeholder = this.getAttribute('placeholder') || 'Select a date';
         this.name = this.getAttribute('name') || 'irnmn-calendar';  
@@ -45,6 +52,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     async connectedCallback() {
+        this.initProperties();
 
         try {
             const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
