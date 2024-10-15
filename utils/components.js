@@ -85,7 +85,6 @@ export function clearHighlights(buttons, classNames = []) {
 export async function loadAndInjectCSS(url) {
     try {
         const response = await fetch(url);
-        console.log(response);
         if (!response.ok) {
             throw new Error(`Failed to load CSS: ${response.statusText}`);
         }
