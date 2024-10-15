@@ -1,5 +1,5 @@
 // Temp approach to import Hls 
-// import Hls from './vendor/hls.light.min.js';
+import Hls from './vendor/hls.light.min.js';
 
 class IrnmnVideo extends HTMLElement {
 
