@@ -1,5 +1,3 @@
-import { selectStyles } from './select-styles.js';
-
 class IrnmnSelect extends HTMLElement {
     constructor() {
         super();
@@ -44,7 +42,6 @@ class IrnmnSelect extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <style>${selectStyles}</style>
             <div class="irnmn-select ${this.selectedOption === null ? 'irnmn-select--unselected' : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
                 <div id="irnmn-select-header" class="irnmn-select__header" tabindex="0">
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
