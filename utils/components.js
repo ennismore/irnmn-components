@@ -83,7 +83,6 @@ export function clearHighlights(buttons, classNames = []) {
  * @returns {Promise<string>} - A promise that resolves to the CSS content.
  */
 export async function loadAndInjectCSS(url) {
-    console.log(url);
     try {
         const response = await fetch(url);
         console.log(response);
