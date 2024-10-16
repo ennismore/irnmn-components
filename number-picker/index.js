@@ -1,4 +1,6 @@
-class NumberPicker extends HTMLElement {
+import { CLASS_NAMES } from './utils/constants.js';
+
+class IRNMNNumberPicker extends HTMLElement {
     constructor() {
         super();
         this.label = this.getAttribute('label') || 'Number';
@@ -19,18 +21,18 @@ class NumberPicker extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="number-picker">
-                <span class="number-label">${this.label}</span>
-                <button type="button" class="decrement-btn">-</button>
-                <span class="number-value">${this.state.count}</span>
-                <button type="button" class="increment-btn">+</button>
+            <div class="${CLASS_NAMES.numberPicker}">
+                <span class="${CLASS_NAMES.label}">${this.label}</span>
+                <button type="button" class="${CLASS_NAMES.decrementBtn}">-</button>
+                <span class="${CLASS_NAMES.numberValue}">${this.state.count}</span>
+                <button type="button" class="${CLASS_NAMES.incrementBtn}">+</button>
             </div>
         `;
     }
 
     attachEventListeners() {
-        this.querySelector('.increment-btn').addEventListener('click', () => this.updateCount(1));
-        this.querySelector('.decrement-btn').addEventListener('click', () => this.updateCount(-1));
+        this.querySelector(`.${CLASS_NAMES.incrementBtn}`).addEventListener('click', () => this.updateCount(1));
+        this.querySelector(`.${CLASS_NAMES.decrementBtn}`).addEventListener('click', () => this.updateCount(-1));
     }
 
     updateCount(delta) {
@@ -50,8 +52,8 @@ class NumberPicker extends HTMLElement {
     }
 
     updateDisplay() {
-        this.querySelector('.number-value').textContent = this.state.count;
+        this.querySelector(`.${CLASS_NAMES.numberValue}`).textContent = this.state.count;
     }
 }
 
-customElements.define('number-picker', NumberPicker);
+customElements.define('irnmn-number-picker', IRNMNNumberPicker);
