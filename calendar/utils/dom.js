@@ -1,6 +1,5 @@
 import { CLASS_NAMES } from './constants.js';
 
-
 /**
  * Creates a month element with the provided month data (button days and weekdays header)
  * @param {Object} month The month data object
@@ -8,11 +7,12 @@ import { CLASS_NAMES } from './constants.js';
  * @param {String} dateLocale The locale to format the date
  * @return {HTMLElement} The month element
  */
+
 export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     const monthEl = document.createElement('div');
     monthEl.classList.add(CLASS_NAMES.month);
-    monthEl.setAttribute('role', 'region'); // Define it as a region for better accessibility
-    monthEl.setAttribute('aria-labelledby', `month-${month.year}-${month.month}`); // Link to the month title for screen readers
+    monthEl.setAttribute('role', 'region');
+    monthEl.setAttribute('aria-labelledby', `month-${month.year}-${month.month}`);
 
     const monthTitle = document.createElement('p');
     monthTitle.classList.add(CLASS_NAMES.monthTitle);
@@ -20,15 +20,15 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     monthTitle.textContent = new Intl.DateTimeFormat(dateLocale, { month: 'long', year: 'numeric' }).format(
         new Date(month.year, month.month)
     );
-    monthTitle.setAttribute('aria-label', `Month of ${monthTitle.textContent}`); // Label for screen readers
+    monthTitle.setAttribute('aria-label', `Month of ${monthTitle.textContent}`);
 
     // Create the main container for the days of the month
     const daysWrapper = document.createElement('div');
-    daysWrapper.className = CLASS_NAMES.daysWrapper; // New class for the day wrapper
+    daysWrapper.className = CLASS_NAMES.daysWrapper;
 
     const daysContainer = document.createElement('div');
     daysContainer.className = CLASS_NAMES.daysContainer;
-    daysContainer.setAttribute('role', 'grid'); // Indicate that it contains a grid of days
+    daysContainer.setAttribute('role', 'grid');
 
     // Optional: Create the weekdays header row if the weekDays parameter is provided
     if (weekDays) {
@@ -36,16 +36,12 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
         daysWrapper.appendChild(weekdayHeader);
     }
 
-    // Calculate the start day of the month and adjust so Monday is the first day (getDay returns 0 for Sunday)
+    // Calculate the start day of the month and adjust so Monday is the first day
     const firstDayOfMonth = new Date(month.year, month.month, 1);
     const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust Sunday to be 6, Monday to be 0
 
-    // Add empty placeholder elements to align the first day of the month correctly
-    for (let i = 0; i < startDay; i++) {
-        const emptyDay = document.createElement('div');
-        emptyDay.classList.add(CLASS_NAMES.emptyDay); // Add a class for empty days
-        daysContainer.appendChild(emptyDay);
-    }
+    // Use the utility function to add empty placeholders
+    addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
 
     // Append the days of the month to the daysContainer
     daysWrapper.appendChild(daysContainer);
@@ -94,4 +90,20 @@ function createWeekdayHeader(weekDays) {
     });
 
     return headerRow;
+}
+
+
+/**
+ * Adds empty day placeholders to the container to align the first day of the month
+ * @param {HTMLElement} container - The container to append empty placeholders to
+ * @param {Number} count - The number of empty placeholders to add
+ * @param {String} className - The CSS class to apply to the empty placeholders
+ * @return {void}
+ */
+export function addEmptyDays(container, count, className) {
+    for (let i = 0; i < count; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.classList.add(className); // Apply the provided class for empty days
+        container.appendChild(emptyDay);
+    }
 }

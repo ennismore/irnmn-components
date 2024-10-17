@@ -1,6 +1,7 @@
 import { 
     createMonthElement, 
-    createDayButton 
+    createDayButton,
+    addEmptyDays
 } from './utils/dom.js'; 
 
 import { 
@@ -110,12 +111,8 @@ class IRNMNCalendar extends HTMLElement {
             const firstDayOfMonth = new Date(month.year, month.month, 1);
             const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust to make Monday = 0
     
-            // Create empty elements for days before the first day of the month
-            for (let i = 0; i < startDay; i++) {
-                const emptyDay = document.createElement('div');
-                emptyDay.classList.add('empty-day'); // Add class for styling empty days
-                daysContainer.appendChild(emptyDay);
-            }
+            // Use the utility function to add empty placeholders
+            addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
     
             // Render the days of the month
             month.days.forEach(day => {
