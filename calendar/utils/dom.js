@@ -30,18 +30,31 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     daysContainer.className = CLASS_NAMES.daysContainer;
     daysContainer.setAttribute('role', 'grid'); // Indicate that it contains a grid of days
 
+    // Optional: Create the weekdays header row if the weekDays parameter is provided
     if (weekDays) {
-        // Create the weekdays header row if the weekDays parameter is provided
         const weekdayHeader = createWeekdayHeader(weekDays);
         daysWrapper.appendChild(weekdayHeader);
     }
 
+    // Calculate the start day of the month and adjust so Monday is the first day (getDay returns 0 for Sunday)
+    const firstDayOfMonth = new Date(month.year, month.month, 1);
+    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust Sunday to be 6, Monday to be 0
+
+    // Add empty placeholder elements to align the first day of the month correctly
+    for (let i = 0; i < startDay; i++) {
+        const emptyDay = document.createElement('div');
+        emptyDay.classList.add(CLASS_NAMES.emptyDay); // Add a class for empty days
+        daysContainer.appendChild(emptyDay);
+    }
+
+    // Append the days of the month to the daysContainer
     daysWrapper.appendChild(daysContainer);
     monthEl.appendChild(monthTitle);
     monthEl.appendChild(daysWrapper);
 
     return monthEl;
 }
+
 
 /**
  * Creates a button element for the provided day

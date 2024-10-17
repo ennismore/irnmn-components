@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Test Web components</title>
+    <link rel="stylesheet" href="tests.css">
     <script src="../calendar/index.js" type="module"></script>
     <script src="../text/index.js" type="module"></script>
 </head>
@@ -25,8 +26,9 @@
             checkin-date-name="startDate"
             checkout-date-name="endDate"
             name="checkInOutDates"
-            weekDays="Sun,Mon,Tue,Wed,Thu,Fri,Sat"
-            date-locale="en-us"
+            weekDays="Mon,Tue,Wed,Thu,Fri,Sat, Sun"
+            date-locale="en-gb"
+            colors="['#f00', '#0f0', '#00f']"
             />
         </irnmn-calendar>
         <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>

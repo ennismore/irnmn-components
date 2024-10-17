@@ -18,8 +18,7 @@ import {
     clearSessionData, 
     toggleVisibility, 
     highlightButton, 
-    clearHighlights,
-    loadAndInjectCSS
+    clearHighlights
 } from '../utils/components.js';  // Utility functions for general component behavior
 
 class IRNMNCalendar extends HTMLElement {
@@ -53,15 +52,7 @@ class IRNMNCalendar extends HTMLElement {
 
     async connectedCallback() {
         this.initProperties();
-
-        try {
-            const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
-            this.render(renderedCss);
-        } catch (error) {
-            console.error('Error loading and injecting CSS:', error);
-            return;
-        }
-
+        this.render();  
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
@@ -74,8 +65,8 @@ class IRNMNCalendar extends HTMLElement {
         document.removeEventListener(`checkout-selected-${this.name}`, this.syncState);
     }
 
-    render(css) {
-        this.innerHTML = `<style>${css}</style>`;
+    render() {
+        this.innerHTML = ``;
         this.renderInputGroup();
         this.renderCalendarPanel();
         this.renderHiddenInputs();
@@ -108,16 +99,31 @@ class IRNMNCalendar extends HTMLElement {
 
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
+    
         months.forEach(month => {
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
             this.panel.appendChild(monthEl);
-
+    
+            const daysContainer = monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`);
+    
+            // Calculate the first day of the month and how many empty slots before Monday
+            const firstDayOfMonth = new Date(month.year, month.month, 1);
+            const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust to make Monday = 0
+    
+            // Create empty elements for days before the first day of the month
+            for (let i = 0; i < startDay; i++) {
+                const emptyDay = document.createElement('div');
+                emptyDay.classList.add('empty-day'); // Add class for styling empty days
+                daysContainer.appendChild(emptyDay);
+            }
+    
+            // Render the days of the month
             month.days.forEach(day => {
                 const dayBtn = createDayButton(day, this.dateLocale);
                 if (day.date < this.openDate) dayBtn.disabled = true;
-
+    
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
-                monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`).appendChild(dayBtn);
+                daysContainer.appendChild(dayBtn);
                 this.dayButtons.push(dayBtn);
             });
         });
