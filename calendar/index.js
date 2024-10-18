@@ -25,18 +25,19 @@ import {
 class IRNMNCalendar extends HTMLElement {
     constructor() {
         super();
+
+        this.state = {
+            checkin: null,
+            checkout: null,
+        };
+
     }
 
     /**
      * Initialize the properties of the component
      * @return {void}
      */
-    initProperties() {
-
-        this.state = {
-            checkin: null,
-            checkout: null,
-        };
+    setProperties() {
 
         this.dayButtons = [];
 
@@ -133,10 +134,10 @@ class IRNMNCalendar extends HTMLElement {
     getDateLocale() {
         return this.getAttribute('date-locale') || 'en-gb';
     }
-    
+
 
     async connectedCallback() {
-        this.initProperties();
+        this.setProperties();
         this.verifyOpenDate();
         this.render();  
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
