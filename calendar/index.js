@@ -1,6 +1,7 @@
 import { 
     createMonthElement, 
-    createDayButton 
+    createDayButton,
+    addEmptyDays
 } from './utils/dom.js'; 
 
 import { 
@@ -18,8 +19,7 @@ import {
     clearSessionData, 
     toggleVisibility, 
     highlightButton, 
-    clearHighlights,
-    loadAndInjectCSS
+    clearHighlights
 } from '../utils/components.js';  // Utility functions for general component behavior
 
 class IRNMNCalendar extends HTMLElement {
@@ -34,7 +34,8 @@ class IRNMNCalendar extends HTMLElement {
     initProperties() {
         this.label = this.getAttribute('label') || 'Check-in';
         this.placeholder = this.getAttribute('placeholder') || 'Select a date';
-        this.name = this.getAttribute('name') || 'irnmn-calendar';  
+        this.name = this.getAttribute('name') || 'irnmn-calendar';
+        this.today = new Date();
         this.openDate = new Date(this.getAttribute('openDate') || Date.now());
         this.startName = this.getAttribute('checkin-date-name') || 'startDate';
         this.endName = this.getAttribute('checkout-date-name') || 'endDate';
@@ -42,26 +43,19 @@ class IRNMNCalendar extends HTMLElement {
         this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
         this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
         this.dateLocale = this.getAttribute('date-locale') || 'en-gb';
-
         this.state = {
             checkin: null,
             checkout: null,
         };
 
         this.dayButtons = [];
+
     }
 
     async connectedCallback() {
         this.initProperties();
-
-        try {
-            const renderedCss = await loadAndInjectCSS('../calendar/css/calendar.css');
-            this.render(renderedCss);
-        } catch (error) {
-            console.error('Error loading and injecting CSS:', error);
-            return;
-        }
-
+        this.verifyOpenDate();
+        this.render();  
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
@@ -74,8 +68,8 @@ class IRNMNCalendar extends HTMLElement {
         document.removeEventListener(`checkout-selected-${this.name}`, this.syncState);
     }
 
-    render(css) {
-        this.innerHTML = `<style>${css}</style>`;
+    render() {
+        this.innerHTML = ``;
         this.renderInputGroup();
         this.renderCalendarPanel();
         this.renderHiddenInputs();
@@ -106,18 +100,48 @@ class IRNMNCalendar extends HTMLElement {
         this.append(this.startInput, this.endInput);
     }
 
+    /**
+     * Use Today as the minimum date for the calendar
+     * @return {void}
+     */
+    verifyOpenDate() {
+
+        /**
+         * Prevent issues with timezone, setting the time to 00:00:00
+         */
+        this.today.setHours(0, 0, 0, 0);
+        this.openDate.setHours(0, 0, 0, 0);
+
+        if( this.openDate < this.today ) {
+            this.openDate = this.today;
+        }
+
+    }
+
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
+    
         months.forEach(month => {
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
             this.panel.appendChild(monthEl);
-
+    
+            const daysContainer = monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`);
+    
+            // Calculate the first day of the month and how many empty slots before Monday
+            const firstDayOfMonth = new Date(month.year, month.month, 1);
+            const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust to make Monday = 0
+    
+            // Use the utility function to add empty placeholders
+            addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
+    
+            // Render the days of the month
             month.days.forEach(day => {
                 const dayBtn = createDayButton(day, this.dateLocale);
-                if (day.date < this.openDate) dayBtn.disabled = true;
 
+                if (day.date < this.openDate) dayBtn.disabled = true;
+    
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
-                monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`).appendChild(dayBtn);
+                daysContainer.appendChild(dayBtn);
                 this.dayButtons.push(dayBtn);
             });
         });
