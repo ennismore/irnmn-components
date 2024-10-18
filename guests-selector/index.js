@@ -84,8 +84,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                     <button type="button" class="${CLASS_NAMES.removeRoomBtn}">Remove</button>
                 </div>
                 <div class="${CLASS_NAMES.guestControls}">
-                    <irnmn-number-picker label="Adults" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initialValue="0"></irnmn-number-picker>
-                    <irnmn-number-picker label="Children" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initialValue="0"></irnmn-number-picker>
+                    <irnmn-number-picker label="Adults" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="1"></irnmn-number-picker>
+                    <irnmn-number-picker label="Children" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="0"></irnmn-number-picker>
                     <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 </div>
                 <p class="${CLASS_NAMES.feedbackMessage}" style="color: red; display: none;">Max total guests exceeded</p>

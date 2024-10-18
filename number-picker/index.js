@@ -5,14 +5,14 @@ class IRNMNNumberPicker extends HTMLElement {
         super();
        
         this.state = {
-            count: this.getInitialValue()  // Set initial count properly
+            count: this.getInitialValue()
         };
     }
 
     connectedCallback() {
         this.setProperties();
         this.render();
-        this.updateDisplay();
+        this.updateDisplay();  // this is to ensure the initial value is displayed
         this.attachEventListeners();
     }
 
@@ -52,7 +52,7 @@ class IRNMNNumberPicker extends HTMLElement {
      * @return {Number} Initial value or minimum value.
      */
     getInitialValue() {
-        return parseInt(this.getAttribute('initialValue')) || this.getMin();
+        return parseInt(this.getAttribute('initial-value')) || this.getMin();
     }
 
     render() {
@@ -86,6 +86,12 @@ class IRNMNNumberPicker extends HTMLElement {
         }
     }
 
+    /**
+     * Update the displayed number value.
+     * This method is called whenever the count is updated.
+     * 
+     * @return {void}
+     */
     updateDisplay() {
         this.querySelector(`.${CLASS_NAMES.numberValue}`).textContent = this.state.count;
     }
