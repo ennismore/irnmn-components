@@ -5,7 +5,7 @@ class IRNMNNumberPicker extends HTMLElement {
         super();
        
         this.state = {
-            count: this.value
+            count: this.getInitialValue()  // Set initial count properly
         };
     }
 
@@ -20,14 +20,13 @@ class IRNMNNumberPicker extends HTMLElement {
         this.label = this.getLabel();
         this.min = this.getMin();
         this.max = this.getMax();
-        this.value = this.getInitialValue();
     }
 
-     /**
+    /**
      * Get the label for the number input.
      * @return {String} Label or default value 'Number'.
      */
-     getLabel() {
+    getLabel() {
         return this.getAttribute('label') || 'Number';
     }
 
@@ -74,7 +73,6 @@ class IRNMNNumberPicker extends HTMLElement {
 
     updateCount(delta) {
         const newValue = this.state.count + delta;
-
         if (newValue >= this.min && newValue <= this.max) {
             this.state.count = newValue;
             this.updateDisplay();
