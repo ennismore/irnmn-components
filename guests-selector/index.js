@@ -3,24 +3,79 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNGuestsSelector extends HTMLElement {
     constructor() {
         super();
-        this.maxTotalGuests = parseInt(this.getAttribute('max-total-guests')) || 5;
-        this.maxAdults = parseInt(this.getAttribute('max-adults')) || 5;
-        this.maxChildren = parseInt(this.getAttribute('max-children')) || 5;
-        this.maxChildAge = parseInt(this.getAttribute('max-child-age')) || 17;
-        this.label = this.getAttribute('label') || 'Room';
-
-        this.state = {
-            adults: 0,
-            children: 0,
-        };
     }
 
     connectedCallback() {
+        this.setProperties();
         this.render();
         this.updateDisplay();
         this.attachEventListeners();
     }
 
+    setProperties() {
+
+        this.state = {
+            adults: 0,
+            children: 0,
+        };
+
+        this.maxTotalGuests = this.getMaxTotalGuests();
+        this.maxAdults = this.getMaxAdults();
+        this.maxChildren = this.getMaxChildren();
+        this.maxChildAge = this.getMaxChildAge();
+        this.label = this.getLabel();
+        this.childAgeLabel = this.getChildAgeLabel();
+    }
+
+
+    /**
+     * Get the maximum total number of guests.
+     * @return {Number} Max total guests or default value of 5.
+     */
+    getMaxTotalGuests() {
+        return parseInt(this.getAttribute('max-total-guests')) || 5;
+    }
+
+    /**
+     * Get the maximum number of adults.
+     * @return {Number} Max adults or default value of 5.
+     */
+    getMaxAdults() {
+        return parseInt(this.getAttribute('max-adults')) || 5;
+    }
+
+    /**
+     * Get the maximum number of children.
+     * @return {Number} Max children or default value of 5.
+     */
+    getMaxChildren() {
+        return parseInt(this.getAttribute('max-children')) || 5;
+    }
+
+    /**
+     * Get the maximum age for children.
+     * @return {Number} Max child age or default value of 17.
+     */
+    getMaxChildAge() {
+        return parseInt(this.getAttribute('max-child-age')) || 17;
+    }
+
+    /**
+     * Get the label for the room.
+     * @return {String} Label or default value 'Room'.
+     */
+    getLabel() {
+        return this.getAttribute('label') || 'Room';
+    }
+
+    /**
+     * Get the label for the child age input.
+     * @return {String} Child age label or default value 'Age'.
+     */
+    getChildAgeLabel() {
+        return this.getAttribute('child-age-label') || 'Age';
+    }
+    
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomContainer}">
