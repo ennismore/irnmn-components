@@ -25,13 +25,22 @@ import {
 class IRNMNCalendar extends HTMLElement {
     constructor() {
         super();
+
+        this.state = {
+            checkin: null,
+            checkout: null,
+        };
+
     }
 
     /**
      * Initialize the properties of the component
      * @return {void}
      */
-    initProperties() {
+    setProperties() {
+
+        this.dayButtons = [];
+
         this.label = this.getAttribute('label') || 'Check-in';
         this.placeholder = this.getAttribute('placeholder') || 'Select a date';
         this.name = this.getAttribute('name') || 'irnmn-calendar';
@@ -43,17 +52,92 @@ class IRNMNCalendar extends HTMLElement {
         this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
         this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
         this.dateLocale = this.getAttribute('date-locale') || 'en-gb';
-        this.state = {
-            checkin: null,
-            checkout: null,
-        };
-
-        this.dayButtons = [];
-
     }
 
+
+    /**
+     * Get the label for the calendar input.
+     * @return {String} Label or default value 'Check-in'.
+     */
+    getLabel() {
+        return this.getAttribute('label') || 'Check-in';
+    }
+
+    /**
+     * Get the placeholder for the calendar input.
+     * @return {String} Placeholder or default value 'Select a date'.
+     */
+    getPlaceholder() {
+        return this.getAttribute('placeholder') || 'Select a date';
+    }
+
+    /**
+     * Get the name attribute for the calendar input.
+     * @return {String} Name or default value 'irnmn-calendar'.
+     */
+    getName() {
+        return this.getAttribute('name') || 'irnmn-calendar';
+    }
+
+    /**
+     * Get the open date for the calendar (either from attribute or current date).
+     * @return {Date} Open date or default to the current date.
+     */
+    getOpenDate() {
+        return new Date(this.getAttribute('openDate') || Date.now());
+    }
+
+    /**
+     * Get the name for the check-in date input.
+     * @return {String} Start date name or default value 'startDate'.
+     */
+    getStartName() {
+        return this.getAttribute('checkin-date-name') || 'startDate';
+    }
+
+    /**
+     * Get the name for the check-out date input.
+     * @return {String} End date name or default value 'endDate'.
+     */
+    getEndName() {
+        return this.getAttribute('checkout-date-name') || 'endDate';
+    }
+
+    /**
+     * Get the weekdays as an array, split by commas.
+     * @return {Array|Boolean} Weekdays array or false if not provided.
+     */
+    getWeekDays() {
+        return this.getAttribute('weekdays') ? this.getAttribute('weekdays').split(',') : false;
+    }
+
+    /**
+     * Get the storage key for the start date.
+     * @return {String} Start storage key formatted with the component name.
+     */
+    getStartStorageKey() {
+        return `irnmn-${this.getStartName()}-${this.getName()}`;
+    }
+
+    /**
+     * Get the storage key for the end date.
+     * @return {String} End storage key formatted with the component name.
+     */
+    getEndStorageKey() {
+        return `irnmn-${this.getEndName()}-${this.getName()}`;
+    }
+
+    /**
+     * Get the locale for the date format.
+     * @return {String} Date locale or default 'en-gb'.
+     */
+    getDateLocale() {
+        return this.getAttribute('date-locale') || 'en-gb';
+    }
+
+
     async connectedCallback() {
-        this.initProperties();
+        this.setProperties();
         this.verifyOpenDate();
         this.render();  
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes

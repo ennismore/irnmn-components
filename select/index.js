@@ -1,3 +1,5 @@
+import { CLASS_NAMES } from './constants.js';
+
 class IrnmnSelect extends HTMLElement {
     constructor() {
         super();
@@ -42,19 +44,19 @@ class IrnmnSelect extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="irnmn-select ${this.selectedOption === null ? 'irnmn-select--unselected' : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
-                <div id="irnmn-select-header" class="irnmn-select__header" tabindex="0">
+            <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
+                <div id="irnmn-select-header" class="${CLASS_NAMES.header}" tabindex="0">
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                 </div>
-                <ul id="option-list" class="irnmn-select__list ${this.isOpen ? 'irnmn-select__list--open' : ''}" role="listbox" aria-labelledby="irnmn-select-header">
+                <ul id="option-list" class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox" aria-labelledby="irnmn-select-header">
                     ${this.placeholder ? `
-                        <li class="irnmn-select__item irnmn-select__item--unselectable" role="option" aria-selected="false" tabindex="-1" disabled>
+                        <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemUnselectable}" role="option" aria-selected="false" tabindex="-1" disabled>
                             ${this.placeholder}
                         </li>` : ''}
                     ${this.options
                         .map(
                             (option, index) => `
-                        <li class="irnmn-select__item" 
+                        <li class="${CLASS_NAMES.item}" 
                             role="option" 
                             tabindex="-1"
                             aria-selected="${this.selectedOption === index ? 'true' : 'false'}"
@@ -83,35 +85,34 @@ class IrnmnSelect extends HTMLElement {
     }
 
     handleFocusOut = (event) => {
-        // If the newly focused element (relatedTarget) is not within the custom select, close the list
         if (!this.contains(event.relatedTarget)) {
             this.closeList();
         }
     };
 
     handleClick = (event) => {
-        const header = event.target.closest('.irnmn-select__header');
-        const item = event.target.closest('.irnmn-select__item');
+        const header = event.target.closest(`.${CLASS_NAMES.header}`);
+        const item = event.target.closest(`.${CLASS_NAMES.item}`);
     
         if (header) {
             this.toggleList();
             return;
         }
     
-        if (item && !item.classList.contains('irnmn-select__item--unselectable')) {
+        if (item && !item.classList.contains(CLASS_NAMES.itemUnselectable)) {
             this.selectOption(parseInt(item.dataset.index, 10));
             this.closeList();
             return;
         }
     
-        if (!event.target.closest('.irnmn-select')) {
+        if (!event.target.closest(`.${CLASS_NAMES.select}`)) {
             this.closeList();
         }
     };
 
     handleKeydown = (event) => {
-        const header = event.target.closest('.irnmn-select__header');
-        const item = event.target.closest('.irnmn-select__item');
+        const header = event.target.closest(`.${CLASS_NAMES.header}`);
+        const item = event.target.closest(`.${CLASS_NAMES.item}`);
     
         if (header && (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === ' ')) {
             event.preventDefault();
@@ -129,8 +130,7 @@ class IrnmnSelect extends HTMLElement {
                 newIndex = (currentIndex + 1) % this.options.length;
                 break;
             case 'ArrowUp':
-                newIndex =
-                    (currentIndex - 1 + this.options.length) % this.options.length;
+                newIndex = (currentIndex - 1 + this.options.length) % this.options.length;
                 break;
             case 'Home':
                 newIndex = 0;
@@ -153,23 +153,22 @@ class IrnmnSelect extends HTMLElement {
         event.preventDefault();
         this.focusItem(newIndex);
     };
-    
 
     toggleList() {
         this.isOpen = !this.isOpen;
     
-        const list = this.querySelector('.irnmn-select__list');
-        const select = this.querySelector('.irnmn-select');
-        const header = this.querySelector('.irnmn-select__header');
+        const list = this.querySelector(`.${CLASS_NAMES.list}`);
+        const select = this.querySelector(`.${CLASS_NAMES.select}`);
+        const header = this.querySelector(`.${CLASS_NAMES.header}`);
     
         if (this.isOpen) {
             this.determineDropdownPosition();
             this.focusItem(this.selectedOption !== null ? this.selectedOption : 0);
         } else {
-            list.classList.remove('open-upwards');
+            list.classList.remove(CLASS_NAMES.openUpwards);
         }
     
-        list.classList.toggle('irnmn-select__list--open', this.isOpen);
+        list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
         select.setAttribute('aria-expanded', this.isOpen);
     
         if (this.isOpen) {
@@ -177,16 +176,13 @@ class IrnmnSelect extends HTMLElement {
         } else {
             header.focus();
         }
-    }    
+    }
 
     closeList() {
         this.isOpen = false;
-        const list = this.querySelector('.irnmn-select__list');
-        list.classList.remove('irnmn-select__list--open');
-        this.querySelector('.irnmn-select').setAttribute(
-            'aria-expanded',
-            'false',
-        );
+        const list = this.querySelector(`.${CLASS_NAMES.list}`);
+        list.classList.remove(CLASS_NAMES.listOpen);
+        this.querySelector(`.${CLASS_NAMES.select}`).setAttribute('aria-expanded', 'false');
     }
 
     determineDropdownPosition() {
@@ -195,7 +191,7 @@ class IrnmnSelect extends HTMLElement {
         const spaceBelow = viewportHeight - rect.bottom;
         const spaceAbove = rect.top;
     
-        const list = this.querySelector('.irnmn-select__list');
+        const list = this.querySelector(`.${CLASS_NAMES.list}`);
     
         // Temporarily show the dropdown to calculate its height - Need to find a cleaner way!!
         list.style.display = 'block';  // Make it visible to measure height
@@ -204,12 +200,11 @@ class IrnmnSelect extends HTMLElement {
     
         // Only add 'open-upwards' if there is not enough space below but there is enough space above
         if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
-            list.classList.add('open-upwards');
+            list.classList.add(CLASS_NAMES.openUpwards);
         } else {
-            list.classList.remove('open-upwards');
+            list.classList.remove(CLASS_NAMES.openUpwards);
         }
-    }    
-    
+    }
 
     selectOption(index) {
         this.selectedOption = index;
@@ -232,7 +227,7 @@ class IrnmnSelect extends HTMLElement {
         if (item) {
             item.focus();
         }
-    }    
+    }
 }
 
 customElements.define('irnmn-select', IrnmnSelect);

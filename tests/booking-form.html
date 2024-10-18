@@ -5,6 +5,9 @@
     <link rel="stylesheet" href="tests.css">
     <script src="../calendar/index.js" type="module"></script>
     <script src="../text/index.js" type="module"></script>
+    <script src="../number-picker/index.js" type="module"></script>
+    <script src="../guests-selector/index.js" type="module"></script>
+    <script src="../rooms-selector/index.js" type="module"></script>
 </head>
 <body>
     <h1>Calendar</h1>
@@ -28,9 +31,13 @@
             name="checkInOutDates"
             weekDays="Mon,Tue,Wed,Thu,Fri,Sat, Sun"
             date-locale="en-gb"
-            colors="['#f00', '#0f0', '#00f']"
             />
         </irnmn-calendar>
+        <irnmn-rooms-selector
+            max-rooms="5"
+            min-rooms="1"
+            label="Select Number of Rooms">
+        </irnmn-rooms-selector>
         <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>
         <button type="submit">Submit</button>
     </form>
@@ -51,6 +58,7 @@
         checkout-date-name="endDate"
         date-locale="en-us"
         />
+        
         </irnmn-calendar>
         <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>
         <button type="submit">Submit</button>
