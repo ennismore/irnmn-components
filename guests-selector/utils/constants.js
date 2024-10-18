@@ -1,9 +1,11 @@
+const prefix = 'irnmn-guests-selector';
+
 export const CLASS_NAMES = {
-    roomContainer: 'irnmn-guests-selector__room-container',
-    roomHeader: 'irnmn-guests-selector__room-header',
-    roomLabel: 'irnmn-guests-selector__room-label',
-    removeRoomBtn: 'irnmn-guests-selector__remove-room-btn',
-    guestControls: 'irnmn-guests-selector__guest-controls',
-    feedbackMessage: 'irnmn-guests-selector__feedback-message',
-    childrenAgeDropdowns: 'irnmn-guests-selector__children-age-dropdowns'
+    roomContainer: `${prefix}__room-container`,
+    roomHeader: `${prefix}__room-header`,
+    roomLabel: `${prefix}__room-label`,
+    removeRoomBtn: `${prefix}__remove-room-btn`,
+    guestControls: `${prefix}__guest-controls`,
+    feedbackMessage: `${prefix}__feedback-message`,
+    childrenAgeDropdowns: `${prefix}__children-age-dropdowns`
 };

@@ -1,3 +1,5 @@
+import { CLASS_NAMES } from './utils/constants.js';
+
 class IRNMNRoomsSelector extends HTMLElement {
     constructor() {
         super();
@@ -14,12 +16,12 @@ class IRNMNRoomsSelector extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="rooms-selector">
+            <div class="${CLASS_NAMES.roomsSelector}">
                 <label for="room-count">${this.label}</label>
-                <select id="room-count">
+                <select class="${CLASS_NAMES.roomCountSelect}">
                     ${this.generateRoomOptions()}
                 </select>
-                <div id="room-container"></div>
+                <div class="${CLASS_NAMES.roomContainer}"></div>
             </div>
         `;
         this.addRooms(this.minRooms); // Start with the minimum number of rooms
@@ -34,17 +36,12 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     attachEventListeners() {
-        this.querySelector('#room-count').addEventListener('change', (e) => {
+        this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).addEventListener('change', (e) => {
             const selectedRooms = parseInt(e.target.value);
             this.updateRoomSelectors(selectedRooms);
         });
     }
 
-    /**
-     * Update the number of room selectors based on the selected number of rooms
-     * @param {Number} selectedRooms The number of rooms selected
-     * @return {void}
-     */
     updateRoomSelectors(selectedRooms) {
         const currentRooms = this.roomSelectors.length;
         const newRooms = selectedRooms - currentRooms;
@@ -54,11 +51,10 @@ class IRNMNRoomsSelector extends HTMLElement {
             return;
         }
         this.removeRooms(-newRooms);
-        
     }
 
     addRooms(count) {
-        const roomContainer = this.querySelector('#room-container');
+        const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
         for (let i = 0; i < count; i++) {
             const roomSelector = document.createElement('irnmn-guests-selector');
             roomSelector.setAttribute('label', `Room ${this.roomSelectors.length + 1}`);
@@ -72,7 +68,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     removeRooms(count) {
-        const roomContainer = this.querySelector('#room-container');
+        const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
         for (let i = 0; i < count; i++) {
             const roomToRemove = this.roomSelectors.pop();
             roomContainer.removeChild(roomToRemove);
