@@ -3,20 +3,57 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNNumberPicker extends HTMLElement {
     constructor() {
         super();
-        this.label = this.getAttribute('label') || 'Number';
-        this.min = parseInt(this.getAttribute('min')) || 0;
-        this.max = parseInt(this.getAttribute('max')) || 10;
-        this.value = parseInt(this.getAttribute('initialValue')) || this.min;
-
+       
         this.state = {
             count: this.value
         };
     }
 
     connectedCallback() {
+        this.setProperties();
         this.render();
         this.updateDisplay();
         this.attachEventListeners();
+    }
+
+    setProperties() {
+        this.label = this.getLabel();
+        this.min = this.getMin();
+        this.max = this.getMax();
+        this.value = this.getInitialValue();
+    }
+
+     /**
+     * Get the label for the number input.
+     * @return {String} Label or default value 'Number'.
+     */
+     getLabel() {
+        return this.getAttribute('label') || 'Number';
+    }
+
+    /**
+     * Get the minimum value for the number input.
+     * @return {Number} Minimum value or default value 0.
+     */
+    getMin() {
+        return parseInt(this.getAttribute('min')) || 0;
+    }
+
+    /**
+     * Get the maximum value for the number input.
+     * @return {Number} Maximum value or default value 10.
+     */
+    getMax() {
+        return parseInt(this.getAttribute('max')) || 10;
+    }
+
+    /**
+     * Get the initial value for the number input.
+     * Falls back to the minimum value if the initial value is not set.
+     * @return {Number} Initial value or minimum value.
+     */
+    getInitialValue() {
+        return parseInt(this.getAttribute('initialValue')) || this.getMin();
     }
 
     render() {

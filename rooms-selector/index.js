@@ -3,15 +3,44 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNRoomsSelector extends HTMLElement {
     constructor() {
         super();
-        this.maxRooms = parseInt(this.getAttribute('max-rooms')) || 5; // Maximum number of rooms
-        this.minRooms = parseInt(this.getAttribute('min-rooms')) || 1; // Minimum number of rooms
-        this.label = this.getAttribute('label') || 'Rooms';
-        this.roomSelectors = [];
     }
 
     connectedCallback() {
+        this.setAttributes();
         this.render();
         this.attachEventListeners();
+    }
+
+    setAttributes() {
+        this.maxRooms = this.getMaxRooms();
+        this.minRooms = this.getMinRooms();
+        this.label = this.getLabel();
+        this.roomSelectors = [];
+        
+    }
+
+     /**
+     * Get the maximum number of rooms.
+     * @return {Number} Max rooms or default value 5.
+     */
+     getMaxRooms() {
+        return parseInt(this.getAttribute('max-rooms')) || 5;
+    }
+
+    /**
+     * Get the minimum number of rooms.
+     * @return {Number} Min rooms or default value 1.
+     */
+    getMinRooms() {
+        return parseInt(this.getAttribute('min-rooms')) || 1;
+    }
+
+    /**
+     * Get the label for the rooms.
+     * @return {String} Label or default value 'Rooms'.
+     */
+    getLabel() {
+        return this.getAttribute('label') || 'Rooms';
     }
 
     render() {
