@@ -95,17 +95,20 @@ class IRNMNGuestsSelector extends HTMLElement {
         const container = this.querySelector(`.${CLASS_NAMES.childrenAgeDropdowns}`);
         container.innerHTML = ''; // Clear previous dropdowns
 
+        let dropdowns = '';
         for (let i = 0; i < this.state.children; i++) {
-            const select = document.createElement('select');
-            select.classList.add('child-age-dropdown');
+            let options = '';
             for (let age = 0; age <= this.maxChildAge; age++) {
-                const option = document.createElement('option');
-                option.value = age;
-                option.text = age === 0 ? 'Age' : age;
-                select.appendChild(option);
+                options += `<option value="${age}">${age === 0 ? this.childAgeLabel : age}</option>`;
             }
-            container.appendChild(select);
+        
+            dropdowns += `
+                <select class="child-age-dropdown" aria-label="${this.childAgeLabel}" aria-labelledby="child-age-label-${i}">
+                    ${options}
+                </select>
+            `;
         }
+        container.innerHTML += dropdowns;
     }
 
     removeRoom() {
