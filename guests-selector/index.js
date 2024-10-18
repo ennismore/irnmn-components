@@ -3,6 +3,11 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNGuestsSelector extends HTMLElement {
     constructor() {
         super();
+
+        this.state = {
+            adults: 0,
+            children: 0,
+        };
     }
 
     connectedCallback() {
@@ -13,11 +18,6 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     setProperties() {
-
-        this.state = {
-            adults: 0,
-            children: 0,
-        };
 
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
