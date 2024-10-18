@@ -55,17 +55,24 @@ class IRNMNRoomsSelector extends HTMLElement {
 
     addRooms(count) {
         const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
+        let roomSelectorsHtml = '';
+        
         for (let i = 0; i < count; i++) {
-            const roomSelector = document.createElement('irnmn-guests-selector');
-            roomSelector.setAttribute('label', `Room ${this.roomSelectors.length + 1}`);
-            roomSelector.setAttribute('max-total-guests', '5');
-            roomSelector.setAttribute('max-adults', '3');
-            roomSelector.setAttribute('max-children', '2');
-            roomSelector.setAttribute('max-child-age', '17');
-            roomContainer.appendChild(roomSelector);
-            this.roomSelectors.push(roomSelector);
+            roomSelectorsHtml += `
+                <irnmn-guests-selector 
+                    label="Room ${this.roomSelectors.length + 1}" 
+                    max-total-guests="5" 
+                    max-adults="3" 
+                    max-children="2" 
+                    max-child-age="17">
+                </irnmn-guests-selector>
+            `;
+            this.roomSelectors.push({});
         }
+    
+        roomContainer.innerHTML += roomSelectorsHtml;
     }
+    
 
     removeRooms(count) {
         const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
