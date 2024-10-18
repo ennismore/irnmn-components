@@ -40,14 +40,21 @@ class IRNMNRoomsSelector extends HTMLElement {
         });
     }
 
+    /**
+     * Update the number of room selectors based on the selected number of rooms
+     * @param {Number} selectedRooms The number of rooms selected
+     * @return {void}
+     */
     updateRoomSelectors(selectedRooms) {
         const currentRooms = this.roomSelectors.length;
+        const newRooms = selectedRooms - currentRooms;
 
-        if (selectedRooms > currentRooms) {
-            this.addRooms(selectedRooms - currentRooms);
-        } else if (selectedRooms < currentRooms) {
-            this.removeRooms(currentRooms - selectedRooms);
+        if (newRooms > 0) {
+            this.addRooms(newRooms);
+            return;
         }
+        this.removeRooms(-newRooms);
+        
     }
 
     addRooms(count) {
