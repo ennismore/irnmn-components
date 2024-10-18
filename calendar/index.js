@@ -34,7 +34,8 @@ class IRNMNCalendar extends HTMLElement {
     initProperties() {
         this.label = this.getAttribute('label') || 'Check-in';
         this.placeholder = this.getAttribute('placeholder') || 'Select a date';
-        this.name = this.getAttribute('name') || 'irnmn-calendar';  
+        this.name = this.getAttribute('name') || 'irnmn-calendar';
+        this.today = new Date();
         this.openDate = new Date(this.getAttribute('openDate') || Date.now());
         this.startName = this.getAttribute('checkin-date-name') || 'startDate';
         this.endName = this.getAttribute('checkout-date-name') || 'endDate';
@@ -42,17 +43,18 @@ class IRNMNCalendar extends HTMLElement {
         this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
         this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
         this.dateLocale = this.getAttribute('date-locale') || 'en-gb';
-
         this.state = {
             checkin: null,
             checkout: null,
         };
 
         this.dayButtons = [];
+
     }
 
     async connectedCallback() {
         this.initProperties();
+        this.verifyOpenDate();
         this.render();  
         this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
 
@@ -98,6 +100,24 @@ class IRNMNCalendar extends HTMLElement {
         this.append(this.startInput, this.endInput);
     }
 
+    /**
+     * Use Today as the minimum date for the calendar
+     * @return {void}
+     */
+    verifyOpenDate() {
+
+        /**
+         * Prevent issues with timezone, setting the time to 00:00:00
+         */
+        this.today.setHours(0, 0, 0, 0);
+        this.openDate.setHours(0, 0, 0, 0);
+
+        if( this.openDate < this.today ) {
+            this.openDate = this.today;
+        }
+
+    }
+
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
     
@@ -117,6 +137,7 @@ class IRNMNCalendar extends HTMLElement {
             // Render the days of the month
             month.days.forEach(day => {
                 const dayBtn = createDayButton(day, this.dateLocale);
+
                 if (day.date < this.openDate) dayBtn.disabled = true;
     
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
