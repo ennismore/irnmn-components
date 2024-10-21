@@ -174,7 +174,11 @@ class IRNMNCalendar extends HTMLElement {
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
         this.panel.style.display = 'none';
-        this.appendChild(this.panel);
+
+        // Create a Wrapper: panel
+        const panelWrapper = this.createElementWithClasses('div', [CLASS_NAMES.wrapper]);
+        panelWrapper.appendChild(this.panel);
+        this.appendChild(panelWrapper);
     }
     
 
