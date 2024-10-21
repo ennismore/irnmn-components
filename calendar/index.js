@@ -173,12 +173,10 @@ class IRNMNCalendar extends HTMLElement {
     
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
-        this.panel.style.display = 'none';
-
-        // Create a Wrapper: panel
-        const panelWrapper = this.createElementWithClasses('div', [CLASS_NAMES.wrapper]);
-        panelWrapper.appendChild(this.panel);
-        this.appendChild(panelWrapper);
+        this.monthsWrapper = this.createElementWithClasses('div', [CLASS_NAMES.monthsWrapper]);
+        this.panel.appendChild(this.monthsWrapper);
+        this.panel.style.display = 'none';  // Hide the panel by default
+        this.appendChild(this.panel);
     }
     
 
@@ -211,7 +209,7 @@ class IRNMNCalendar extends HTMLElement {
     
         months.forEach(month => {
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
-            this.panel.appendChild(monthEl);
+            this.monthsWrapper.appendChild(monthEl);
     
             const daysContainer = monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`);
     
