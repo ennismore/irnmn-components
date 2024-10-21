@@ -10,11 +10,25 @@ class IRNMNGuestsSelector extends HTMLElement {
         };
     }
 
-    connectedCallback() {
+    static get observedAttributes() {
+        return ['max-adults', 'max-total-guests', 'max-children', 'max-child-age' ];  
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderGuestsSelector();
+        }
+    }
+
+    renderGuestsSelector() {
         this.setProperties();
         this.render();
         this.updateDisplay();
         this.attachEventListeners();
+    }
+
+    connectedCallback() {
+        this.renderGuestsSelector();
     }
 
     setProperties() {

@@ -82,24 +82,23 @@ class IRNMNLocation extends HTMLElement {
 
     /**
      * Updates the components within the parent form based on the selected location's properties.
-     * 
+     * It doesn't matter which compoment it is, as long as it has the corresponding data attributes.
      * @param {Object} selectedLocation - The selected location object containing properties.
+     * 
+     * @return {void}
      */
-    updateOtherComponents(selectedLocation) {
-        
-        console.log(selectedLocation);
-        // convert obj to array
-        const selectedLocationArray = Object.entries(selectedLocation);
-
-        selectedLocationArray.forEach(attrName => {
-            const attributeValue = selectedLocation[attrName];
+    updateOtherComponents(selectedLocation) {    
+        // Directly iterate over the key-value pairs of the selectedLocation object
+        Object.entries(selectedLocation).forEach(([attrName, attributeValue]) => {
+            // Convert format to match with the attributes (e.g openDate -> open-date)
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
+    
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
                 element.setAttribute(formattedAttrName, attributeValue);
             });
         });
-
     }
+    
     
 }
 

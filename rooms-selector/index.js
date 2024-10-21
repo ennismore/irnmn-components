@@ -6,6 +6,10 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     connectedCallback() {
+       this.renderRoomsSelector();
+    }
+
+    renderRoomsSelector() {
         this.setAttributes();
         this.render();
         this.attachEventListeners();
@@ -18,6 +22,18 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.roomSelectors = [];
         
     }
+
+    static get observedAttributes() {
+        return ['max-rooms', 'min-rooms' ];  
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderRoomsSelector();
+        }
+    }
+
+
 
      /**
      * Get the maximum number of rooms.
