@@ -4,6 +4,7 @@ import {
     saveToSessionStorage, 
     getFromSessionStorage 
 } from '../utils/components.js';
+import { CLASS_NAMES } from './utils/constants.js';
 
 class IRNMNText extends HTMLElement {
     constructor() {
@@ -27,15 +28,24 @@ class IRNMNText extends HTMLElement {
         document.removeEventListener(`irnmn-text-updated-${this.name}`, this.syncText);
     }
 
+    /**
+     * Render the custom text input with a label and input field.
+     */
     render() {
         this.innerHTML = `
-            <label>${this.label}</label>
-            <input name="${this.name}" type="text" placeholder="${this.placeholder}" value="${this.value}" />
+            <div class="${CLASS_NAMES.textWrapper}">
+                <label class="${CLASS_NAMES.label}">${this.label}</label>
+                <input class="${CLASS_NAMES.input}" name="${this.name}" type="text" placeholder="${this.placeholder}" value="${this.value}" />
+            </div>
         `;
-        this.inputElement = this.querySelector('input');
+        this.inputElement = this.querySelector(`.${CLASS_NAMES.input}`);
         this.inputElement.addEventListener('input', (e) => this.handleInput(e));
     }
 
+    /**
+     * Handle user input in the text field, save it to session storage, 
+     * and dispatch a synchronization event for other instances.
+     */
     handleInput(e) {
         this.value = e.target.value;
 
@@ -44,6 +54,11 @@ class IRNMNText extends HTMLElement {
         dispatchSyncEvent(`irnmn-text-updated-${this.name}`, { value: this.value });
     }
 
+    /**
+     * Synchronize the text value across different instances of the component.
+     * 
+     * @param {Event} event The synchronization event containing the updated value.
+     */
     syncText(event) {
         handleSyncEvent(event, { value: this.value }, (newState) => {
             this.value = newState.value;
@@ -51,6 +66,9 @@ class IRNMNText extends HTMLElement {
         });
     }
 
+    /**
+     * Load the value from session storage if it exists and update the input field.
+     */
     loadFromSessionStorage() {
         const storedValue = getFromSessionStorage(this.storageKey);
         if (storedValue) {
