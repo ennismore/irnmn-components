@@ -33,6 +33,16 @@ class IRNMNCalendar extends HTMLElement {
 
     }
 
+    static get observedAttributes() {
+        return ['open-date', 'date-locale'];  
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderCalendar();
+        }
+    }
+
     /**
      * Initialize the properties of the component
      * @return {void}
@@ -45,7 +55,7 @@ class IRNMNCalendar extends HTMLElement {
         this.placeholder = this.getAttribute('placeholder') || 'Select a date';
         this.name = this.getAttribute('name') || 'irnmn-calendar';
         this.today = new Date();
-        this.openDate = new Date(this.getAttribute('openDate') || Date.now());
+        this.openDate = new Date(this.getAttribute('open-date') || Date.now());
         this.startName = this.getAttribute('checkin-date-name') || 'startDate';
         this.endName = this.getAttribute('checkout-date-name') || 'endDate';
         this.weekDays = this.getAttribute('weekdays') ? this.getAttribute('weekdays').split(',') :  false;
@@ -84,7 +94,7 @@ class IRNMNCalendar extends HTMLElement {
      * @return {Date} Open date or default to the current date.
      */
     getOpenDate() {
-        return new Date(this.getAttribute('openDate') || Date.now());
+        return new Date(this.getAttribute('open-date') || Date.now());
     }
 
     /**
@@ -135,12 +145,16 @@ class IRNMNCalendar extends HTMLElement {
         return this.getAttribute('date-locale') || 'en-gb';
     }
 
-
-    async connectedCallback() {
+    renderCalendar() {
         this.setProperties();
         this.verifyOpenDate();
         this.render();  
-        this.loadFromSessionStorage();  // Load from sessionStorage and apply necessary classes
+        this.loadFromSessionStorage();
+    }
+
+    async connectedCallback() {
+       this.renderCalendar();
+         // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
         document.addEventListener(`checkin-selected-${this.name}`, (e) => this.syncState(e));
