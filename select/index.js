@@ -1,4 +1,4 @@
-import { CLASS_NAMES } from './constants.js';
+import { CLASS_NAMES } from './utils/constants.js';
 
 class IrnmnSelect extends HTMLElement {
     constructor() {

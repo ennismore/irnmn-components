@@ -45,6 +45,7 @@ class IRNMNLocation extends HTMLElement {
                         </option>`
                     ).join('')}
                 </select>
+                <irnmn-select></irnmn-select>
                 <span class="irnmn-location__error-message"></span>
             </div>
         `;
@@ -58,25 +59,13 @@ class IRNMNLocation extends HTMLElement {
     handleLocationChange(event) {
         const selectedOption = event.target.selectedOptions[0];
         const errorMessageEl = this.querySelector('.irnmn-location__error-message');
+        // define value of the select
 
         if (!selectedOption.value) {
             errorMessageEl.textContent = this.errorMessage;
         } else {
             errorMessageEl.textContent = ''; // Clear error message when valid location is selected
-
-            // Extract data attributes from the selected option
-            const selectedLocation = {
-                hotelCode: selectedOption.value,
-                name: selectedOption.textContent,
-                maxRooms: selectedOption.dataset.maxRooms,
-                minRooms: selectedOption.dataset.minRooms,
-                openDate: selectedOption.dataset.openDate,
-                dateDisplayFormat: selectedOption.dataset.dateDisplayFormat,
-                dateLocale: selectedOption.dataset.dateLocale
-            };
-
-            // Call the function to update components within the parent form
-            this.updateOtherComponents(selectedLocation);
+            this.updateOtherComponents(selectedOption.dataset);
         }
     }
 
