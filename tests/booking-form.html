@@ -3,6 +3,7 @@
 <head>
     <title>Test Web components</title>
     <link rel="stylesheet" href="tests.css">
+    <script src="../location/index.js" type="module"></script>
     <script src="../calendar/index.js" type="module"></script>
     <script src="../text/index.js" type="module"></script>
     <script src="../number-picker/index.js" type="module"></script>
@@ -14,15 +15,27 @@
 
     <h2>Booking Form 1</h2>
     <form method="GET" action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
-        <irnmn-text label="First Name" placeholder="First Name" name="firstName"></irnmn-text>
+       
+        <irnmn-location 
+            label="Select a Destination" 
+            id="location-select" 
+            name="destination" 
+            placeholder="Choose a location" 
+            error-message="Please select a location" 
+            locations='[
+                {"name": "New York", "hotelCode": "NYC01", "maxRooms": 5, "minRooms": 1, "openDate": "2024-10-01", "dateDisplayFormat": "DD/MM/YYYY", "dateLocale": "en-us"}, 
+                {"name": "Los Angeles", "hotelCode": "LA02", "maxRooms": 10, "minRooms": 2, "openDate": "2024-11-01", "dateDisplayFormat": "MM/DD/YYYY", "dateLocale": "en-gb"},
+                {"name": "Chicago", "hotelCode": "CHI03", "maxRooms": 7, "minRooms": 1, "openDate": "2024-12-01", "dateDisplayFormat": "YYYY/MM/DD", "dateLocale": "fr-fr"}
+            ]'>
+        </irnmn-location>
+    
         <irnmn-calendar
             id="booking-calendar1" 
             label="Booking Dates" 
             name="booking_another" 
             placeholder="Choose your date" 
-            dateFormat="YYYY-MM-DD" 
-            dateDisplayFormat="DD/MM/YYYY"
-            openDate="2024-10-04"
+            date-format="YYYY-MM-DD" 
+            open-date="2024-10-04"
             open-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date"
             input-name="date-selection"
@@ -44,19 +57,18 @@
     <form method="GET" action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking Form 2</h2>
         <irnmn-calendar
-        id="booking-calendar2" 
-        label="Booking Dates" 
-        name="booking_another" 
-        placeholder="Choose your date" 
-        dateFormat="YYYY-MM-DD" 
-        dateDisplayFormat="DD/MM/YYYY"
-        openDate="2024-10-04"
-        open-date-message="You can't select before the opening date"
-        errorMessage="Please pick a valid date"
-        input-name="date-selection"
-        checkin-date-name="startDate"
-        checkout-date-name="endDate"
-        date-locale="en-us"
+            id="booking-calendar2" 
+            label="Booking Dates" 
+            name="booking_another" 
+            placeholder="Choose your date" 
+            date-format="YYYY-MM-DD" 
+            open-date="2024-10-04"
+            open-date-message="You can't select before the opening date"
+            errorMessage="Please pick a valid date"
+            input-name="date-selection"
+            checkin-date-name="startDate"
+            checkout-date-name="endDate"
+            date-locale="en-us"
         />
         
         </irnmn-calendar>
