@@ -181,7 +181,7 @@ class IRNMNRoomsSelector extends HTMLElement {
 
         // Track the new room in the state
         this.state.rooms.push({
-            adults: 1, // Default adults
+            adults: 2, // Default adults
             children: 0, // Default children
             childAges: [] // Initialize empty array for child ages
         });
@@ -242,7 +242,7 @@ class IRNMNRoomsSelector extends HTMLElement {
      */
     trackRoomChanges(roomGuests) {
         // Listen for the 'roomValuesChange' event from the room-guests component
-        roomGuests.addEventListener('roomValuesChange', (event) => {
+        roomGuests.addEventListener('irnmn-roomValuesChange', (event) => {
             const roomIndex = this.getRoomIndex(roomGuests);
             const room = this.state.rooms[roomIndex - 1];
 
@@ -258,7 +258,7 @@ class IRNMNRoomsSelector extends HTMLElement {
             }
         });
         // Listen for the 'roomRemoved' event from the room-guests component
-        roomGuests.addEventListener('roomRemoved', (event) => {
+        roomGuests.addEventListener('irnmn-roomRemoved', (event) => {
             const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
             const roomIndex = this.getRoomIndex(roomGuests);
 

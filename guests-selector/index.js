@@ -5,7 +5,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         super();
 
         this.state = {
-            adults: 1,
+            adults: 2,
             children: 0,
             childAges: []
         };
@@ -121,7 +121,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             this.state.adults = e.detail.value;
             this.checkIfTotalGuestsReached();
             // Emit event
-            this.dispatchEvent(new CustomEvent('roomValuesChange', {
+            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
                 detail: this.state
             }));
         });
@@ -132,7 +132,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             this.checkIfTotalGuestsReached();
             this.renderChildrenAgeDropdowns();
             // Emit event
-            this.dispatchEvent(new CustomEvent('roomValuesChange', {
+            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
                 detail: this.state
             }));
         });
@@ -188,7 +188,7 @@ class IRNMNGuestsSelector extends HTMLElement {
                 this.state.childAges[i - 1] = parseInt(ageDropdown.value);
 
                 // Emit custom event with the entire childAges array when any child age changes
-                this.dispatchEvent(new CustomEvent('roomValuesChange', {
+                this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
                     detail: this.state
                 }));
             });
@@ -204,7 +204,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             childAgeContainer.appendChild(ageWrapper);
 
             // Emit event after adding select to the DOM (usefull for custom dropdowns)
-            this.dispatchEvent(new CustomEvent('initChildAgeDropdown', {
+            this.dispatchEvent(new CustomEvent('irnmn-initChildAgeDropdown', {
                 detail: {
                     ID: `irnmn-child-age-${i}`,
                     element: ageDropdown
@@ -213,7 +213,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         }
 
         // Emit event after setting default values for childAges
-        this.dispatchEvent(new CustomEvent('roomValuesChange', {
+        this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
             detail: this.state
         }));
     }
@@ -228,7 +228,7 @@ class IRNMNGuestsSelector extends HTMLElement {
 
     removeRoom() {
         // Dispatch a custom event to inform the parent to remove this room
-        this.dispatchEvent(new CustomEvent('roomRemoved', {
+        this.dispatchEvent(new CustomEvent('irnmn-roomRemoved', {
             detail: { roomIndex: this.label },
             bubbles: true,
             composed: true
