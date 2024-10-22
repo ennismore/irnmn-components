@@ -2,12 +2,14 @@
 <html>
 <head>
     <title>Test Web components</title>
+    <link rel="stylesheet" href="css/select.css">
     <link rel="stylesheet" href="tests.css">
     <script src="../calendar/index.js" type="module"></script>
     <script src="../text/index.js" type="module"></script>
     <script src="../number-picker/index.js" type="module"></script>
     <script src="../guests-selector/index.js" type="module"></script>
     <script src="../rooms-selector/index.js" type="module"></script>
+    <script src="../select/index.js" type="module"></script>
 </head>
 <body>
     <h1>Calendar</h1>
@@ -61,6 +63,37 @@
         
         </irnmn-calendar>
         <irnmn-text label="Promo Code" placeholder="Enter your promo code" name="promoCode"></irnmn-text>
+        <button type="submit">Submit</button>
+    </form>
+
+
+    <form method="GET"
+        action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
+        <h2>Booking Form 3</h2>
+
+        <irnmn-select class="location-select" id="location-select" aria-labelledby="location-label" heading-text="Please select"
+            placeholder="Go to" preselected="Bentonville" options='[
+                {"name":"Bentonville, Arkansas", "value":"Bentonville"}, 
+                {"name":"Chicago, Illinois", "value":"Chicago"}, 
+                {"name":"Cincinnati, Ohio", "value":"Cincinnati"}, 
+                {"name":"Durham, North Carolina", "value":"Durham"}, 
+                {"name":"Kansas City, Missouri", "value":"Kansas City"}, 
+                {"name":"Lexington, Kentucky", "value":"Lexington"}, 
+                {"name":"Louisville, Kentucky", "value":"Louisville"}, 
+                {"name":"St. Louis, Missouri", "value":"St. Louis"}
+            ]'>
+        </irnmn-select>
+        
+        <irnmn-rooms-selector
+        max-rooms="5" 
+        min-rooms="1" 
+        label="Select Number of Rooms" 
+        max-total-guests="6"
+        max-adults="5"
+        max-children="3"
+        max-child-age="11">
+        </irnmn-rooms-selector>
+
         <button type="submit">Submit</button>
     </form>
     
