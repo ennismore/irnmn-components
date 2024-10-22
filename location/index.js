@@ -1,3 +1,5 @@
+import { CLASS_NAMES } from './utils/constants.js';
+
 class IRNMNLocation extends HTMLElement {
     constructor() {
         super();
@@ -30,9 +32,9 @@ class IRNMNLocation extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="irnmn-location__container">
-                <label for="${this.inputId}" class="irnmn-location__label">${this.label}</label>
-                <select id="${this.inputId}" name="${this.inputName}" class="irnmn-location__select">
+            <div class="${CLASS_NAMES.container}">
+                <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
+                <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}">
                     <option value="" disabled selected>${this.placeholder}</option>
                     ${this.locations.map(location => 
                         `<option value="${location.hotelCode}" 
@@ -40,26 +42,25 @@ class IRNMNLocation extends HTMLElement {
                             data-min-rooms="${location.minRooms}"
                             data-open-date="${location.openDate}"
                             data-date-display-format="${location.dateDisplayFormat}"
-                            data-date-locale="${location.dateLocale}">
+                            data-date-locale="${location.dateLocale}"
+                            class="${CLASS_NAMES.option}">
                             ${location.name}
                         </option>`
                     ).join('')}
                 </select>
-                <irnmn-select></irnmn-select>
-                <span class="irnmn-location__error-message"></span>
+                <span class="${CLASS_NAMES.errorMessage}"></span>
             </div>
         `;
     }
 
     attachEventListeners() {
-        const selectElement = this.querySelector('.irnmn-location__select');
+        const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
         selectElement.addEventListener('change', (event) => this.handleLocationChange(event));
     }
 
     handleLocationChange(event) {
         const selectedOption = event.target.selectedOptions[0];
-        const errorMessageEl = this.querySelector('.irnmn-location__error-message');
-        // define value of the select
+        const errorMessageEl = this.querySelector(`.${CLASS_NAMES.errorMessage}`);
 
         if (!selectedOption.value) {
             errorMessageEl.textContent = this.errorMessage;
@@ -71,15 +72,13 @@ class IRNMNLocation extends HTMLElement {
 
     /**
      * Updates the components within the parent form based on the selected location's properties.
-     * It doesn't matter which compoment it is, as long as it has the corresponding data attributes.
+     * It doesn't matter which component it is, as long as it has the corresponding data attributes.
      * @param {Object} selectedLocation - The selected location object containing properties.
      * 
      * @return {void}
      */
     updateOtherComponents(selectedLocation) {    
-        // Directly iterate over the key-value pairs of the selectedLocation object
         Object.entries(selectedLocation).forEach(([attrName, attributeValue]) => {
-            // Convert format to match with the attributes (e.g openDate -> open-date)
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
     
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
@@ -87,8 +86,6 @@ class IRNMNLocation extends HTMLElement {
             });
         });
     }
-    
-    
 }
 
 customElements.define('irnmn-location', IRNMNLocation);

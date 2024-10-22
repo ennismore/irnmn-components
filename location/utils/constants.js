@@ -1,10 +1,10 @@
 const prefix = 'irnmn-location';
 
 export const CLASS_NAMES = {
-    locationDropdown: `${prefix}__dropdown`,
-    locationOption: `${prefix}__option`,
-    locationLabel: `${prefix}__label`,
-    locationContainer: `${prefix}__container`,
-    locationSelect: `${prefix}__select`,
-    locationErrorMessage: `${prefix}__error-message`
+    dropdown: `${prefix}__dropdown`,
+    option: `${prefix}__option`,
+    label: `${prefix}__label`,
+    container: `${prefix}__container`,
+    select: `${prefix}__select`,
+    errorMessage: `${prefix}__error-message`
 };
