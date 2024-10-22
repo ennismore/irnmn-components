@@ -11,19 +11,33 @@ class IRNMNGuestsSelector extends HTMLElement {
         };
     }
 
-    connectedCallback() {
+    static get observedAttributes() {
+        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderGuestsSelector();
+        }
+    }
+
+    renderGuestsSelector() {
         this.setProperties();
         this.render();
         this.attachEventListeners();
     }
 
+    connectedCallback() {
+        this.renderGuestsSelector();
+    }
+
     setProperties() {
         this.name = this.getName();
+        this.label = this.getLabel();
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
         this.maxChildren = this.getMaxChildren();
         this.maxChildAge = this.getMaxChildAge();
-        this.label = this.getLabel();
         this.childAgeLabel = this.getChildAgeLabel();
     }
 
@@ -97,6 +111,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                 </div>
             </div>
         `;
+        this.renderChildrenAgeDropdowns();
+        this.checkIfTotalGuestsReached();
     }
 
     attachEventListeners() {
@@ -104,6 +120,10 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.querySelector('irnmn-number-picker[label="Adults"]').addEventListener('valueChanged', (e) => {
             this.state.adults = e.detail.value;
             this.checkIfTotalGuestsReached();
+            // Emit event
+            this.dispatchEvent(new CustomEvent('roomValuesChange', {
+                detail: this.state
+            }));
         });
 
         // Listen for the valueChanged event from the "Children" picker
@@ -111,6 +131,10 @@ class IRNMNGuestsSelector extends HTMLElement {
             this.state.children = e.detail.value;
             this.checkIfTotalGuestsReached();
             this.renderChildrenAgeDropdowns();
+            // Emit event
+            this.dispatchEvent(new CustomEvent('roomValuesChange', {
+                detail: this.state
+            }));
         });
 
         this.querySelector(`.${CLASS_NAMES.removeRoomBtn}`).addEventListener('click', () => this.removeRoom());
@@ -180,7 +204,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             childAgeContainer.appendChild(ageWrapper);
 
             // Emit event after adding select to the DOM (usefull for custom dropdowns)
-            this.dispatchEvent(new CustomEvent('initChildAgeDropdowns', {
+            this.dispatchEvent(new CustomEvent('initChildAgeDropdown', {
                 detail: {
                     ID: `irnmn-child-age-${i}`,
                     element: ageDropdown
@@ -205,7 +229,7 @@ class IRNMNGuestsSelector extends HTMLElement {
     removeRoom() {
         // Dispatch a custom event to inform the parent to remove this room
         this.dispatchEvent(new CustomEvent('roomRemoved', {
-            detail: { roomLabel: this.label },
+            detail: { roomIndex: this.label },
             bubbles: true,
             composed: true
         }));
