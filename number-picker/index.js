@@ -3,7 +3,7 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNNumberPicker extends HTMLElement {
     constructor() {
         super();
-       
+
         this.state = {
             count: this.getInitialValue()
         };
@@ -18,6 +18,7 @@ class IRNMNNumberPicker extends HTMLElement {
 
     setProperties() {
         this.label = this.getLabel();
+        this.name = this.getName();
         this.min = this.getMin();
         this.max = this.getMax();
     }
@@ -28,6 +29,14 @@ class IRNMNNumberPicker extends HTMLElement {
      */
     getLabel() {
         return this.getAttribute('label') || 'Number';
+    }
+
+    /**
+     * Get the name.
+     * @return {String} Name or default value 'count'.
+     */
+    getName() {
+        return this.getAttribute('name') || 'count';
     }
 
     /**
@@ -62,6 +71,7 @@ class IRNMNNumberPicker extends HTMLElement {
                 <button type="button" class="${CLASS_NAMES.decrementBtn}">-</button>
                 <span class="${CLASS_NAMES.numberValue}">${this.state.count}</span>
                 <button type="button" class="${CLASS_NAMES.incrementBtn}">+</button>
+                <input type="hidden" name="${this.name}" value="${this.state.count}">
             </div>
         `;
     }
@@ -94,6 +104,7 @@ class IRNMNNumberPicker extends HTMLElement {
      */
     updateDisplay() {
         this.querySelector(`.${CLASS_NAMES.numberValue}`).textContent = this.state.count;
+        this.querySelector('input[type=hidden]').value = this.state.count;
     }
 }
 
