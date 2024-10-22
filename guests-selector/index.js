@@ -4,11 +4,30 @@ class IRNMNGuestsSelector extends HTMLElement {
     constructor() {
         super();
 
-        this.state = {
-            adults: 2,
-            children: 0,
-            childAges: []
-        };
+        const initState = this.getAttribute('init-state');
+        if (initState && initState !== '' && initState !== 'false') {
+            try {
+                const parsedState = JSON.parse(initState);
+                if (parsedState.adults !== undefined && parsedState.children !== undefined && parsedState.childAges !== undefined) {
+                    this.state = parsedState;
+                } else {
+                    throw new Error('Missing required state properties');
+                }
+            } catch (e) {
+                console.error('Invalid JSON string for init-state or missing properties:', e);
+                this.state = {
+                    adults: 2,
+                    children: 0,
+                    childAges: []
+                };
+            }
+        } else {
+            this.state = {
+                adults: 2,
+                children: 0,
+                childAges: []
+            };
+        }
     }
 
     static get observedAttributes() {
@@ -173,7 +192,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         for (let i = 1; i <= this.state.children; i++) {
             const ageDropdown = document.createElement('select');
             ageDropdown.setAttribute('id', `irnmn-child-age-${i}`);
-            ageDropdown.setAttribute('name', `${this.name}[childrenAges][${i - 1}]`);
+            ageDropdown.setAttribute('name', `${this.name}[childAges][${i - 1}]`);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childAges[i - 1] to 1 if not already set

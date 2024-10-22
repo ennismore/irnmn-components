@@ -1,5 +1,11 @@
 import { CLASS_NAMES } from './utils/constants.js';
 
+import {
+    saveToSessionStorage,
+    getFromSessionStorage,
+    clearSessionData,
+} from '../utils/components.js';
+
 class IRNMNRoomsSelector extends HTMLElement {
     constructor() {
         super();
@@ -12,6 +18,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     connectedCallback() {
         this.setAttributes();
         this.render();
+        this.loadFromSessionStorage();
         this.attachEventListeners();
     }
 
@@ -23,6 +30,18 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.maxChildren = this.getMaxChildren();
         this.maxChildAge = this.getMaxChildAge();
         this.label = this.getLabel();
+    }
+
+    loadFromSessionStorage() {
+        const rooms = getFromSessionStorage('irnmn-rooms');
+        if (rooms) {
+            this.state.rooms = JSON.parse(rooms);
+            this.updateRoomCount(this.state.rooms.length);
+            // update select value
+            this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
+        } else {
+            this.updateRoomCount(1); // one room on init by default if nothing saved in storage
+        }
     }
 
     /**
@@ -99,7 +118,6 @@ class IRNMNRoomsSelector extends HTMLElement {
                 <div class="${CLASS_NAMES.roomContainer}"></div>
             </div>
         `;
-        this.updateRoomCount(1); // one room on init by default
     }
 
     /**
@@ -140,17 +158,18 @@ class IRNMNRoomsSelector extends HTMLElement {
      */
     updateRoomCount(roomCount) {
         const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
+        const roomsList = roomContainer.querySelectorAll('irnmn-guests-selector');
 
         // If new room count is greater, add rooms
-        if (roomCount > this.state.rooms.length) {
-            for (let i = this.state.rooms.length + 1; i <= roomCount; i++) {
+        if (roomCount > roomsList.length) {
+            for (let i = roomsList.length + 1; i <= roomCount; i++) {
                 this.addRoom(i, roomContainer);
             }
         }
 
         // If new room count is smaller, remove rooms
-        if (roomCount < this.state.rooms.length) {
-            for (let i = this.state.rooms.length; i > roomCount; i--) {
+        if (roomCount < roomsList.length) {
+            for (let i = roomsList.length; i > roomCount; i--) {
                 this.removeRoom(i, roomContainer);
             }
         }
@@ -164,8 +183,22 @@ class IRNMNRoomsSelector extends HTMLElement {
      * @param {HTMLElement} roomContainer - The container element where the room will be added.
      */
     addRoom(roomIndex, roomContainer) {
+        let roomState;
+        //if room already exists in the state, retieve its data
+        if (this.state.rooms[roomIndex - 1]) {
+            roomState = this.state.rooms[roomIndex - 1];
+        } else {
+            roomState = false;
+            //if room does not exist in the state, create a default one
+            this.state.rooms.push({
+                adults: 2, // Default adults
+                children: 0, // Default children
+                childAges: [] // Initialize empty array for child ages
+            });
+        }
         const roomGuestsHTML = `
             <irnmn-guests-selector 
+                init-state='${JSON.stringify(roomState)}'
                 name="rooms[${roomIndex - 1}]"
                 label="Room ${roomIndex}"
                 max-total-guests="${this.maxTotalGuests}" 
@@ -179,13 +212,8 @@ class IRNMNRoomsSelector extends HTMLElement {
         roomContainer.insertAdjacentHTML('beforeEnd', roomGuestsHTML);
         const roomGuests = roomContainer.querySelectorAll('irnmn-guests-selector')[roomIndex - 1];
 
-        // Track the new room in the state
-        this.state.rooms.push({
-            adults: 2, // Default adults
-            children: 0, // Default children
-            childAges: [] // Initialize empty array for child ages
-        });
-
+        // update session storage
+        saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
         // Add event listeners to track changes in the room's state
         this.trackRoomChanges(roomGuests);
     }
@@ -206,6 +234,8 @@ class IRNMNRoomsSelector extends HTMLElement {
 
         // Remove the room from the state
         this.state.rooms.splice(roomIndex - 1, 1);
+        // update session storage
+        saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
     }
 
 
@@ -228,7 +258,6 @@ class IRNMNRoomsSelector extends HTMLElement {
         const roomSelectors = Array.from(roomContainer.querySelectorAll('irnmn-guests-selector'));
         return roomSelectors.indexOf(roomGuests) + 1;
     }
-
 
     /**
      * Tracks changes to room details and updates the state accordingly.
@@ -256,6 +285,8 @@ class IRNMNRoomsSelector extends HTMLElement {
             if ('childAges' in event.detail) {
                 room.childAges = event.detail.childAges;
             }
+            // update session storage
+            saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
         });
         // Listen for the 'roomRemoved' event from the room-guests component
         roomGuests.addEventListener('irnmn-roomRemoved', (event) => {
