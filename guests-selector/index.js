@@ -223,7 +223,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             childAgeContainer.appendChild(ageWrapper);
 
             // Emit event after adding select to the DOM (usefull for custom dropdowns)
-            this.dispatchEvent(new CustomEvent('irnmn-initChildAgeDropdown', {
+            document.dispatchEvent(new CustomEvent('irnmn-initChildAgeDropdown', {
                 detail: {
                     ID: `irnmn-child-age-${i}`,
                     element: ageDropdown
