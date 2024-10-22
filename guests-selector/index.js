@@ -45,7 +45,9 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.render();
         this.attachEventListeners();
         this.renderChildrenAgeDropdowns();
-        this.checkIfTotalGuestsReached();
+        setTimeout(() => {
+            this.checkIfTotalGuestsReached();
+        }, 200);
     }
 
     connectedCallback() {
@@ -222,8 +224,9 @@ class IRNMNGuestsSelector extends HTMLElement {
             const selectWrapper = document.createElement('div');
             selectWrapper.classList.add('irnmn-child-age-select-wrapper');
             selectWrapper.appendChild(ageDropdown);
+            ageWrapper.appendChild(selectWrapper);
             // append everything to the container
-            childAgeContainer.appendChild(selectWrapper);
+            childAgeContainer.appendChild(ageWrapper);
 
             // Emit event after adding select to the DOM (usefull for custom dropdowns)
             document.dispatchEvent(new CustomEvent('irnmn-initChildAgeDropdown', {
