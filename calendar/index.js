@@ -51,17 +51,24 @@ class IRNMNCalendar extends HTMLElement {
 
         this.dayButtons = [];
 
-        this.label = this.getAttribute('label') || 'Check-in';
-        this.placeholder = this.getAttribute('placeholder') || 'Select a date';
-        this.name = this.getAttribute('name') || 'irnmn-calendar';
-        this.today = new Date();
-        this.openDate = new Date(this.getAttribute('open-date') || Date.now());
-        this.startName = this.getAttribute('checkin-date-name') || 'startDate';
-        this.endName = this.getAttribute('checkout-date-name') || 'endDate';
-        this.weekDays = this.getAttribute('weekdays') ? this.getAttribute('weekdays').split(',') :  false;
-        this.startStorageKey = `irnmn-${this.startName}-${this.name}`;
-        this.endStorageKey = `irnmn-${this.endName}-${this.name}`;
-        this.dateLocale = this.getAttribute('date-locale') || 'en-gb';
+        this.label = this.getLabel();
+        this.placeholder = this.getPlaceholder();
+        this.name = this.getName();
+        this.today = this.getToday();
+        this.openDate = this.getOpenDate();
+        this.startName = this.getStartName();
+        this.endName = this.getEndName();
+        this.weekDays = this.getWeekDays();
+        this.startStorageKey = this.getStartStorageKey();
+        this.endStorageKey = this.getEndStorageKey();
+        this.dateLocale = this.getDateLocale();
+    }
+
+    /**
+     * Get the current date
+     */
+    getToday() {
+        return new Date();
     }
 
 
