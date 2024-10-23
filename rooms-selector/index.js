@@ -192,11 +192,14 @@ class IRNMNRoomsSelector extends HTMLElement {
                 this.removeRoom(i, roomContainer);
             }
         }
-
-        // add a class to the room container if only one room is listed (to hide remove button)
-        roomContainer.classList.toggle('one-room', roomCount === 1);
     }
 
+    checkIfOneRoom() {
+        const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
+        const roomsList = roomContainer.querySelectorAll('irnmn-guests-selector');
+        // add a class to the room container if only one room is listed (to hide remove button)
+        roomContainer.classList.toggle('one-room', roomsList.length === 1);
+    }
 
     /**
      * Adds a new room to the room container (at the end of the list) and updates the state.
@@ -242,6 +245,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
         // Add event listeners to track changes in the room's state
         this.trackRoomChanges(roomGuests);
+        this.checkIfOneRoom();
     }
 
 
@@ -262,6 +266,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.state.rooms.splice(roomIndex - 1, 1);
         // update session storage
         saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
+        this.checkIfOneRoom();
     }
 
 
