@@ -47,13 +47,6 @@ class IRNMNRoomsSelector extends HTMLElement {
         }
     }
 
-
-
-     /**
-     * Get the maximum number of rooms.
-     * @return {Number} Max rooms or default value 5.
-     * 
-     */
     loadFromSessionStorage() {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
