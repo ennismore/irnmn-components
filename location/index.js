@@ -76,28 +76,38 @@ class IRNMNLocation extends HTMLElement {
         return this.getAttribute('error-message') || 'Please select a valid location';
     }
 
+
     render() {
+        if (!this.locations) {
+            console.error("No locations provided");
+            return;
+        }
+    
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
                 <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}">
                     <option value="" disabled selected>${this.placeholder}</option>
-                    ${this.locations.map(location => 
-                        `<option value="${location.hotelCode}" 
-                            data-max-rooms="${location.maxRooms}" 
-                            data-min-rooms="${location.minRooms}"
-                            data-open-date="${location.openDate}"
-                            data-date-display-format="${location.dateDisplayFormat}"
-                            data-date-locale="${location.dateLocale}"
-                            class="${CLASS_NAMES.option}">
-                            ${location.name}
-                        </option>`
-                    ).join('')}
+                    ${this.locations.map(location => {
+                        // Dynamically create the data attributes based on the locations obj
+                        const dataAttributes = Object.entries(location)
+                            .map(([key, value]) => {
+                                const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                                return `${dataAttrName}="${value}"`;
+                            }).join(' ');
+    
+                        return `
+                            <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
+                                ${location.name}
+                            </option>`;
+                    }).join('')}
                 </select>
                 <span class="${CLASS_NAMES.errorMessage}"></span>
             </div>
         `;
     }
+
+
 
     attachEventListeners() {
         const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
