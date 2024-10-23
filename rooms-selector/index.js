@@ -15,7 +15,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     connectedCallback() {
-       this.renderRoomsSelector();
+        this.renderRoomsSelector();
     }
 
     renderRoomsSelector() {
@@ -38,7 +38,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['max-rooms', 'min-rooms' ];  
+        return ['max-rooms', 'min-rooms'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -145,9 +145,11 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomsSelector}">
                 <label for="room-count">${this.labels.selectRoom}</label>
-                <select class="${CLASS_NAMES.roomCountSelect}">
-                    ${this.generateRoomOptions()}
-                </select>
+                <div class="${CLASS_NAMES.roomCountSelect}-wrapper">
+                    <select class="${CLASS_NAMES.roomCountSelect}">
+                        ${this.generateRoomOptions()}
+                    </select>
+                </div>
                 <div class="${CLASS_NAMES.roomContainer}"></div>
             </div>
         `;
