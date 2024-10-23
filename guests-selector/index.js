@@ -31,7 +31,7 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age'];
+        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-childs', 'enable-childs-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -49,10 +49,6 @@ class IRNMNGuestsSelector extends HTMLElement {
         setTimeout(() => {
             this.checkIfTotalGuestsReached();
         }, 200);
-    }
-
-    static get observedAttributes() {
-        return ['max-adults', 'max-total-guests', 'max-children', 'max-child-age' ];  
     }
 
     connectedCallback() {

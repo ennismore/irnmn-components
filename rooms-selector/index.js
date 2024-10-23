@@ -53,7 +53,9 @@ class IRNMNRoomsSelector extends HTMLElement {
             this.state.rooms = JSON.parse(rooms);
             this.updateRoomCount(this.state.rooms.length);
             // update select value
-            this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
+            const roomCountSelect = this.querySelector(`.${CLASS_NAMES.roomCountSelect}`);
+            roomCountSelect.value = this.state.rooms.length;
+            roomCountSelect.dispatchEvent(new Event('change'));
         } else {
             this.updateRoomCount(this.minRooms); // minimum rooms on init by default if nothing saved in storage
         }
@@ -296,7 +298,7 @@ class IRNMNRoomsSelector extends HTMLElement {
 
         roomSelectors.forEach((roomSelector, index) => {
             roomSelector.setAttribute('name', `rooms[${index}]`);
-            roomSelector.setAttribute('label', `Room ${index + 1}`);
+            roomSelector.setAttribute('label', `${this.labels.room} ${index + 1}`);
         });
     }
 
@@ -343,7 +345,9 @@ class IRNMNRoomsSelector extends HTMLElement {
             this.removeRoom(roomIndex, roomContainer);
             this.updateRoomsListing();
             // update select value
-            this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
+            const roomCountSelect = this.querySelector(`.${CLASS_NAMES.roomCountSelect}`);
+            roomCountSelect.value = this.state.rooms.length;
+            roomCountSelect.dispatchEvent(new Event('change'));
         });
     }
 }
