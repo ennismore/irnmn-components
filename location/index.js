@@ -114,7 +114,11 @@ class IRNMNLocation extends HTMLElement {
      * @return {void}
      */
     handleLocationChange(event) {
-        const selectedOption = event.target.selectedOptions[0];
+        const selectedOptions = event.target.selectedOptions;
+        if ( !selectedOptions.length ) {
+            return;
+        }
+        const selectedOption = selectedOptions[0];
         const errorMessageEl = this.querySelector(`.${CLASS_NAMES.errorMessage}`);
 
         if (!selectedOption.value) {
