@@ -3,25 +3,14 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNLocation extends HTMLElement {
     constructor() {
         super();
-        this.locations = [];
     }
 
     connectedCallback() {
         this.parentForm = this.closest('form');
-        this.initProperties();
         this.render();
         this.attachEventListeners();
     }
 
-    initProperties() {
-        
-        this.locations = this.getLocations();
-        this.label = this.getLabel();
-        this.inputId = this.getId();
-        this.inputName = this.getName();
-        this.placeholder = this.getPlaceholder();
-        this.errorMessage = this.getErrorMessage();
-    }
 
 
     /**
@@ -29,7 +18,7 @@ class IRNMNLocation extends HTMLElement {
      * 
      * @return {Array} Locations array or empty.
      */
-    getLocations() {
+    get locations() {
         const locationsAttr = this.getAttribute('locations');
 
         try {
@@ -40,11 +29,12 @@ class IRNMNLocation extends HTMLElement {
     }
 
 
+
     /**
      * Get the label for the location select.
      * @return {String} Label or default value 'Select Location'.
      */
-    getLabel() {
+    get label() {
         return this.getAttribute('label') || 'Select Location';
     }
 
@@ -53,7 +43,7 @@ class IRNMNLocation extends HTMLElement {
      * Get the ID for the location select.
      * @return {String} ID or default value 'irnmn-location-select'.
      */
-    getId() {
+    get inputId() {
         return this.getAttribute('id') || 'irnmn-location-select';
     }
 
@@ -62,7 +52,7 @@ class IRNMNLocation extends HTMLElement {
      * 
      * @return {String} Name or default value 'location'.
      */
-    getName() {
+    get inputName() {
         return this.getAttribute('name') || 'location';
     }
 
@@ -72,7 +62,7 @@ class IRNMNLocation extends HTMLElement {
      * 
      * @return {String} Placeholder or default value 'Select a location'.
      */
-    getPlaceholder() {
+    get placeholder() {
         return this.getAttribute('placeholder') || 'Select a location';
     }
 
@@ -82,7 +72,7 @@ class IRNMNLocation extends HTMLElement {
      * 
      * @return {String} Error message or default value 'Please select a valid location'.
      */
-    getErrorMessage() {
+    get errorMessage() {
         return this.getAttribute('error-message') || 'Please select a valid location';
     }
 
@@ -114,6 +104,15 @@ class IRNMNLocation extends HTMLElement {
         selectElement.addEventListener('change', (event) => this.handleLocationChange(event));
     }
 
+
+    /**
+     * Handles the change event for the location select element.
+     * It updates the other components within the parent form based on the selected location.
+     * 
+     * @param {Event} event - The change event object.
+     * 
+     * @return {void}
+     */
     handleLocationChange(event) {
         const selectedOption = event.target.selectedOptions[0];
         const errorMessageEl = this.querySelector(`.${CLASS_NAMES.errorMessage}`);
