@@ -14,20 +14,76 @@ class IRNMNLocation extends HTMLElement {
     }
 
     initProperties() {
+        
+        this.locations = this.getLocations();
+        this.label = this.getLabel();
+        this.inputId = this.getId();
+        this.inputName = this.getName();
+        this.placeholder = this.getPlaceholder();
+        this.errorMessage = this.getErrorMessage();
+    }
+
+
+    /**
+     * Get the locations from the attribute, using try/catch to handle invalid JSON.
+     * 
+     * @return {Array} Locations array or empty.
+     */
+    getLocations() {
         const locationsAttr = this.getAttribute('locations');
 
         try {
-            this.locations = JSON.parse(locationsAttr);  // Parse JSON object for locations
+            return JSON.parse(locationsAttr);  // Parse JSON object for locations
         } catch (e) {
             console.error("Invalid JSON for locations attribute");
-            this.locations = [];
         }
+    }
 
-        this.label = this.getAttribute('label') || 'Select Location';
-        this.inputId = this.getAttribute('id') || 'irnmn-location-select';
-        this.inputName = this.getAttribute('name') || 'location';
-        this.placeholder = this.getAttribute('placeholder') || 'Select a location';
-        this.errorMessage = this.getAttribute('error-message') || 'Please select a valid location';
+
+    /**
+     * Get the label for the location select.
+     * @return {String} Label or default value 'Select Location'.
+     */
+    getLabel() {
+        return this.getAttribute('label') || 'Select Location';
+    }
+
+
+    /**
+     * Get the ID for the location select.
+     * @return {String} ID or default value 'irnmn-location-select'.
+     */
+    getId() {
+        return this.getAttribute('id') || 'irnmn-location-select';
+    }
+
+    /**
+     * Get the name for the location select.
+     * 
+     * @return {String} Name or default value 'location'.
+     */
+    getName() {
+        return this.getAttribute('name') || 'location';
+    }
+
+
+    /**
+     * Get the placeholder for the location select.
+     * 
+     * @return {String} Placeholder or default value 'Select a location'.
+     */
+    getPlaceholder() {
+        return this.getAttribute('placeholder') || 'Select a location';
+    }
+
+
+    /**
+     * Get the error message for the location select.
+     * 
+     * @return {String} Error message or default value 'Please select a valid location'.
+     */
+    getErrorMessage() {
+        return this.getAttribute('error-message') || 'Please select a valid location';
     }
 
     render() {
