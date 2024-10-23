@@ -3,7 +3,6 @@ import { CLASS_NAMES } from './utils/constants.js';
 import {
     saveToSessionStorage,
     getFromSessionStorage,
-    clearSessionData,
 } from '../utils/components.js';
 
 class IRNMNRoomsSelector extends HTMLElement {
@@ -27,9 +26,11 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.minRooms = this.getMinRooms();
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
+        this.enableChilds = this.getEnableChilds();
         this.maxChildren = this.getMaxChildren();
+        this.enableChildsAges = this.getEnableChildsAges();
         this.maxChildAge = this.getMaxChildAge();
-        this.label = this.getLabel();
+        this.labels = this.getLabels();
     }
 
     loadFromSessionStorage() {
@@ -40,8 +41,24 @@ class IRNMNRoomsSelector extends HTMLElement {
             // update select value
             this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
         } else {
-            this.updateRoomCount(1); // one room on init by default if nothing saved in storage
+            this.updateRoomCount(this.minRooms); // minimum rooms on init by default if nothing saved in storage
         }
+    }
+
+    /**
+     * Check if children are enabled.
+     * @return {Boolean} True if children are enabled, false otherwise.
+     */
+    getEnableChilds() {
+        return this.hasAttribute('enable-childs') && this.getAttribute('enable-childs') !== 'false';
+    }
+
+    /**
+     * Check if child ages are enabled.
+     * @return {Boolean} True if child ages are enabled, false otherwise.
+     */
+    getEnableChildsAges() {
+        return this.hasAttribute('enable-childs-ages') && this.getAttribute('enable-childs-ages') !== 'false';
     }
 
     /**
@@ -96,8 +113,10 @@ class IRNMNRoomsSelector extends HTMLElement {
      * Get the label for the rooms.
      * @return {String} Label or default value 'Rooms'.
      */
-    getLabel() {
-        return this.getAttribute('label') || 'Rooms';
+    getLabels() {
+        const defaultLabels = { "room": "Room", "rooms": "Rooms", "guests": "Guests", "adults": "Adults", "children": "Children", "childAge": "Child age", "selectRoom": "Select number of rooms", "remove": "Remove" };
+        const customLabels = JSON.parse(this.getAttribute('labels')) || {};
+        return { ...defaultLabels, ...customLabels };
     }
 
     /**
@@ -111,7 +130,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomsSelector}">
-                <label for="room-count">${this.label}</label>
+                <label for="room-count">${this.labels.selectRoom}</label>
                 <select class="${CLASS_NAMES.roomCountSelect}">
                     ${this.generateRoomOptions()}
                 </select>
@@ -131,7 +150,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     generateRoomOptions() {
         let options = '';
         for (let i = this.minRooms; i <= this.maxRooms; i++) {
-            options += `<option value="${i}">${i}</option>`;
+            options += `<option value="${i}">${i} ${i == 1 ? this.labels.room : this.labels.rooms}</option>`;
         }
         return options;
     }
@@ -173,6 +192,9 @@ class IRNMNRoomsSelector extends HTMLElement {
                 this.removeRoom(i, roomContainer);
             }
         }
+
+        // add a class to the room container if only one room is listed (to hide remove button)
+        roomContainer.classList.toggle('one-room', roomCount === 1);
     }
 
 
@@ -200,11 +222,15 @@ class IRNMNRoomsSelector extends HTMLElement {
             <irnmn-guests-selector 
                 init-state='${JSON.stringify(roomState)}'
                 name="rooms[${roomIndex - 1}]"
-                label="Room ${roomIndex}"
+                label="${this.labels.room} ${roomIndex}"
+                labels='${JSON.stringify(this.labels)}'
                 max-total-guests="${this.maxTotalGuests}" 
                 max-adults="${this.maxAdults}" 
                 max-children="${this.maxChildren}" 
-                max-child-age="${this.maxChildAge}">
+                max-child-age="${this.maxChildAge}"
+                enable-childs="${this.enableChilds}"
+                enable-childs-ages="${this.enableChildsAges}"
+                >
             </irnmn-guests-selector>
         `;
 

@@ -42,6 +42,7 @@ class IRNMNGuestsSelector extends HTMLElement {
 
     renderGuestsSelector() {
         this.setProperties();
+        this.updateState();
         this.render();
         this.attachEventListeners();
         this.renderChildrenAgeDropdowns();
@@ -57,11 +58,38 @@ class IRNMNGuestsSelector extends HTMLElement {
     setProperties() {
         this.name = this.getName();
         this.label = this.getLabel();
+        this.labels = this.getLabels();
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
+        this.enableChilds = this.getEnableChilds();
         this.maxChildren = this.getMaxChildren();
+        this.enableChildsAges = this.getEnableChildsAges();
         this.maxChildAge = this.getMaxChildAge();
-        this.childAgeLabel = this.getChildAgeLabel();
+    }
+
+    updateState() {
+        if (!this.enableChilds) {
+            this.state.children = 0;
+            this.state.childAges = [];
+        } else if (!this.enableChildsAges) {
+            this.state.childAges = [];
+        }
+    }
+
+    /**
+     * Check if children are enabled.
+     * @return {Boolean} True if children are enabled, false otherwise.
+     */
+    getEnableChilds() {
+        return this.hasAttribute('enable-childs') && this.getAttribute('enable-childs') !== 'false';
+    }
+
+    /**
+     * Check if child ages are enabled.
+     * @return {Boolean} True if child ages are enabled, false otherwise.
+     */
+    getEnableChildsAges() {
+        return this.hasAttribute('enable-childs-ages') && this.getAttribute('enable-childs-ages') !== 'false';
     }
 
     /**
@@ -112,6 +140,12 @@ class IRNMNGuestsSelector extends HTMLElement {
         return this.getAttribute('label') || 'Room';
     }
 
+    getLabels() {
+        const defaultLabels = { "room": "Room", "rooms": "Rooms", "guests": "Guests", "adults": "Adults", "children": "Children", "childAge": "Child age", "remove": "Remove" };
+        const customLabels = JSON.parse(this.getAttribute('labels')) || {};
+        return { ...defaultLabels, ...customLabels };
+    }
+
     /**
      * Get the label for the child age input.
      * @return {String} Child age label or default value 'Age'.
@@ -123,22 +157,27 @@ class IRNMNGuestsSelector extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomContainer}">
-                <div class="${CLASS_NAMES.roomHeader}">
-                    <span class="${CLASS_NAMES.roomLabel}">${this.label} (max ${this.maxTotalGuests} guests)</span>
-                    <button type="button" class="${CLASS_NAMES.removeRoomBtn}">Remove</button>
-                </div>
-                <div class="${CLASS_NAMES.guestControls}">
-                    <irnmn-number-picker label="Adults" name="${this.name}[adults]" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
-                    <irnmn-number-picker label="Children" name="${this.name}[children]" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
-                    <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
-                </div>
+            <div class="${CLASS_NAMES.roomHeader}">
+                <span class="${CLASS_NAMES.roomLabel}">${this.label} (max ${this.maxTotalGuests} ${this.labels.guests})</span>
+                <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
+            </div>
+            <div class="${CLASS_NAMES.guestControls}">
+                <irnmn-number-picker class="adult-picker" label="${this.enableChilds ? this.labels.adults : this.labels.guests}" name="${this.name}[adults]" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
+                ${this.enableChilds ? `
+                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}[children]" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
+                <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
+                ` : ''}
+            </div>
             </div>
         `;
     }
 
     attachEventListeners() {
+        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
+        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
+
         // Listen for the valueChanged event from the "Adults" picker
-        this.querySelector('irnmn-number-picker[label="Adults"]').addEventListener('valueChanged', (e) => {
+        adultsPicker.addEventListener('valueChanged', (e) => {
             this.state.adults = e.detail.value;
             this.checkIfTotalGuestsReached();
             // Emit event
@@ -147,16 +186,18 @@ class IRNMNGuestsSelector extends HTMLElement {
             }));
         });
 
-        // Listen for the valueChanged event from the "Children" picker
-        this.querySelector('irnmn-number-picker[label="Children"]').addEventListener('valueChanged', (e) => {
-            this.state.children = e.detail.value;
-            this.checkIfTotalGuestsReached();
-            this.renderChildrenAgeDropdowns();
-            // Emit event
-            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-                detail: this.state
-            }));
-        });
+        if (childrenPicker) {
+            // Listen for the valueChanged event from the "Children" picker
+            childrenPicker.addEventListener('valueChanged', (e) => {
+                this.state.children = e.detail.value;
+                this.checkIfTotalGuestsReached();
+                this.renderChildrenAgeDropdowns();
+                // Emit event
+                this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
+                    detail: this.state
+                }));
+            });
+        }
 
         this.querySelector(`.${CLASS_NAMES.removeRoomBtn}`).addEventListener('click', () => this.removeRoom());
     }
@@ -171,23 +212,30 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     disableIncrementButtons() {
-        const adultsPicker = this.querySelector('irnmn-number-picker[label="Adults"]');
-        const childrenPicker = this.querySelector('irnmn-number-picker[label="Children"]');
+        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
+        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
 
         adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = true;
-        childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = true;
+        if (childrenPicker) {
+            childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = true;
+        }
     }
 
     enableIncrementButtons() {
-        const adultsPicker = this.querySelector('irnmn-number-picker[label="Adults"]');
-        const childrenPicker = this.querySelector('irnmn-number-picker[label="Children"]');
+        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
+        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
 
         adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = false;
-        childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = false;
+        if (childrenPicker) {
+            childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = false;
+        }
     }
 
 
     renderChildrenAgeDropdowns() {
+        if (!this.enableChilds || !this.enableChildsAges) {
+            return;
+        }
         const childAgeContainer = this.querySelector(`.${CLASS_NAMES.childrenAgeDropdowns}`);
         childAgeContainer.innerHTML = ''; // Clear existing dropdowns
 
@@ -215,7 +263,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             });
             // create a label for the child age select
             const label = document.createElement('label');
-            label.textContent = `${this.childAgeLabel} (${i})`;
+            label.textContent = `${this.labels.childAge} (${i})`;
             // create a wrapper for label and select
             const ageWrapper = document.createElement('div');
             ageWrapper.classList.add('irnmn-child-age-wrapper');
