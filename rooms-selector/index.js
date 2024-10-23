@@ -15,6 +15,10 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     connectedCallback() {
+       this.renderRoomsSelector();
+    }
+
+    renderRoomsSelector() {
         this.setAttributes();
         this.render();
         this.loadFromSessionStorage();
@@ -31,6 +35,16 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.enableChildsAges = this.getEnableChildsAges();
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
+    }
+
+    static get observedAttributes() {
+        return ['max-rooms', 'min-rooms' ];  
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderRoomsSelector();
+        }
     }
 
     loadFromSessionStorage() {

@@ -51,6 +51,10 @@ class IRNMNGuestsSelector extends HTMLElement {
         }, 200);
     }
 
+    static get observedAttributes() {
+        return ['max-adults', 'max-total-guests', 'max-children', 'max-child-age' ];  
+    }
+
     connectedCallback() {
         this.renderGuestsSelector();
     }
