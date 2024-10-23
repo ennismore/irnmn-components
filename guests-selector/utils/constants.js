@@ -6,6 +6,8 @@ export const CLASS_NAMES = {
     roomLabel: `${prefix}__room-label`,
     removeRoomBtn: `${prefix}__remove-room-btn`,
     guestControls: `${prefix}__guest-controls`,
-    feedbackMessage: `${prefix}__feedback-message`,
-    childrenAgeDropdowns: `${prefix}__children-age-dropdowns`
+    childrenAgeDropdowns: `${prefix}__children-age-dropdowns`,
+    // from number-picker
+    decrementBtn: `irnmn-number-picker__decrement-btn`,
+    incrementBtn: `irnmn-number-picker__increment-btn`,
 };

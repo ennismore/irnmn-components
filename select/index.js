@@ -19,7 +19,7 @@ class IrnmnSelect extends HTMLElement {
 
     get placeholder() {
         return this.getAttribute('placeholder') || null;
-    }    
+    }
 
     get options() {
         const optionsAttr = this.getAttribute('options');
@@ -54,8 +54,8 @@ class IrnmnSelect extends HTMLElement {
                             ${this.placeholder}
                         </li>` : ''}
                     ${this.options
-                        .map(
-                            (option, index) => `
+                .map(
+                    (option, index) => `
                         <li class="${CLASS_NAMES.item}" 
                             role="option" 
                             tabindex="-1"
@@ -65,8 +65,8 @@ class IrnmnSelect extends HTMLElement {
                             ${option.name}
                         </li>
                     `,
-                        )
-                        .join('')}
+                )
+                .join('')}
                 </ul>
             </div>
         `;
@@ -93,18 +93,18 @@ class IrnmnSelect extends HTMLElement {
     handleClick = (event) => {
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
         const item = event.target.closest(`.${CLASS_NAMES.item}`);
-    
+
         if (header) {
             this.toggleList();
             return;
         }
-    
+
         if (item && !item.classList.contains(CLASS_NAMES.itemUnselectable)) {
             this.selectOption(parseInt(item.dataset.index, 10));
             this.closeList();
             return;
         }
-    
+
         if (!event.target.closest(`.${CLASS_NAMES.select}`)) {
             this.closeList();
         }
@@ -113,18 +113,18 @@ class IrnmnSelect extends HTMLElement {
     handleKeydown = (event) => {
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
         const item = event.target.closest(`.${CLASS_NAMES.item}`);
-    
+
         if (header && (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === ' ')) {
             event.preventDefault();
             this.toggleList();
             return;
         }
-    
+
         if (!item) return;
-    
+
         const currentIndex = parseInt(item.dataset.index, 10);
         let newIndex;
-    
+
         switch (event.key) {
             case 'ArrowDown':
                 newIndex = (currentIndex + 1) % this.options.length;
@@ -149,28 +149,28 @@ class IrnmnSelect extends HTMLElement {
             default:
                 return;
         }
-    
+
         event.preventDefault();
         this.focusItem(newIndex);
     };
 
     toggleList() {
         this.isOpen = !this.isOpen;
-    
+
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         const select = this.querySelector(`.${CLASS_NAMES.select}`);
         const header = this.querySelector(`.${CLASS_NAMES.header}`);
-    
+
         if (this.isOpen) {
             this.determineDropdownPosition();
             this.focusItem(this.selectedOption !== null ? this.selectedOption : 0);
         } else {
             list.classList.remove(CLASS_NAMES.openUpwards);
         }
-    
+
         list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
         select.setAttribute('aria-expanded', this.isOpen);
-    
+
         if (this.isOpen) {
             this.focusItem(this.selectedOption !== null ? this.selectedOption : 0);
         } else {
@@ -190,14 +190,14 @@ class IrnmnSelect extends HTMLElement {
         const viewportHeight = window.innerHeight;
         const spaceBelow = viewportHeight - rect.bottom;
         const spaceAbove = rect.top;
-    
+
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
-    
+
         // Temporarily show the dropdown to calculate its height - Need to find a cleaner way!!
         list.style.display = 'block';  // Make it visible to measure height
         const dropdownHeight = list.offsetHeight;
         list.style.display = '';  // Reset the display to its original value
-    
+
         // Only add 'open-upwards' if there is not enough space below but there is enough space above
         if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
             list.classList.add(CLASS_NAMES.openUpwards);
