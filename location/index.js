@@ -77,6 +77,10 @@ class IRNMNLocation extends HTMLElement {
     }
 
     render() {
+        if ( ! this.locations ) {
+            console.error("No locations provided");
+            return;
+        }
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
@@ -87,8 +91,14 @@ class IRNMNLocation extends HTMLElement {
                             data-max-rooms="${location.maxRooms}" 
                             data-min-rooms="${location.minRooms}"
                             data-open-date="${location.openDate}"
-                            data-date-display-format="${location.dateDisplayFormat}"
                             data-date-locale="${location.dateLocale}"
+                            data-max-adults="${location.maxAdults}"
+                            data-max-child-age="${location.maxChildAge}"
+                            data-max-children="${location.maxChildren}"
+                            data-max-total-guests="${location.maxTotalGuests}"
+                            data-has-children="${location.hasChildren}"
+                            data-has-child-age="${location.hasChildAge}"
+                            data-has-promo-code="${location.hasPromoCode}"
                             class="${CLASS_NAMES.option}">
                             ${location.name}
                         </option>`
