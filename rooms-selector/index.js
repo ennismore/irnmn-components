@@ -30,9 +30,9 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.minRooms = this.getMinRooms();
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
-        this.enableChilds = this.getEnableChilds();
+        this.enableChildren = this.getEnableChildren();
         this.maxChildren = this.getMaxChildren();
-        this.enableChildsAges = this.getEnableChildsAges();
+        this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
     }
@@ -47,6 +47,13 @@ class IRNMNRoomsSelector extends HTMLElement {
         }
     }
 
+
+
+     /**
+     * Get the maximum number of rooms.
+     * @return {Number} Max rooms or default value 5.
+     * 
+     */
     loadFromSessionStorage() {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
@@ -63,16 +70,16 @@ class IRNMNRoomsSelector extends HTMLElement {
      * Check if children are enabled.
      * @return {Boolean} True if children are enabled, false otherwise.
      */
-    getEnableChilds() {
-        return this.hasAttribute('enable-childs') && this.getAttribute('enable-childs') !== 'false';
+    getEnableChildren() {
+        return this.hasAttribute('enable-children') && this.getAttribute('enable-children') !== 'false';
     }
 
     /**
      * Check if child ages are enabled.
      * @return {Boolean} True if child ages are enabled, false otherwise.
      */
-    getEnableChildsAges() {
-        return this.hasAttribute('enable-childs-ages') && this.getAttribute('enable-childs-ages') !== 'false';
+    getEnableChildrenAges() {
+        return this.hasAttribute('enable-children-ages') && this.getAttribute('enable-children-ages') !== 'false';
     }
 
     /**
@@ -242,8 +249,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 max-adults="${this.maxAdults}" 
                 max-children="${this.maxChildren}" 
                 max-child-age="${this.maxChildAge}"
-                enable-childs="${this.enableChilds}"
-                enable-childs-ages="${this.enableChildsAges}"
+                enable-children="${this.enableChildren}"
+                enable-children-ages="${this.enableChildrenAges}"
                 >
             </irnmn-guests-selector>
         `;
