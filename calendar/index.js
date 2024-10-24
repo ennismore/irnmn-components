@@ -158,7 +158,6 @@ class IRNMNCalendar extends HTMLElement {
         this.render();  
         this.loadFromSessionStorage();
 
-        
         Promise.resolve().then(() => {
             this.dispatchEvent(new CustomEvent('irnmn-calendar-loaded', { 
                 detail: { panel: this.panel }
