@@ -3,32 +3,71 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNLocation extends HTMLElement {
     constructor() {
         super();
+        this.locations = []; 
     }
 
-    connectedCallback() {
+    // Make connectedCallback asynchronous to await for locations
+    async connectedCallback() {
         this.parentForm = this.closest('form');
+
+        this.locations = await this.getLocations(); 
+
+        /**
+         * Render the first time only when locations are loaded
+         * async method to wait for locations to be fetched
+         */
         this.render();
         this.attachEventListeners();
     }
 
-
-
+  
     /**
-     * Get the locations from the attribute, using try/catch to handle invalid JSON.
+     * Get the locations from the attribute or fetch from the endpoint.
      * 
      * @return {Array} Locations array or empty.
      */
-    get locations() {
-        const locationsAttr = this.getAttribute('locations');
-
-        try {
-            return JSON.parse(locationsAttr);  // Parse JSON object for locations
-        } catch (e) {
-            console.error("Invalid JSON for locations attribute");
+    async getLocations() {
+        const locationsEndpoint = this.getAttribute('locations-endpoint');
+        
+        if (locationsEndpoint) {
+            return await this.fetchLocations(locationsEndpoint);
+        } else {
+            return await this.parseLocations();
         }
     }
+    
 
-
+    /**
+     * Parse the locations from the attribute.
+     * async method to wait for the response
+     * @return {Array} Locations array or empty.
+     */
+    async parseLocations() {
+        const locationsAttr = this.getAttribute('locations');
+        
+        try {
+            return JSON.parse(locationsAttr); 
+        } catch (e) {
+            console.error("Invalid JSON for locations attribute");
+            return [];  
+        }
+    }
+    /**
+     * Fetch the locations from the provided endpoint.
+     * async method to wait for the response
+     * @param {String} locationsEndpoint - The URL to fetch the locations from.
+     * 
+     * @return {Array} Locations array or empty.
+     */
+    async fetchLocations(locationsEndpoint) {
+        try {
+            const response = await fetch(locationsEndpoint);
+            return await response.json();
+        } catch (error) {
+            console.error("Error fetching locations", error);
+            return []; 
+        }
+    }
 
     /**
      * Get the label for the location select.
@@ -37,7 +76,6 @@ class IRNMNLocation extends HTMLElement {
     get label() {
         return this.getAttribute('label') || 'Select Location';
     }
-
 
     /**
      * Get the ID for the location select.
@@ -56,7 +94,6 @@ class IRNMNLocation extends HTMLElement {
         return this.getAttribute('name') || 'location';
     }
 
-
     /**
      * Get the placeholder for the location select.
      * 
@@ -65,7 +102,6 @@ class IRNMNLocation extends HTMLElement {
     get placeholder() {
         return this.getAttribute('placeholder') || 'Select a location';
     }
-
 
     /**
      * Get the error message for the location select.
@@ -76,9 +112,11 @@ class IRNMNLocation extends HTMLElement {
         return this.getAttribute('error-message') || 'Please select a valid location';
     }
 
-
+    /**
+     * Render the component only if locations data is available.
+     */
     render() {
-        if (!this.locations) {
+        if (!this.locations || this.locations.length === 0) {
             console.error("No locations provided");
             return;
         }
@@ -107,13 +145,10 @@ class IRNMNLocation extends HTMLElement {
         `;
     }
 
-
-
     attachEventListeners() {
         const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
         selectElement.addEventListener('change', (event) => this.handleLocationChange(event));
     }
-
 
     /**
      * Handles the change event for the location select element.
