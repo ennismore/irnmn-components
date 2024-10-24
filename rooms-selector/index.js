@@ -23,6 +23,13 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.render();
         this.loadFromSessionStorage();
         this.attachEventListeners();
+
+        Promise.resolve().then(() => {
+            this.dispatchEvent(new CustomEvent('irnmn-rooms-selector-loaded', {
+                detail: { element: this }
+            }));
+        });
+
     }
 
     setAttributes() {
