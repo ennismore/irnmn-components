@@ -29,7 +29,9 @@
                 {"name": "New York", "hotelCode": "NYC01", "maxRooms": 5, "minRooms": 1, "openDate": "2024-10-01", "dateLocale": "en-us"}, 
                 {"name": "Los Angeles", "hotelCode": "LA02", "maxRooms": 10, "minRooms": 2, "openDate": "2025-11-01", "dateLocale": "en-gb"},
                 {"name": "Chicago", "hotelCode": "CHI03", "maxRooms": 7, "minRooms": 1, "openDate": "2024-12-01", "dateLocale": "fr-fr"}
-            ]'>
+            ]'
+            locations-endpoint="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/locations"
+            >
         </irnmn-location>
     
         <irnmn-calendar
@@ -37,7 +39,6 @@
             label="Booking Dates" 
             name="booking_another" 
             placeholder="Choose your date" 
-            date-format="YYYY-MM-DD" 
             open-date="2024-10-04"
             open-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date"
@@ -64,7 +65,6 @@
             label="Booking Dates" 
             name="booking_another" 
             placeholder="Choose your date" 
-            date-format="YYYY-MM-DD" 
             open-date="2024-10-04"
             open-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date"
@@ -105,8 +105,8 @@
         max-adults="5"
         max-children="3"
         max-child-age="11"
-        enable-childs
-        enable-childs-ages>
+        enable-children="true"
+        enable-children-ages="true">
         </irnmn-rooms-selector>
 
         <button type="submit">Submit</button>

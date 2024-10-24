@@ -157,6 +157,13 @@ class IRNMNCalendar extends HTMLElement {
         this.verifyOpenDate();
         this.render();  
         this.loadFromSessionStorage();
+
+        
+        Promise.resolve().then(() => {
+            this.dispatchEvent(new CustomEvent('irnmn-calendar-loaded', { 
+                detail: { panel: this.panel }
+             }));
+        });
     }
 
     async connectedCallback() {

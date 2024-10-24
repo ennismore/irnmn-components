@@ -71,7 +71,7 @@ class IRNMNRoomsSelector extends HTMLElement {
      * @return {Boolean} True if children are enabled, false otherwise.
      */
     getEnableChildren() {
-        return this.hasAttribute('enable-children') && this.getAttribute('enable-children') !== 'false';
+        return this.getAttribute('enable-children') == 'true';
     }
 
     /**
@@ -79,7 +79,7 @@ class IRNMNRoomsSelector extends HTMLElement {
      * @return {Boolean} True if child ages are enabled, false otherwise.
      */
     getEnableChildrenAges() {
-        return this.hasAttribute('enable-children-ages') && this.getAttribute('enable-children-ages') !== 'false';
+        return this.getAttribute('enable-children-ages') == 'true';
     }
 
     /**
