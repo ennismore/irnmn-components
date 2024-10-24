@@ -31,7 +31,7 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-childs', 'enable-childs-ages'];
+        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-children', 'enable-children-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -46,9 +46,10 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.render();
         this.attachEventListeners();
         this.renderChildrenAgeDropdowns();
-        setTimeout(() => {
+
+        Promise.resolve().then(() => {
             this.checkIfTotalGuestsReached();
-        }, 200);
+        });
     }
 
     connectedCallback() {
@@ -61,19 +62,19 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.labels = this.getLabels();
         this.maxTotalGuests = this.getMaxTotalGuests();
         this.maxAdults = this.getMaxAdults();
-        this.enableChilds = this.getEnableChilds();
+        this.enableChildren = this.getEnableChildren();
         this.maxChildren = this.getMaxChildren();
-        this.enableChildsAges = this.getEnableChildsAges();
+        this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
     }
 
     updateState() {
         const initialState = { ...this.state };
 
-        if (!this.enableChilds) {
+        if (!this.enableChildren) {
             this.state.children = 0;
             this.state.childAges = [];
-        } else if (!this.enableChildsAges) {
+        } else if (!this.enableChildrenAges) {
             this.state.childAges = [];
         }
 
@@ -115,16 +116,16 @@ class IRNMNGuestsSelector extends HTMLElement {
      * Check if children are enabled.
      * @return {Boolean} True if children are enabled, false otherwise.
      */
-    getEnableChilds() {
-        return this.hasAttribute('enable-childs') && this.getAttribute('enable-childs') !== 'false';
+    getEnableChildren() {
+        return this.getAttribute('enable-children') == 'true';
     }
 
     /**
      * Check if child ages are enabled.
      * @return {Boolean} True if child ages are enabled, false otherwise.
      */
-    getEnableChildsAges() {
-        return this.hasAttribute('enable-childs-ages') && this.getAttribute('enable-childs-ages') !== 'false';
+    getEnableChildrenAges() {
+        return this.getAttribute('enable-children-ages') == 'true';
     }
 
     /**
@@ -197,8 +198,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                 <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
             </div>
             <div class="${CLASS_NAMES.guestControls}">
-                <irnmn-number-picker class="adult-picker" label="${this.enableChilds ? this.labels.adults : this.labels.guests}" name="${this.name}[adults]" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
-                ${this.enableChilds ? `
+                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}[adults]" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
+                ${this.enableChildren ? `
                 <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}[children]" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 ` : ''}
@@ -268,7 +269,7 @@ class IRNMNGuestsSelector extends HTMLElement {
 
 
     renderChildrenAgeDropdowns() {
-        if (!this.enableChilds || !this.enableChildsAges) {
+        if (!this.enableChildren || !this.enableChildrenAges) {
             return;
         }
         const childAgeContainer = this.querySelector(`.${CLASS_NAMES.childrenAgeDropdowns}`);
