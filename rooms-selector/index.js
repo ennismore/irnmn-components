@@ -15,7 +15,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     connectedCallback() {
-       this.renderRoomsSelector();
+        this.renderRoomsSelector();
     }
 
     renderRoomsSelector() {
@@ -38,7 +38,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['max-rooms', 'min-rooms' ];  
+        return ['max-rooms', 'min-rooms', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-childs', 'enable-childs-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -58,9 +58,14 @@ class IRNMNRoomsSelector extends HTMLElement {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
             this.state.rooms = JSON.parse(rooms);
+            if (this.state.rooms.length > this.maxRooms) {
+                this.state.rooms = this.state.rooms.slice(0, this.maxRooms);
+            }
             this.updateRoomCount(this.state.rooms.length);
             // update select value
-            this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
+            const roomCountSelect = this.querySelector(`.${CLASS_NAMES.roomCountSelect}`);
+            roomCountSelect.value = this.state.rooms.length;
+            roomCountSelect.dispatchEvent(new Event('change'));
         } else {
             this.updateRoomCount(this.minRooms); // minimum rooms on init by default if nothing saved in storage
         }
@@ -152,9 +157,11 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomsSelector}">
                 <label for="room-count">${this.labels.selectRoom}</label>
-                <select class="${CLASS_NAMES.roomCountSelect}">
-                    ${this.generateRoomOptions()}
-                </select>
+                <div class="${CLASS_NAMES.roomCountSelect}-wrapper">
+                    <select class="${CLASS_NAMES.roomCountSelect}">
+                        ${this.generateRoomOptions()}
+                    </select>
+                </div>
                 <div class="${CLASS_NAMES.roomContainer}"></div>
             </div>
         `;
@@ -213,11 +220,14 @@ class IRNMNRoomsSelector extends HTMLElement {
                 this.removeRoom(i, roomContainer);
             }
         }
-
-        // add a class to the room container if only one room is listed (to hide remove button)
-        roomContainer.classList.toggle('one-room', roomCount === 1);
     }
 
+    checkIfOneRoom() {
+        const roomContainer = this.querySelector(`.${CLASS_NAMES.roomContainer}`);
+        const roomsList = roomContainer.querySelectorAll('irnmn-guests-selector');
+        // add a class to the room container if only one room is listed (to hide remove button)
+        roomContainer.classList.toggle('one-room', roomsList.length === 1);
+    }
 
     /**
      * Adds a new room to the room container (at the end of the list) and updates the state.
@@ -263,6 +273,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
         // Add event listeners to track changes in the room's state
         this.trackRoomChanges(roomGuests);
+        this.checkIfOneRoom();
     }
 
 
@@ -283,6 +294,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.state.rooms.splice(roomIndex - 1, 1);
         // update session storage
         saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
+        this.checkIfOneRoom();
     }
 
 
@@ -296,7 +308,7 @@ class IRNMNRoomsSelector extends HTMLElement {
 
         roomSelectors.forEach((roomSelector, index) => {
             roomSelector.setAttribute('name', `rooms[${index}]`);
-            roomSelector.setAttribute('label', `Room ${index + 1}`);
+            roomSelector.setAttribute('label', `${this.labels.room} ${index + 1}`);
         });
     }
 
@@ -320,6 +332,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         // Listen for the 'roomValuesChange' event from the room-guests component
         roomGuests.addEventListener('irnmn-roomValuesChange', (event) => {
             const roomIndex = this.getRoomIndex(roomGuests);
+            if (roomIndex === 0) { return } // if roomIndex is 0, it means the room don't exist
             const room = this.state.rooms[roomIndex - 1];
 
             // Update the room object with the new adults, children, and childAges data
@@ -343,7 +356,9 @@ class IRNMNRoomsSelector extends HTMLElement {
             this.removeRoom(roomIndex, roomContainer);
             this.updateRoomsListing();
             // update select value
-            this.querySelector(`.${CLASS_NAMES.roomCountSelect}`).value = this.state.rooms.length;
+            const roomCountSelect = this.querySelector(`.${CLASS_NAMES.roomCountSelect}`);
+            roomCountSelect.value = this.state.rooms.length;
+            roomCountSelect.dispatchEvent(new Event('change'));
         });
     }
 }
