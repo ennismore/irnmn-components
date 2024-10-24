@@ -68,11 +68,46 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     updateState() {
+        const initialState = { ...this.state };
+
         if (!this.enableChilds) {
             this.state.children = 0;
             this.state.childAges = [];
         } else if (!this.enableChildsAges) {
             this.state.childAges = [];
+        }
+
+        // Ensure adults do not exceed maxAdults
+        if (this.state.adults > this.maxAdults) {
+            this.state.adults = this.maxAdults;
+        }
+
+        // Ensure children do not exceed maxChildren
+        if (this.state.children > this.maxChildren) {
+            this.state.children = this.maxChildren;
+        }
+
+        // Ensure total guests do not exceed maxTotalGuests
+        let totalGuests = this.state.adults + this.state.children;
+        if (totalGuests > this.maxTotalGuests) {
+            // Reduce children first
+            if (this.state.children > 0) {
+                const excessChildren = totalGuests - this.maxTotalGuests;
+                this.state.children = Math.max(0, this.state.children - excessChildren);
+                totalGuests = this.state.adults + this.state.children;
+            }
+
+            // If still exceeding, reduce adults
+            if (totalGuests > this.maxTotalGuests) {
+                this.state.adults = this.maxTotalGuests - this.state.children;
+            }
+        }
+
+        // Dispatch event only if the final state is different from the initial state
+        if (JSON.stringify(initialState) !== JSON.stringify(this.state)) {
+            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
+                detail: this.state
+            }));
         }
     }
 

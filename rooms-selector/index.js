@@ -38,7 +38,7 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['max-rooms', 'min-rooms'];
+        return ['max-rooms', 'min-rooms', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-childs', 'enable-childs-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -51,6 +51,9 @@ class IRNMNRoomsSelector extends HTMLElement {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
             this.state.rooms = JSON.parse(rooms);
+            if (this.state.rooms.length > this.maxRooms) {
+                this.state.rooms = this.state.rooms.slice(0, this.maxRooms);
+            }
             this.updateRoomCount(this.state.rooms.length);
             // update select value
             const roomCountSelect = this.querySelector(`.${CLASS_NAMES.roomCountSelect}`);
@@ -322,6 +325,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         // Listen for the 'roomValuesChange' event from the room-guests component
         roomGuests.addEventListener('irnmn-roomValuesChange', (event) => {
             const roomIndex = this.getRoomIndex(roomGuests);
+            if (roomIndex === 0) { return } // if roomIndex is 0, it means the room don't exist
             const room = this.state.rooms[roomIndex - 1];
 
             // Update the room object with the new adults, children, and childAges data
