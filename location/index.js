@@ -1,5 +1,11 @@
 import { CLASS_NAMES } from './utils/constants.js';
 
+import {
+    saveToSessionStorage,
+    getFromSessionStorage,
+} from '../utils/components.js';
+
+
 class IRNMNLocation extends HTMLElement {
     constructor() {
         super();
@@ -18,6 +24,7 @@ class IRNMNLocation extends HTMLElement {
          */
         this.render();
         this.attachEventListeners();
+        Promise.resolve().then(() => this.setDefaultValue());
     }
 
 
@@ -75,6 +82,14 @@ class IRNMNLocation extends HTMLElement {
      */
     get label() {
         return this.getAttribute('label') || 'Select Location';
+    }
+
+    /**
+     * Get the label for the location select.
+     * @return {String} Label or default value 'Select Location'.
+     */
+    get default() {
+        return this.getAttribute('default') || false;
     }
 
     /**
@@ -150,6 +165,18 @@ class IRNMNLocation extends HTMLElement {
         selectElement.addEventListener('change', (event) => this.handleLocationChange(event));
     }
 
+    setDefaultValue() {
+        const selectedLocation = getFromSessionStorage(this.inputName) || this.default;
+        if (selectedLocation) {
+            const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
+            console.log(selectElement)
+            console.log(selectedLocation)
+            selectElement.value = selectedLocation;
+            const event = new Event('change', { bubbles: true });
+            selectElement.dispatchEvent(event);
+        }
+    }
+
     /**
      * Handles the change event for the location select element.
      * It updates the other components within the parent form based on the selected location.
@@ -171,6 +198,7 @@ class IRNMNLocation extends HTMLElement {
         } else {
             errorMessageEl.textContent = ''; // Clear error message when valid location is selected
             this.updateOtherComponents(selectedOption.dataset);
+            saveToSessionStorage(this.inputName, selectedOption.value);
         }
     }
 
@@ -186,7 +214,6 @@ class IRNMNLocation extends HTMLElement {
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
 
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
-                element.setAttribute(formattedAttrName, attributeValue);
                 if (this != element && !this.contains(element)) { // Avoid updating the current component
                     element.setAttribute(formattedAttrName, attributeValue);
                 }
