@@ -117,7 +117,8 @@ class IRNMNGuestsSelector extends HTMLElement {
      * @return {Boolean} True if children are enabled, false otherwise.
      */
     getEnableChildren() {
-        return this.getAttribute('enable-children') == 'true';
+        const enableChildrenAttr = this.getAttribute('enable-children');
+        return enableChildrenAttr === 'true' || (enableChildrenAttr !== 'false' && enableChildrenAttr);
     }
 
     /**
@@ -125,7 +126,8 @@ class IRNMNGuestsSelector extends HTMLElement {
      * @return {Boolean} True if child ages are enabled, false otherwise.
      */
     getEnableChildrenAges() {
-        return this.getAttribute('enable-children-ages') == 'true';
+        const enableChildrenAgesAttr = this.getAttribute('enable-children-ages');
+        return enableChildrenAgesAttr === 'true' || (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr);
     }
 
     /**
