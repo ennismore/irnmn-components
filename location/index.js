@@ -169,8 +169,6 @@ class IRNMNLocation extends HTMLElement {
         const selectedLocation = getFromSessionStorage(this.inputName) || this.default;
         if (selectedLocation) {
             const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
-            console.log(selectElement)
-            console.log(selectedLocation)
             selectElement.value = selectedLocation;
             const event = new Event('change', { bubbles: true });
             selectElement.dispatchEvent(event);
