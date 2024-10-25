@@ -198,9 +198,9 @@ class IRNMNGuestsSelector extends HTMLElement {
                 <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
             </div>
             <div class="${CLASS_NAMES.guestControls}">
-                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}[adults]" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
+                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
                 ${this.enableChildren ? `
-                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}[children]" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
+                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 ` : ''}
             </div>
@@ -278,7 +278,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         for (let i = 1; i <= this.state.children; i++) {
             const ageDropdown = document.createElement('select');
             ageDropdown.setAttribute('id', `irnmn-child-age-${i}`);
-            ageDropdown.setAttribute('name', `${this.name}[childrenAges][${i - 1}]`);
+            ageDropdown.setAttribute('name', `${this.name}.childrenAges[${i - 1}]`);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childrenAges[i - 1] to 1 if not already set
