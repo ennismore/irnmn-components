@@ -3,14 +3,14 @@ import { CLASS_NAMES } from './utils/constants.js';
 class IRNMNLocation extends HTMLElement {
     constructor() {
         super();
-        this.locations = []; 
+        this.locations = [];
     }
 
     // Make connectedCallback asynchronous to await for locations
     async connectedCallback() {
         this.parentForm = this.closest('form');
 
-        this.locations = await this.getLocations(); 
+        this.locations = await this.getLocations();
 
         /**
          * Render the first time only when locations are loaded
@@ -20,7 +20,7 @@ class IRNMNLocation extends HTMLElement {
         this.attachEventListeners();
     }
 
-  
+
     /**
      * Get the locations from the attribute or fetch from the endpoint.
      * 
@@ -28,14 +28,14 @@ class IRNMNLocation extends HTMLElement {
      */
     async getLocations() {
         const locationsEndpoint = this.getAttribute('locations-endpoint');
-        
+
         if (locationsEndpoint) {
             return await this.fetchLocations(locationsEndpoint);
         } else {
             return await this.parseLocations();
         }
     }
-    
+
 
     /**
      * Parse the locations from the attribute.
@@ -44,12 +44,12 @@ class IRNMNLocation extends HTMLElement {
      */
     async parseLocations() {
         const locationsAttr = this.getAttribute('locations');
-        
+
         try {
-            return JSON.parse(locationsAttr); 
+            return JSON.parse(locationsAttr);
         } catch (e) {
             console.error("Invalid JSON for locations attribute");
-            return [];  
+            return [];
         }
     }
     /**
@@ -65,7 +65,7 @@ class IRNMNLocation extends HTMLElement {
             return await response.json();
         } catch (error) {
             console.error("Error fetching locations", error);
-            return []; 
+            return [];
         }
     }
 
@@ -120,25 +120,25 @@ class IRNMNLocation extends HTMLElement {
             console.error("No locations provided");
             return;
         }
-    
+
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
                 <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}">
                     <option value="" disabled selected>${this.placeholder}</option>
                     ${this.locations.map(location => {
-                        // Dynamically create the data attributes based on the locations obj
-                        const dataAttributes = Object.entries(location)
-                            .map(([key, value]) => {
-                                const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-                                return `${dataAttrName}="${value}"`;
-                            }).join(' ');
-    
-                        return `
+            // Dynamically create the data attributes based on the locations obj
+            const dataAttributes = Object.entries(location)
+                .map(([key, value]) => {
+                    const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                    return `${dataAttrName}="${value}"`;
+                }).join(' ');
+
+            return `
                             <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
                                 ${location.name}
                             </option>`;
-                    }).join('')}
+        }).join('')}
                 </select>
                 <span class="${CLASS_NAMES.errorMessage}"></span>
             </div>
@@ -160,7 +160,7 @@ class IRNMNLocation extends HTMLElement {
      */
     handleLocationChange(event) {
         const selectedOptions = event.target.selectedOptions;
-        if ( !selectedOptions.length ) {
+        if (!selectedOptions.length) {
             return;
         }
         const selectedOption = selectedOptions[0];
@@ -181,15 +181,19 @@ class IRNMNLocation extends HTMLElement {
      * 
      * @return {void}
      */
-    updateOtherComponents(selectedLocation) {    
+    updateOtherComponents(selectedLocation) {
         Object.entries(selectedLocation).forEach(([attrName, attributeValue]) => {
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
-    
+
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
                 element.setAttribute(formattedAttrName, attributeValue);
+                if (this != element && !this.contains(element)) { // Avoid updating the current component
+                    element.setAttribute(formattedAttrName, attributeValue);
+                }
             });
         });
     }
+
 }
 
 customElements.define('irnmn-location', IRNMNLocation);
