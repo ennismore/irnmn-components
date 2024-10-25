@@ -56,11 +56,11 @@ class IRNMNRoomsSelector extends HTMLElement {
 
 
 
-     /**
-     * Get the maximum number of rooms.
-     * @return {Number} Max rooms or default value 5.
-     * 
-     */
+    /**
+    * Get the maximum number of rooms.
+    * @return {Number} Max rooms or default value 5.
+    * 
+    */
     loadFromSessionStorage() {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
@@ -253,7 +253,7 @@ class IRNMNRoomsSelector extends HTMLElement {
             this.state.rooms.push({
                 adults: 2, // Default adults
                 children: 0, // Default children
-                childAges: [] // Initialize empty array for child ages
+                childrenAges: [] // Initialize empty array for child ages
             });
         }
         const roomGuestsHTML = `
@@ -329,7 +329,7 @@ class IRNMNRoomsSelector extends HTMLElement {
      * Tracks changes to room details and updates the state accordingly.
      *
      * This function listens for 'roomValuesChange' and 'roomRemoved' events from the room-guests component.
-     * When 'roomValuesChange' is triggered, it updates the room object with new adults, children, and childAges data.
+     * When 'roomValuesChange' is triggered, it updates the room object with new adults, children, and childrenAges data.
      * When 'roomRemoved' is triggered, it removes the room from the state and updates the room listing.
      *
      * @param {HTMLElement} roomGuests - The room-guests component that emits the events.
@@ -342,15 +342,15 @@ class IRNMNRoomsSelector extends HTMLElement {
             if (roomIndex === 0) { return } // if roomIndex is 0, it means the room don't exist
             const room = this.state.rooms[roomIndex - 1];
 
-            // Update the room object with the new adults, children, and childAges data
+            // Update the room object with the new adults, children, and childrenAges data
             if ('adults' in event.detail) {
                 room.adults = event.detail.adults;
             }
             if ('children' in event.detail) {
                 room.children = event.detail.children;
             }
-            if ('childAges' in event.detail) {
-                room.childAges = event.detail.childAges;
+            if ('childrenAges' in event.detail) {
+                room.childrenAges = event.detail.childrenAges;
             }
             // update session storage
             saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));

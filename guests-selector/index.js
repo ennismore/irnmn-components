@@ -8,7 +8,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         if (initState && initState !== '' && initState !== 'false') {
             try {
                 const parsedState = JSON.parse(initState);
-                if (parsedState.adults !== undefined && parsedState.children !== undefined && parsedState.childAges !== undefined) {
+                if (parsedState.adults !== undefined && parsedState.children !== undefined && parsedState.childrenAges !== undefined) {
                     this.state = parsedState;
                 } else {
                     throw new Error('Missing required state properties');
@@ -18,14 +18,14 @@ class IRNMNGuestsSelector extends HTMLElement {
                 this.state = {
                     adults: 2,
                     children: 0,
-                    childAges: []
+                    childrenAges: []
                 };
             }
         } else {
             this.state = {
                 adults: 2,
                 children: 0,
-                childAges: []
+                childrenAges: []
             };
         }
     }
@@ -73,9 +73,9 @@ class IRNMNGuestsSelector extends HTMLElement {
 
         if (!this.enableChildren) {
             this.state.children = 0;
-            this.state.childAges = [];
+            this.state.childrenAges = [];
         } else if (!this.enableChildrenAges) {
-            this.state.childAges = [];
+            this.state.childrenAges = [];
         }
 
         // Ensure adults do not exceed maxAdults
@@ -278,21 +278,21 @@ class IRNMNGuestsSelector extends HTMLElement {
         for (let i = 1; i <= this.state.children; i++) {
             const ageDropdown = document.createElement('select');
             ageDropdown.setAttribute('id', `irnmn-child-age-${i}`);
-            ageDropdown.setAttribute('name', `${this.name}[childAges][${i - 1}]`);
+            ageDropdown.setAttribute('name', `${this.name}[childrenAges][${i - 1}]`);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
-            // Initialize childAges[i - 1] to 1 if not already set
-            if (!this.state.childAges[i - 1]) {
-                this.state.childAges[i - 1] = 1;  // Set default age to 1
+            // Initialize childrenAges[i - 1] to 1 if not already set
+            if (!this.state.childrenAges[i - 1]) {
+                this.state.childrenAges[i - 1] = 1;  // Set default age to 1
             }
 
-            ageDropdown.value = this.state.childAges[i - 1]; // Set the dropdown value to the initialized age
+            ageDropdown.value = this.state.childrenAges[i - 1]; // Set the dropdown value to the initialized age
 
             // Dispatch event on change
             ageDropdown.addEventListener('change', () => {
-                this.state.childAges[i - 1] = parseInt(ageDropdown.value);
+                this.state.childrenAges[i - 1] = parseInt(ageDropdown.value);
 
-                // Emit custom event with the entire childAges array when any child age changes
+                // Emit custom event with the entire childrenAges array when any child age changes
                 this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
                     detail: this.state
                 }));
@@ -321,7 +321,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             }));
         }
 
-        // Emit event after setting default values for childAges
+        // Emit event after setting default values for childrenAges
         this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
             detail: this.state
         }));
