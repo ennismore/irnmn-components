@@ -209,6 +209,8 @@ class IRNMNLocation extends HTMLElement {
      */
     updateOtherComponents(selectedLocation) {
         Object.entries(selectedLocation).forEach(([attrName, attributeValue]) => {
+            if (attrName === 'name') return; // Exclude the attribute "name"
+
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
 
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
