@@ -8,30 +8,46 @@ class IRNMNGuestsSelector extends HTMLElement {
         if (initState && initState !== '' && initState !== 'false') {
             try {
                 const parsedState = JSON.parse(initState);
-                if (parsedState.adults !== undefined && parsedState.children !== undefined && parsedState.childrenAges !== undefined) {
+                if (
+                    parsedState.adults !== undefined &&
+                    parsedState.children !== undefined &&
+                    parsedState.childrenAges !== undefined
+                ) {
                     this.state = parsedState;
                 } else {
                     throw new Error('Missing required state properties');
                 }
             } catch (e) {
-                console.error('Invalid JSON string for init-state or missing properties:', e);
+                console.error(
+                    'Invalid JSON string for init-state or missing properties:',
+                    e,
+                );
                 this.state = {
                     adults: 2,
                     children: 0,
-                    childrenAges: []
+                    childrenAges: [],
                 };
             }
         } else {
             this.state = {
                 adults: 2,
                 children: 0,
-                childrenAges: []
+                childrenAges: [],
             };
         }
     }
 
     static get observedAttributes() {
-        return ['name', 'label', 'max-total-guests', 'adults-number', 'children-number', 'max-child-age', 'enable-children', 'enable-children-ages'];
+        return [
+            'name',
+            'label',
+            'max-total-guests',
+            'adults-number',
+            'children-number',
+            'max-child-age',
+            'enable-children',
+            'enable-children-ages',
+        ];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -94,7 +110,10 @@ class IRNMNGuestsSelector extends HTMLElement {
             // Reduce children first
             if (this.state.children > 0) {
                 const excessChildren = totalGuests - this.maxTotalGuests;
-                this.state.children = Math.max(0, this.state.children - excessChildren);
+                this.state.children = Math.max(
+                    0,
+                    this.state.children - excessChildren,
+                );
                 totalGuests = this.state.adults + this.state.children;
             }
 
@@ -106,9 +125,11 @@ class IRNMNGuestsSelector extends HTMLElement {
 
         // Dispatch event only if the final state is different from the initial state
         if (JSON.stringify(initialState) !== JSON.stringify(this.state)) {
-            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-                detail: this.state
-            }));
+            this.dispatchEvent(
+                new CustomEvent('irnmn-roomValuesChange', {
+                    detail: this.state,
+                }),
+            );
         }
     }
 
@@ -118,7 +139,10 @@ class IRNMNGuestsSelector extends HTMLElement {
      */
     getEnableChildren() {
         const enableChildrenAttr = this.getAttribute('enable-children');
-        return enableChildrenAttr === 'true' || (enableChildrenAttr !== 'false' && enableChildrenAttr);
+        return (
+            enableChildrenAttr === 'true' ||
+            (enableChildrenAttr !== 'false' && enableChildrenAttr)
+        );
     }
 
     /**
@@ -126,8 +150,13 @@ class IRNMNGuestsSelector extends HTMLElement {
      * @return {Boolean} True if child ages are enabled, false otherwise.
      */
     getEnableChildrenAges() {
-        const enableChildrenAgesAttr = this.getAttribute('enable-children-ages');
-        return enableChildrenAgesAttr === 'true' || (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr);
+        const enableChildrenAgesAttr = this.getAttribute(
+            'enable-children-ages',
+        );
+        return (
+            enableChildrenAgesAttr === 'true' ||
+            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr)
+        );
     }
 
     /**
@@ -179,7 +208,15 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     getLabels() {
-        const defaultLabels = { "room": "Room", "rooms": "Rooms", "guests": "Guests", "adults": "Adults", "children": "Children", "childAge": "Child age", "remove": "Remove" };
+        const defaultLabels = {
+            room: 'Room',
+            rooms: 'Rooms',
+            guests: 'Guests',
+            adults: 'Adults',
+            children: 'Children',
+            childAge: 'Child age',
+            remove: 'Remove',
+        };
         const customLabels = JSON.parse(this.getAttribute('labels')) || {};
         return { ...defaultLabels, ...customLabels };
     }
@@ -201,27 +238,37 @@ class IRNMNGuestsSelector extends HTMLElement {
             </div>
             <div class="${CLASS_NAMES.guestControls}">
                 <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.adultsNumber ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
-                ${this.enableChildren ? `
+                ${
+                    this.enableChildren
+                        ? `
                 <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.childrenNumber ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
-                ` : ''}
+                `
+                        : ''
+                }
             </div>
             </div>
         `;
     }
 
     attachEventListeners() {
-        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
-        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
+        const adultsPicker = this.querySelector(
+            'irnmn-number-picker.adult-picker',
+        );
+        const childrenPicker = this.querySelector(
+            'irnmn-number-picker.children-picker',
+        );
 
         // Listen for the valueChanged event from the "Adults" picker
         adultsPicker.addEventListener('valueChanged', (e) => {
             this.state.adults = e.detail.value;
             this.checkIfTotalGuestsReached();
             // Emit event
-            this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-                detail: this.state
-            }));
+            this.dispatchEvent(
+                new CustomEvent('irnmn-roomValuesChange', {
+                    detail: this.state,
+                }),
+            );
         });
 
         if (childrenPicker) {
@@ -231,13 +278,18 @@ class IRNMNGuestsSelector extends HTMLElement {
                 this.checkIfTotalGuestsReached();
                 this.renderChildrenAgeDropdowns();
                 // Emit event
-                this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-                    detail: this.state
-                }));
+                this.dispatchEvent(
+                    new CustomEvent('irnmn-roomValuesChange', {
+                        detail: this.state,
+                    }),
+                );
             });
         }
 
-        this.querySelector(`.${CLASS_NAMES.removeRoomBtn}`).addEventListener('click', () => this.removeRoom());
+        this.querySelector(`.${CLASS_NAMES.removeRoomBtn}`).addEventListener(
+            'click',
+            () => this.removeRoom(),
+        );
     }
 
     checkIfTotalGuestsReached() {
@@ -250,42 +302,60 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     disableIncrementButtons() {
-        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
-        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
+        const adultsPicker = this.querySelector(
+            'irnmn-number-picker.adult-picker',
+        );
+        const childrenPicker = this.querySelector(
+            'irnmn-number-picker.children-picker',
+        );
 
-        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = true;
+        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled =
+            true;
         if (childrenPicker) {
-            childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = true;
+            childrenPicker.querySelector(
+                `.${CLASS_NAMES.incrementBtn}`,
+            ).disabled = true;
         }
     }
 
     enableIncrementButtons() {
-        const adultsPicker = this.querySelector('irnmn-number-picker.adult-picker');
-        const childrenPicker = this.querySelector('irnmn-number-picker.children-picker');
+        const adultsPicker = this.querySelector(
+            'irnmn-number-picker.adult-picker',
+        );
+        const childrenPicker = this.querySelector(
+            'irnmn-number-picker.children-picker',
+        );
 
-        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = false;
+        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled =
+            false;
         if (childrenPicker) {
-            childrenPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled = false;
+            childrenPicker.querySelector(
+                `.${CLASS_NAMES.incrementBtn}`,
+            ).disabled = false;
         }
     }
-
 
     renderChildrenAgeDropdowns() {
         if (!this.enableChildren || !this.enableChildrenAges) {
             return;
         }
-        const childAgeContainer = this.querySelector(`.${CLASS_NAMES.childrenAgeDropdowns}`);
+        const childAgeContainer = this.querySelector(
+            `.${CLASS_NAMES.childrenAgeDropdowns}`,
+        );
         childAgeContainer.innerHTML = ''; // Clear existing dropdowns
 
         for (let i = 1; i <= this.state.children; i++) {
             const ageDropdown = document.createElement('select');
             ageDropdown.setAttribute('id', `irnmn-child-age-${i}`);
-            ageDropdown.setAttribute('name', `${this.name}.childrenAges[${i - 1}]`);
+            ageDropdown.setAttribute(
+                'name',
+                `${this.name}.childrenAges[${i - 1}]`,
+            );
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childrenAges[i - 1] to 1 if not already set
             if (!this.state.childrenAges[i - 1]) {
-                this.state.childrenAges[i - 1] = 1;  // Set default age to 1
+                this.state.childrenAges[i - 1] = 1; // Set default age to 1
             }
 
             ageDropdown.value = this.state.childrenAges[i - 1]; // Set the dropdown value to the initialized age
@@ -295,9 +365,11 @@ class IRNMNGuestsSelector extends HTMLElement {
                 this.state.childrenAges[i - 1] = parseInt(ageDropdown.value);
 
                 // Emit custom event with the entire childrenAges array when any child age changes
-                this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-                    detail: this.state
-                }));
+                this.dispatchEvent(
+                    new CustomEvent('irnmn-roomValuesChange', {
+                        detail: this.state,
+                    }),
+                );
             });
             // create a label for the child age select
             const label = document.createElement('label');
@@ -315,18 +387,22 @@ class IRNMNGuestsSelector extends HTMLElement {
             childAgeContainer.appendChild(ageWrapper);
 
             // Emit event after adding select to the DOM (usefull for custom dropdowns)
-            document.dispatchEvent(new CustomEvent('irnmn-initChildAgeDropdown', {
-                detail: {
-                    ID: `irnmn-child-age-${i}`,
-                    element: ageDropdown
-                }
-            }));
+            document.dispatchEvent(
+                new CustomEvent('irnmn-initChildAgeDropdown', {
+                    detail: {
+                        ID: `irnmn-child-age-${i}`,
+                        element: ageDropdown,
+                    },
+                }),
+            );
         }
 
         // Emit event after setting default values for childrenAges
-        this.dispatchEvent(new CustomEvent('irnmn-roomValuesChange', {
-            detail: this.state
-        }));
+        this.dispatchEvent(
+            new CustomEvent('irnmn-roomValuesChange', {
+                detail: this.state,
+            }),
+        );
     }
 
     generateAgeOptions(maxAge) {
@@ -339,11 +415,13 @@ class IRNMNGuestsSelector extends HTMLElement {
 
     removeRoom() {
         // Dispatch a custom event to inform the parent to remove this room
-        this.dispatchEvent(new CustomEvent('irnmn-roomRemoved', {
-            detail: { roomIndex: this.label },
-            bubbles: true,
-            composed: true
-        }));
+        this.dispatchEvent(
+            new CustomEvent('irnmn-roomRemoved', {
+                detail: { roomIndex: this.label },
+                bubbles: true,
+                composed: true,
+            }),
+        );
     }
 }
 
