@@ -33,7 +33,7 @@ class IrnmnSelect extends HTMLElement {
     setPreselectedOption() {
         if (this.preselected) {
             const preselectedIndex = this.options.findIndex(
-                (option) => option.value === this.preselected
+                (option) => option.value === this.preselected,
             );
 
             if (preselectedIndex !== -1) {
@@ -49,13 +49,17 @@ class IrnmnSelect extends HTMLElement {
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                 </div>
                 <ul id="option-list" class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox" aria-labelledby="irnmn-select-header">
-                    ${this.placeholder ? `
+                    ${
+                        this.placeholder
+                            ? `
                         <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemUnselectable}" role="option" aria-selected="false" tabindex="-1" disabled>
                             ${this.placeholder}
-                        </li>` : ''}
+                        </li>`
+                            : ''
+                    }
                     ${this.options
-                .map(
-                    (option, index) => `
+                        .map(
+                            (option, index) => `
                         <li class="${CLASS_NAMES.item}" 
                             role="option" 
                             tabindex="-1"
@@ -65,8 +69,8 @@ class IrnmnSelect extends HTMLElement {
                             ${option.name}
                         </li>
                     `,
-                )
-                .join('')}
+                        )
+                        .join('')}
                 </ul>
             </div>
         `;
@@ -114,7 +118,12 @@ class IrnmnSelect extends HTMLElement {
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
         const item = event.target.closest(`.${CLASS_NAMES.item}`);
 
-        if (header && (event.key === 'ArrowDown' || event.key === 'ArrowUp' || event.key === ' ')) {
+        if (
+            header &&
+            (event.key === 'ArrowDown' ||
+                event.key === 'ArrowUp' ||
+                event.key === ' ')
+        ) {
             event.preventDefault();
             this.toggleList();
             return;
@@ -130,7 +139,9 @@ class IrnmnSelect extends HTMLElement {
                 newIndex = (currentIndex + 1) % this.options.length;
                 break;
             case 'ArrowUp':
-                newIndex = (currentIndex - 1 + this.options.length) % this.options.length;
+                newIndex =
+                    (currentIndex - 1 + this.options.length) %
+                    this.options.length;
                 break;
             case 'Home':
                 newIndex = 0;
@@ -163,7 +174,9 @@ class IrnmnSelect extends HTMLElement {
 
         if (this.isOpen) {
             this.determineDropdownPosition();
-            this.focusItem(this.selectedOption !== null ? this.selectedOption : 0);
+            this.focusItem(
+                this.selectedOption !== null ? this.selectedOption : 0,
+            );
         } else {
             list.classList.remove(CLASS_NAMES.openUpwards);
         }
@@ -172,7 +185,9 @@ class IrnmnSelect extends HTMLElement {
         select.setAttribute('aria-expanded', this.isOpen);
 
         if (this.isOpen) {
-            this.focusItem(this.selectedOption !== null ? this.selectedOption : 0);
+            this.focusItem(
+                this.selectedOption !== null ? this.selectedOption : 0,
+            );
         } else {
             header.focus();
         }
@@ -182,7 +197,10 @@ class IrnmnSelect extends HTMLElement {
         this.isOpen = false;
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         list.classList.remove(CLASS_NAMES.listOpen);
-        this.querySelector(`.${CLASS_NAMES.select}`).setAttribute('aria-expanded', 'false');
+        this.querySelector(`.${CLASS_NAMES.select}`).setAttribute(
+            'aria-expanded',
+            'false',
+        );
     }
 
     determineDropdownPosition() {
@@ -194,9 +212,9 @@ class IrnmnSelect extends HTMLElement {
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
 
         // Temporarily show the dropdown to calculate its height - Need to find a cleaner way!!
-        list.style.display = 'block';  // Make it visible to measure height
+        list.style.display = 'block'; // Make it visible to measure height
         const dropdownHeight = list.offsetHeight;
-        list.style.display = '';  // Reset the display to its original value
+        list.style.display = ''; // Reset the display to its original value
 
         // Only add 'open-upwards' if there is not enough space below but there is enough space above
         if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {

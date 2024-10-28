@@ -1,8 +1,8 @@
-import { 
-    dispatchSyncEvent, 
-    handleSyncEvent, 
-    saveToSessionStorage, 
-    getFromSessionStorage 
+import {
+    dispatchSyncEvent,
+    handleSyncEvent,
+    saveToSessionStorage,
+    getFromSessionStorage,
 } from '../utils/components.js';
 import { CLASS_NAMES } from './utils/constants.js';
 
@@ -12,8 +12,8 @@ class IRNMNText extends HTMLElement {
         this.label = this.getAttribute('label') || 'Text';
         this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
         this.name = this.getAttribute('name');
-        this.value = '';  // Holds the input value
-        this.storageKey = `${this.name}-text`;  // Key for session storage
+        this.value = ''; // Holds the input value
+        this.storageKey = `${this.name}-text`; // Key for session storage
     }
 
     connectedCallback() {
@@ -21,11 +21,16 @@ class IRNMNText extends HTMLElement {
         this.loadFromSessionStorage();
 
         // Listen for updates across instances
-        document.addEventListener(`irnmn-text-updated-${this.name}`, (e) => this.syncText(e));
+        document.addEventListener(`irnmn-text-updated-${this.name}`, (e) =>
+            this.syncText(e),
+        );
     }
 
     disconnectedCallback() {
-        document.removeEventListener(`irnmn-text-updated-${this.name}`, this.syncText);
+        document.removeEventListener(
+            `irnmn-text-updated-${this.name}`,
+            this.syncText,
+        );
     }
 
     /**
@@ -43,7 +48,7 @@ class IRNMNText extends HTMLElement {
     }
 
     /**
-     * Handle user input in the text field, save it to session storage, 
+     * Handle user input in the text field, save it to session storage,
      * and dispatch a synchronization event for other instances.
      */
     handleInput(e) {
@@ -51,12 +56,14 @@ class IRNMNText extends HTMLElement {
 
         // Update session storage and dispatch sync event
         saveToSessionStorage(this.storageKey, this.value);
-        dispatchSyncEvent(`irnmn-text-updated-${this.name}`, { value: this.value });
+        dispatchSyncEvent(`irnmn-text-updated-${this.name}`, {
+            value: this.value,
+        });
     }
 
     /**
      * Synchronize the text value across different instances of the component.
-     * 
+     *
      * @param {Event} event The synchronization event containing the updated value.
      */
     syncText(event) {

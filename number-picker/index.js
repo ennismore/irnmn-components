@@ -5,14 +5,14 @@ class IRNMNNumberPicker extends HTMLElement {
         super();
 
         this.state = {
-            count: this.getInitialValue()
+            count: this.getInitialValue(),
         };
     }
 
     connectedCallback() {
         this.setProperties();
         this.render();
-        this.updateDisplay();  // this is to ensure the initial value is displayed
+        this.updateDisplay(); // this is to ensure the initial value is displayed
         this.attachEventListeners();
     }
 
@@ -77,8 +77,14 @@ class IRNMNNumberPicker extends HTMLElement {
     }
 
     attachEventListeners() {
-        this.querySelector(`.${CLASS_NAMES.incrementBtn}`).addEventListener('click', () => this.updateCount(1));
-        this.querySelector(`.${CLASS_NAMES.decrementBtn}`).addEventListener('click', () => this.updateCount(-1));
+        this.querySelector(`.${CLASS_NAMES.incrementBtn}`).addEventListener(
+            'click',
+            () => this.updateCount(1),
+        );
+        this.querySelector(`.${CLASS_NAMES.decrementBtn}`).addEventListener(
+            'click',
+            () => this.updateCount(-1),
+        );
     }
 
     updateCount(delta) {
@@ -88,22 +94,25 @@ class IRNMNNumberPicker extends HTMLElement {
             this.updateDisplay();
 
             // Emit custom event to notify parent of the change
-            this.dispatchEvent(new CustomEvent('valueChanged', {
-                detail: { value: this.state.count },
-                bubbles: true,
-                composed: true
-            }));
+            this.dispatchEvent(
+                new CustomEvent('valueChanged', {
+                    detail: { value: this.state.count },
+                    bubbles: true,
+                    composed: true,
+                }),
+            );
         }
     }
 
     /**
      * Update the displayed number value.
      * This method is called whenever the count is updated.
-     * 
+     *
      * @return {void}
      */
     updateDisplay() {
-        this.querySelector(`.${CLASS_NAMES.numberValue}`).textContent = this.state.count;
+        this.querySelector(`.${CLASS_NAMES.numberValue}`).textContent =
+            this.state.count;
         this.querySelector('input[type=hidden]').value = this.state.count;
     }
 }

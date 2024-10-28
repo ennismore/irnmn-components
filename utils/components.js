@@ -18,7 +18,7 @@ export function dispatchSyncEvent(eventName, detail) {
  */
 export function handleSyncEvent(event, currentState, updateState) {
     const newState = event.detail;
-    if (JSON.stringify(currentState) === JSON.stringify(newState)) return;  // Prevent self-updates
+    if (JSON.stringify(currentState) === JSON.stringify(newState)) return; // Prevent self-updates
     updateState(newState);
 }
 
@@ -45,7 +45,7 @@ export function getFromSessionStorage(key) {
  * @param {...string} keys - List of keys to clear from sessionStorage
  */
 export function clearSessionData(...keys) {
-    keys.forEach(key => sessionStorage.removeItem(key));
+    keys.forEach((key) => sessionStorage.removeItem(key));
 }
 
 /**
@@ -72,8 +72,8 @@ export function highlightButton(button, className) {
  * @param {string[]} classNames - Array of class names to clear
  */
 export function clearHighlights(buttons, classNames = []) {
-    buttons.forEach(button => {
-        classNames.forEach(className => button.classList.remove(className));
+    buttons.forEach((button) => {
+        classNames.forEach((className) => button.classList.remove(className));
     });
 }
 
