@@ -96,7 +96,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         const enableChildrenAttr = this.getAttribute('enable-children');
         return (
             enableChildrenAttr === 'true' ||
-            (enableChildrenAttr !== 'false' && enableChildrenAttr)
+            (enableChildrenAttr !== 'false' && enableChildrenAttr !== 'null' && enableChildrenAttr)
         );
     }
 
@@ -110,7 +110,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         );
         return (
             enableChildrenAgesAttr === 'true' ||
-            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr)
+            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr !== 'null' && enableChildrenAgesAttr)
         );
     }
 
@@ -297,14 +297,14 @@ class IRNMNRoomsSelector extends HTMLElement {
             });
         }
         const roomGuestsHTML = `
-            <irnmn-guests-selector 
+            <irnmn-guests-selector
                 init-state='${JSON.stringify(roomState)}'
                 name="rooms[${roomIndex - 1}]"
                 label="${this.labels.room} ${roomIndex}"
                 labels='${JSON.stringify(this.labels)}'
-                max-total-guests="${this.maxTotalGuests}" 
-                adults-number="${this.adultsNumber}" 
-                children-number="${this.childrenNumber}" 
+                max-total-guests="${this.maxTotalGuests}"
+                adults-number="${this.adultsNumber}"
+                children-number="${this.childrenNumber}"
                 max-child-age="${this.maxChildAge}"
                 enable-children="${this.enableChildren}"
                 enable-children-ages="${this.enableChildrenAges}"

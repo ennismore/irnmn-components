@@ -141,7 +141,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         const enableChildrenAttr = this.getAttribute('enable-children');
         return (
             enableChildrenAttr === 'true' ||
-            (enableChildrenAttr !== 'false' && enableChildrenAttr)
+            (enableChildrenAttr !== 'false' && enableChildrenAttr !== 'null' && enableChildrenAttr)
         );
     }
 
@@ -155,7 +155,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         );
         return (
             enableChildrenAgesAttr === 'true' ||
-            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr)
+            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr !== 'null' && enableChildrenAgesAttr)
         );
     }
 
@@ -238,14 +238,13 @@ class IRNMNGuestsSelector extends HTMLElement {
             </div>
             <div class="${CLASS_NAMES.guestControls}">
                 <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.adultsNumber ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
-                ${
-                    this.enableChildren
-                        ? `
+                ${this.enableChildren
+                ? `
                 <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.childrenNumber ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 `
-                        : ''
-                }
+                : ''
+            }
             </div>
             </div>
         `;
