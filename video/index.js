@@ -1,8 +1,7 @@
-// Temp approach to import Hls 
+// Temp approach to import Hls
 import Hls from './vendor/hls.light.min.js';
 
 class IrnmnVideo extends HTMLElement {
-
     static get observedAttributes() {
         return ['src'];
     }
@@ -35,7 +34,6 @@ class IrnmnVideo extends HTMLElement {
     }
 
     render() {
-        
         this.shadowRoot.innerHTML = `
             <style>
                 video{
@@ -73,8 +71,7 @@ class IrnmnVideo extends HTMLElement {
      * @returns {void}
      */
     setupVideo() {
-
-        if (this.getAttribute('video-source') !== 'hls' || ! Hls.isSupported() ) {
+        if (this.getAttribute('video-source') !== 'hls' || !Hls.isSupported()) {
             return;
         }
 
@@ -83,10 +80,9 @@ class IrnmnVideo extends HTMLElement {
         hls.loadSource(video.src);
         hls.attachMedia(video);
 
-        if( this.getAttribute('video-autoplay') === 'true' ) {
+        if (this.getAttribute('video-autoplay') === 'true') {
             video.play();
         }
-
     }
 
     /**
@@ -95,24 +91,20 @@ class IrnmnVideo extends HTMLElement {
      * If a button is present in the component, it links to the video player.
      * When the button is clicked, the video will toggle between play and pause.
      *
-     * @returns {void} 
+     * @returns {void}
      */
     setupButton() {
-    
         const video = this.shadowRoot.querySelector('video');
         const button = this.querySelector('button');
 
         button?.addEventListener('click', () => {
-            
             // Toggle play/pause state
             video.paused ? video.play() : video.pause();
-        
+
             // Update button class and title for UI and Accessibility purposes
             button.classList.toggle('--paused', video.paused);
             button.title = video.paused ? 'Pause video' : 'Play video';
-
         });
-
     }
 }
 
