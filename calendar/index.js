@@ -35,7 +35,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['open-date', 'date-locale'];
+        return ['opening-date', 'date-locale'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -56,7 +56,7 @@ class IRNMNCalendar extends HTMLElement {
         this.placeholder = this.getPlaceholder();
         this.name = this.getName();
         this.today = this.getToday();
-        this.openDate = this.getOpenDate();
+        this.openingDate = this.getOpeningDate();
         this.startName = this.getStartName();
         this.endName = this.getEndName();
         this.weekDays = this.getWeekDays();
@@ -102,8 +102,8 @@ class IRNMNCalendar extends HTMLElement {
      * Get the open date for the calendar (either from attribute or current date).
      * @return {Date} Open date or default to the current date.
      */
-    getOpenDate() {
-        return new Date(this.getAttribute('open-date') || Date.now());
+    getOpeningDate() {
+        return new Date(this.getAttribute('opening-date') || Date.now());
     }
 
     /**
@@ -164,7 +164,7 @@ class IRNMNCalendar extends HTMLElement {
 
     renderCalendar() {
         this.setProperties();
-        this.verifyOpenDate();
+        this.verifyOpeningDate();
         this.render();
         this.loadFromSessionStorage();
 
@@ -231,22 +231,22 @@ class IRNMNCalendar extends HTMLElement {
      * Use Today as the minimum date for the calendar
      * @return {void}
      */
-    verifyOpenDate() {
+    verifyOpeningDate() {
 
         /**
          * Prevent issues with timezone, setting the time to 00:00:00
          */
         this.today.setHours(0, 0, 0, 0);
-        this.openDate.setHours(0, 0, 0, 0);
+        this.openingDate.setHours(0, 0, 0, 0);
 
-        if (this.openDate < this.today) {
-            this.openDate = this.today;
+        if (this.openingDate < this.today) {
+            this.openingDate = this.today;
         }
 
     }
 
     loadMonthButtons() {
-        const months = getNext12Months(this.openDate);
+        const months = getNext12Months(this.openingDate);
 
         months.forEach(month => {
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
@@ -265,7 +265,7 @@ class IRNMNCalendar extends HTMLElement {
             month.days.forEach(day => {
                 const dayBtn = createDayButton(day, this.dateLocale);
 
-                if (day.date < this.openDate) dayBtn.disabled = true;
+                if (day.date < this.openingDate) dayBtn.disabled = true;
 
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
                 daysContainer.appendChild(dayBtn);

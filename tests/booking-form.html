@@ -31,7 +31,7 @@
                     "hotelCode": "NYC01", 
                     "roomsNumber": 5, 
                     "minRooms": 1, 
-                    "openDate": "2024-10-01", 
+                    "openingDate": "2024-10-01", 
                     "dateLocale": "en-us",
                     "maxTotalGuests": 6,
                     "adultsNumber": 5,
@@ -40,8 +40,8 @@
                     "enableChildren": true,
                     "enableChildrenAges": true
                 }, 
-                {"name": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 10, "minRooms": 2, "openDate": "2025-11-01", "dateLocale": "en-gb"},
-                {"name": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "minRooms": 1, "openDate": "2024-12-01", "dateLocale": "fr-fr"}
+                {"name": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 10, "minRooms": 2, "openingDate": "2025-11-01", "dateLocale": "en-gb"},
+                {"name": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "minRooms": 1, "openingDate": "2024-12-01", "dateLocale": "fr-fr"}
             ]'
             locations-endpoint="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v2/locations"
             >
@@ -52,8 +52,8 @@
             label="Booking Dates" 
             name="booking_another" 
             placeholder="Choose your date" 
-            open-date="2024-10-04"
-            open-date-message="You can't select before the opening date"
+            opening-date="2024-10-04"
+            opening-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date"
             input-name="date-selection"
             checkin-date-name="startDate"
@@ -78,8 +78,8 @@
             label="Booking Dates" 
             name="booking_another" 
             placeholder="Choose your date" 
-            open-date="2024-10-04"
-            open-date-message="You can't select before the opening date"
+            opening-date="2024-10-04"
+            opening-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date"
             input-name="date-selection"
             checkin-date-name="startDate"
@@ -99,15 +99,15 @@
 
         <irnmn-location label="Select a Destination" id="location-select" name="booking-location" default="LA02"
             placeholder="Choose a location" error-message="Please select a location" locations='[
-                        {"hotelName": "New York", "hotelCode": "NYC01", "roomsNumber": 5, "openDate": "2024-10-01", "dateLocale": "en-us", "maxTotalGuests": 6, "adultsNumber": 5, "childrenNumber": 3, "maxChildAge": 10, "enableChildren": true, "enableChildrenAges": true},
-                        {"hotelName": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 6, "openDate": "2025-11-01", "dateLocale": "en-gb", "maxTotalGuests": 5, "adultsNumber": 5, "childrenNumber": 2, "maxChildAge": 15, "enableChildren": true, "enableChildrenAges": false},
-                        {"hotelName": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "openDate": "2024-12-01", "dateLocale": "fr-fr", "maxTotalGuests": 4, "adultsNumber": 4, "childrenNumber": 0, "maxChildAge": 11, "enableChildren": false, "enableChildrenAges": false}
+                        {"hotelName": "New York", "hotelCode": "NYC01", "roomsNumber": 5, "openingDate": "2024-10-01", "dateLocale": "en-us", "maxTotalGuests": 6, "adultsNumber": 5, "childrenNumber": 3, "maxChildAge": 10, "enableChildren": true, "enableChildrenAges": true},
+                        {"hotelName": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 6, "openingDate": "2025-11-01", "dateLocale": "en-gb", "maxTotalGuests": 5, "adultsNumber": 5, "childrenNumber": 2, "maxChildAge": 15, "enableChildren": true, "enableChildrenAges": false},
+                        {"hotelName": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "openingDate": "2024-12-01", "dateLocale": "fr-fr", "maxTotalGuests": 4, "adultsNumber": 4, "childrenNumber": 0, "maxChildAge": 11, "enableChildren": false, "enableChildrenAges": false}
                     ]'>
             ]'>
         </irnmn-location>
 
         <irnmn-calendar id="booking-calendar2" label="Booking Dates" name="booking_another" placeholder="Choose your date" format-date-values="YYYY-MM-DD"
-            open-date="2024-10-04" open-date-message="You can't select before the opening date"
+            opening-date="2024-10-04" opening-date-message="You can't select before the opening date"
             errorMessage="Please pick a valid date" input-name="date-selection" checkin-date-name="startDate"
             checkout-date-name="endDate" date-locale="en-us" />
         </irnmn-calendar>

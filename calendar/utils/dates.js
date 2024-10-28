@@ -1,12 +1,12 @@
 /**
  * Get the next 12 months from the open date
- * @param {Date} openDate The date to start from
+ * @param {Date} openingDate The date to start from
  * @return {Array} An array of objects representing the next 12 months (year, month, days)
  */
-export function getNext12Months(openDate) {
+export function getNext12Months(openingDate) {
     const months = [];
-    const startYear = openDate.getUTCFullYear();
-    const startMonth = openDate.getUTCMonth();
+    const startYear = openingDate.getUTCFullYear();
+    const startMonth = openingDate.getUTCMonth();
 
     for (let offset = 0; offset < 12; offset++) {
         const currentMonth = (startMonth + offset) % 12;
