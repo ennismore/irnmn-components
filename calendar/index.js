@@ -222,8 +222,8 @@ class IRNMNCalendar extends HTMLElement {
 
 
     renderHiddenInputs() {
-        this.startInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.startName });
-        this.endInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.endName });
+        this.startInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.startName, required: 'required' });
+        this.endInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.endName, required: 'required' });
         this.append(this.startInput, this.endInput);
     }
 

@@ -139,7 +139,7 @@ class IRNMNLocation extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
-                <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}">
+                <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}" required>
                     <option value="" disabled selected>${this.placeholder}</option>
                     ${this.locations.map(location => {
             // Dynamically create the data attributes based on the locations obj
