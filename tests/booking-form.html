@@ -105,7 +105,14 @@
                     ]'>
             ]'>
         </irnmn-location>
-        
+
+        <irnmn-calendar id="booking-calendar2" label="Booking Dates" name="booking_another" placeholder="Choose your date" format-date-values="YYYY-MM-DD"
+            open-date="2024-10-04" open-date-message="You can't select before the opening date"
+            errorMessage="Please pick a valid date" input-name="date-selection" checkin-date-name="startDate"
+            checkout-date-name="endDate" date-locale="en-us" />
+        </irnmn-calendar>
+
+
         <irnmn-rooms-selector
         max-rooms="5" 
         min-rooms="1" 
