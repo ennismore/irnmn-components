@@ -1,24 +1,25 @@
-import { 
-    createMonthElement, 
+import {
+    createMonthElement,
     createDayButton,
     addEmptyDays
-} from './utils/dom.js'; 
+} from './utils/dom.js';
 
-import { 
-    getNext12Months, 
-    formatDate
-} from './utils/dates.js'; 
+import {
+    getNext12Months,
+    formatDate,
+    formatDateToLocale
+} from './utils/dates.js';
 
-import { CLASS_NAMES } from './utils/constants.js';  
+import { CLASS_NAMES } from './utils/constants.js';
 
-import { 
-    dispatchSyncEvent, 
-    handleSyncEvent, 
-    saveToSessionStorage, 
-    getFromSessionStorage, 
-    clearSessionData, 
-    toggleVisibility, 
-    highlightButton, 
+import {
+    dispatchSyncEvent,
+    handleSyncEvent,
+    saveToSessionStorage,
+    getFromSessionStorage,
+    clearSessionData,
+    toggleVisibility,
+    highlightButton,
     clearHighlights
 } from '../utils/components.js';  // Utility functions for general component behavior
 
@@ -34,7 +35,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['open-date', 'date-locale'];  
+        return ['open-date', 'date-locale'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -62,6 +63,7 @@ class IRNMNCalendar extends HTMLElement {
         this.startStorageKey = this.getStartStorageKey();
         this.endStorageKey = this.getEndStorageKey();
         this.dateLocale = this.getDateLocale();
+        this.formatDateValues = this.getFormatDateValues();
     }
 
     /**
@@ -152,10 +154,18 @@ class IRNMNCalendar extends HTMLElement {
         return this.getAttribute('date-locale') || 'en-gb';
     }
 
+    /**
+     * Get the date format values.
+     * @return {String} Date format or default 'YYYY-MM-DD'.
+     */
+    getFormatDateValues() {
+        return this.getAttribute('format-date-values') || 'YYYY-MM-DD';
+    }
+
     renderCalendar() {
         this.setProperties();
         this.verifyOpenDate();
-        this.render();  
+        this.render();
         this.loadFromSessionStorage();
 
         /**
@@ -163,15 +173,15 @@ class IRNMNCalendar extends HTMLElement {
          * and all the methods above have been executed
          */
         Promise.resolve().then(() => {
-            this.dispatchEvent(new CustomEvent('irnmn-calendar-loaded', { 
+            this.dispatchEvent(new CustomEvent('irnmn-calendar-loaded', {
                 detail: { panel: this.panel }
-             }));
+            }));
         });
     }
 
     async connectedCallback() {
-       this.renderCalendar();
-         // Load from sessionStorage and apply necessary classes
+        this.renderCalendar();
+        // Load from sessionStorage and apply necessary classes
 
         // Listen for custom events tied to the specific "name" attribute
         document.addEventListener(`checkin-selected-${this.name}`, (e) => this.syncState(e));
@@ -201,7 +211,7 @@ class IRNMNCalendar extends HTMLElement {
         inputGroup.addEventListener('click', () => this.toggleCalendar());
         this.appendChild(inputGroup);
     }
-    
+
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
         this.monthsWrapper = this.createElementWithClasses('div', [CLASS_NAMES.monthsWrapper]);
@@ -209,7 +219,7 @@ class IRNMNCalendar extends HTMLElement {
         this.panel.style.display = 'none';  // Hide the panel by default
         this.appendChild(this.panel);
     }
-    
+
 
     renderHiddenInputs() {
         this.startInput = this.createElementWithAttributes('input', { type: 'hidden', name: this.startName });
@@ -229,7 +239,7 @@ class IRNMNCalendar extends HTMLElement {
         this.today.setHours(0, 0, 0, 0);
         this.openDate.setHours(0, 0, 0, 0);
 
-        if( this.openDate < this.today ) {
+        if (this.openDate < this.today) {
             this.openDate = this.today;
         }
 
@@ -237,26 +247,26 @@ class IRNMNCalendar extends HTMLElement {
 
     loadMonthButtons() {
         const months = getNext12Months(this.openDate);
-    
+
         months.forEach(month => {
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
             this.monthsWrapper.appendChild(monthEl);
-    
+
             const daysContainer = monthEl.querySelector(`.${CLASS_NAMES.daysContainer}`);
-    
+
             // Calculate the first day of the month and how many empty slots before Monday
             const firstDayOfMonth = new Date(month.year, month.month, 1);
             const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust to make Monday = 0
-    
+
             // Use the utility function to add empty placeholders
             addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
-    
+
             // Render the days of the month
             month.days.forEach(day => {
                 const dayBtn = createDayButton(day, this.dateLocale);
 
                 if (day.date < this.openDate) dayBtn.disabled = true;
-    
+
                 dayBtn.addEventListener('click', (e) => this.handleDayClick(dayBtn));
                 daysContainer.appendChild(dayBtn);
                 this.dayButtons.push(dayBtn);
@@ -272,23 +282,23 @@ class IRNMNCalendar extends HTMLElement {
      */
     handleDayClick(dayBtn) {
         const time = parseInt(dayBtn.dataset.time);
-    
+
         // If no check-in is set, set it
         if (!this.state.checkin) {
             this.setDate('checkin', time, dayBtn, `checkin-selected-${this.name}`);
-        } 
+        }
         // If no checkout is set and the selected time is after check-in, set checkout
         else if (!this.state.checkout && time > this.state.checkin) {
             this.setDate('checkout', time, dayBtn, `checkout-selected-${this.name}`);
             this.highlightRange(this.state.checkin, this.state.checkout);
             this.toggleCalendar();
-        } 
+        }
         // Otherwise, reset and set a new check-in
         else {
             this.resetDates();
             this.setDate('checkin', time, dayBtn, `checkin-selected-${this.name}`);
         }
-    
+
         this.updateInputField();
     }
 
@@ -332,27 +342,30 @@ class IRNMNCalendar extends HTMLElement {
     setRangeInputFields() {
         const checkinDate = new Date(this.state.checkin);
         const checkoutDate = new Date(this.state.checkout);
-    
-        this.inputElement.value = `${formatDate(checkinDate, this.dateLocale)} - ${formatDate(checkoutDate, this.dateLocale)}`;
-        this.startInput.value = checkinDate.toISOString();  // Save as ISO string
-        this.endInput.value = checkoutDate.toISOString();   // Save as ISO string
-    
+
+        this.inputElement.value = `${formatDateToLocale(checkinDate, this.dateLocale)} - ${formatDateToLocale(checkoutDate, this.dateLocale)}`;
+        this.startInput.value = formatDate(checkinDate, this.formatDateValues);  // Save in provided format
+        this.endInput.value = formatDate(checkoutDate, this.formatDateValues);   // Save in provided format
+
         saveToSessionStorage(this.startStorageKey, this.startInput.value);
+        saveToSessionStorage(`${this.startStorageKey}-iso`, checkinDate.toISOString());
         saveToSessionStorage(this.endStorageKey, this.endInput.value);
+        saveToSessionStorage(`${this.endStorageKey}-iso`, checkoutDate.toISOString());
     }
-    
+
 
     setSingleInputField() {
         const checkinDate = new Date(this.state.checkin);
-    
-        this.inputElement.value = formatDate(checkinDate, this.dateLocale);
-        this.startInput.value = checkinDate.toISOString();  // Save as ISO string
+
+        this.inputElement.value = formatDateToLocale(checkinDate, this.dateLocale);
+        this.startInput.value = formatDate(checkinDate, this.formatDateValues);  // Save in provided format
         this.endInput.value = '';
-    
+
         saveToSessionStorage(this.startStorageKey, this.startInput.value);
+        saveToSessionStorage(`${this.startStorageKey}-iso`, checkinDate.toISOString());
         clearSessionData(this.endStorageKey);
     }
-    
+
     clearInputFields() {
         this.inputElement.value = '';
         this.startInput.value = '';
@@ -402,30 +415,32 @@ class IRNMNCalendar extends HTMLElement {
      * @param {HTMLInputElement} inputElement - The input element to set the value
      * @return {void}
      */
-    setDateFromStorage(storedDate, stateKey, inputElement) {
-        if (storedDate) {
-            this.state[stateKey] = new Date(storedDate).getTime();  // Convert ISO string to timestamp
-            inputElement.value = formatDate(new Date(this.state[stateKey]), this.dateLocale);
+    setDateFromStorage(storedDate, storedISO, stateKey, inputElement) {
+        if (storedDate && storedISO) {
+            this.state[stateKey] = new Date(storedISO).getTime();  // Convert ISO string to timestamp
+            inputElement.value = storedDate;
         }
     }
 
     loadFromSessionStorage() {
         const storedCheckin = getFromSessionStorage(this.startStorageKey);
+        const storedCheckinISO = getFromSessionStorage(`${this.startStorageKey}-iso`);
         const storedCheckout = getFromSessionStorage(this.endStorageKey);
+        const storedCheckoutISO = getFromSessionStorage(`${this.endStorageKey}-iso`);
 
-        this.setDateFromStorage(storedCheckin, 'checkin', this.startInput);
-        this.setDateFromStorage(storedCheckout, 'checkout', this.endInput);
+        this.setDateFromStorage(storedCheckin, storedCheckinISO, 'checkin', this.startInput);
+        this.setDateFromStorage(storedCheckout, storedCheckoutISO, 'checkout', this.endInput);
 
         // Display the date range in the input field
         if (this.state.checkin && this.state.checkout) {
-            this.inputElement.value = `${this.startInput.value} - ${this.endInput.value}`;
+            this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale)} - ${formatDateToLocale(this.state.checkout, this.dateLocale)}`;
         } else if (this.state.checkin) {
-            this.inputElement.value = this.startInput.value;
+            this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale)}`;
         }
 
         this.applyHighlights();  // Apply the saved highlights to the calendar
     }
-    
+
     createElementWithClasses(tag, classNames = []) {
         const element = document.createElement(tag);
         classNames.forEach(className => element.classList.add(className));
