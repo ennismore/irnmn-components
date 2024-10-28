@@ -33,19 +33,19 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     setAttributes() {
-        this.maxRooms = this.getMaxRooms();
+        this.roomsNumber = this.getRoomsNumber();
         this.minRooms = this.getMinRooms();
         this.maxTotalGuests = this.getMaxTotalGuests();
-        this.maxAdults = this.getMaxAdults();
+        this.adultsNumber = this.getAdultsNumber();
         this.enableChildren = this.getEnableChildren();
-        this.maxChildren = this.getMaxChildren();
+        this.childrenNumber = this.getChildrenNumber();
         this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
     }
 
     static get observedAttributes() {
-        return ['max-rooms', 'min-rooms', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-children', 'enable-children-ages'];
+        return ['rooms-number', 'min-rooms', 'max-total-guests', 'adults-number', 'children-number', 'max-child-age', 'enable-children', 'enable-children-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -65,8 +65,8 @@ class IRNMNRoomsSelector extends HTMLElement {
         const rooms = getFromSessionStorage('irnmn-rooms');
         if (rooms) {
             this.state.rooms = JSON.parse(rooms);
-            if (this.state.rooms.length > this.maxRooms) {
-                this.state.rooms = this.state.rooms.slice(0, this.maxRooms);
+            if (this.state.rooms.length > this.roomsNumber) {
+                this.state.rooms = this.state.rooms.slice(0, this.roomsNumber);
             }
             this.updateRoomCount(this.state.rooms.length);
             // update select value
@@ -100,8 +100,8 @@ class IRNMNRoomsSelector extends HTMLElement {
     * Get the maximum number of rooms.
     * @return {Number} Max rooms or default value 5.
     */
-    getMaxRooms() {
-        return parseInt(this.getAttribute('max-rooms')) || 5;
+    getRoomsNumber() {
+        return parseInt(this.getAttribute('rooms-number')) || 5;
     }
 
     /**
@@ -124,16 +124,16 @@ class IRNMNRoomsSelector extends HTMLElement {
      * Get the maximum number of adults.
      * @return {Number} Max adults or default value of 5.
      */
-    getMaxAdults() {
-        return parseInt(this.getAttribute('max-adults')) || 5;
+    getAdultsNumber() {
+        return parseInt(this.getAttribute('adults-number')) || 5;
     }
 
     /**
      * Get the maximum number of children.
      * @return {Number} Max children or default value of 5.
      */
-    getMaxChildren() {
-        return parseInt(this.getAttribute('max-children')) || 5;
+    getChildrenNumber() {
+        return parseInt(this.getAttribute('children-number')) || 5;
     }
 
     /**
@@ -180,13 +180,13 @@ class IRNMNRoomsSelector extends HTMLElement {
      * Generates HTML option elements for a range of room numbers.
      *
      * This method creates a string of `<option>` elements, each representing a room number
-     * within the range defined by `this.minRooms` and `this.maxRooms`.
+     * within the range defined by `this.minRooms` and `this.roomsNumber`.
      *
      * @returns {string} A string containing HTML `<option>` elements for each room number.
      */
     generateRoomOptions() {
         let options = '';
-        for (let i = this.minRooms; i <= this.maxRooms; i++) {
+        for (let i = this.minRooms; i <= this.roomsNumber; i++) {
             options += `<option value="${i}">${i} ${i == 1 ? this.labels.room : this.labels.rooms}</option>`;
         }
         return options;
@@ -265,8 +265,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 label="${this.labels.room} ${roomIndex}"
                 labels='${JSON.stringify(this.labels)}'
                 max-total-guests="${this.maxTotalGuests}" 
-                max-adults="${this.maxAdults}" 
-                max-children="${this.maxChildren}" 
+                adults-number="${this.adultsNumber}" 
+                children-number="${this.childrenNumber}" 
                 max-child-age="${this.maxChildAge}"
                 enable-children="${this.enableChildren}"
                 enable-children-ages="${this.enableChildrenAges}"

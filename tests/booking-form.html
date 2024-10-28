@@ -29,19 +29,19 @@
                 {
                     "name": "New York", 
                     "hotelCode": "NYC01", 
-                    "maxRooms": 5, 
+                    "roomsNumber": 5, 
                     "minRooms": 1, 
                     "openDate": "2024-10-01", 
                     "dateLocale": "en-us",
                     "maxTotalGuests": 6,
-                    "maxAdults": 5,
-                    "maxChildren": 3,
+                    "adultsNumber": 5,
+                    "childrenNumber": 3,
                     "maxChildAge": 11,
                     "enableChildren": true,
                     "enableChildrenAges": true
                 }, 
-                {"name": "Los Angeles", "hotelCode": "LA02", "maxRooms": 10, "minRooms": 2, "openDate": "2025-11-01", "dateLocale": "en-gb"},
-                {"name": "Chicago", "hotelCode": "CHI03", "maxRooms": 7, "minRooms": 1, "openDate": "2024-12-01", "dateLocale": "fr-fr"}
+                {"name": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 10, "minRooms": 2, "openDate": "2025-11-01", "dateLocale": "en-gb"},
+                {"name": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "minRooms": 1, "openDate": "2024-12-01", "dateLocale": "fr-fr"}
             ]'
             locations-endpoint="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v2/locations"
             >
@@ -64,7 +64,7 @@
             />
         </irnmn-calendar>
         <irnmn-rooms-selector
-            max-rooms="5"
+            rooms-number="5"
             min-rooms="1"
             label="Select Number of Rooms">
         </irnmn-rooms-selector>
@@ -99,9 +99,9 @@
 
         <irnmn-location label="Select a Destination" id="location-select" name="booking-location" default="LA02"
             placeholder="Choose a location" error-message="Please select a location" locations='[
-                        {"name": "New York", "hotelCode": "NYC01", "maxRooms": 5, "openDate": "2024-10-01", "dateLocale": "en-us", "maxTotalGuests": 6, "maxAdults": 5, "maxChildren": 3, "maxChildAge": 10, "enableChildren": true, "enableChildrenAges": true},
-                        {"name": "Los Angeles", "hotelCode": "LA02", "maxRooms": 6, "openDate": "2025-11-01", "dateLocale": "en-gb", "maxTotalGuests": 5, "maxAdults": 5, "maxChildren": 2, "maxChildAge": 15, "enableChildren": true, "enableChildrenAges": false},
-                        {"name": "Chicago", "hotelCode": "CHI03", "maxRooms": 7, "openDate": "2024-12-01", "dateLocale": "fr-fr", "maxTotalGuests": 4, "maxAdults": 4, "maxChildren": 0, "maxChildAge": 11, "enableChildren": false, "enableChildrenAges": false}
+                        {"hotelName": "New York", "hotelCode": "NYC01", "roomsNumber": 5, "openDate": "2024-10-01", "dateLocale": "en-us", "maxTotalGuests": 6, "adultsNumber": 5, "childrenNumber": 3, "maxChildAge": 10, "enableChildren": true, "enableChildrenAges": true},
+                        {"hotelName": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 6, "openDate": "2025-11-01", "dateLocale": "en-gb", "maxTotalGuests": 5, "adultsNumber": 5, "childrenNumber": 2, "maxChildAge": 15, "enableChildren": true, "enableChildrenAges": false},
+                        {"hotelName": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "openDate": "2024-12-01", "dateLocale": "fr-fr", "maxTotalGuests": 4, "adultsNumber": 4, "childrenNumber": 0, "maxChildAge": 11, "enableChildren": false, "enableChildrenAges": false}
                     ]'>
             ]'>
         </irnmn-location>
@@ -114,12 +114,12 @@
 
 
         <irnmn-rooms-selector
-        max-rooms="5" 
+        rooms-number="5" 
         min-rooms="1" 
         label="Select Number of Rooms" 
         max-total-guests="6"
-        max-adults="5"
-        max-children="3"
+        adults-number="5"
+        children-number="3"
         max-child-age="11"
         enable-children="true"
         enable-children-ages="true">

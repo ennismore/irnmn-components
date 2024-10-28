@@ -31,7 +31,7 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['name', 'label', 'max-total-guests', 'max-adults', 'max-children', 'max-child-age', 'enable-children', 'enable-children-ages'];
+        return ['name', 'label', 'max-total-guests', 'adults-number', 'children-number', 'max-child-age', 'enable-children', 'enable-children-ages'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -61,9 +61,9 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.label = this.getLabel();
         this.labels = this.getLabels();
         this.maxTotalGuests = this.getMaxTotalGuests();
-        this.maxAdults = this.getMaxAdults();
+        this.adultsNumber = this.getAdultsNumber();
         this.enableChildren = this.getEnableChildren();
-        this.maxChildren = this.getMaxChildren();
+        this.childrenNumber = this.getChildrenNumber();
         this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
     }
@@ -78,14 +78,14 @@ class IRNMNGuestsSelector extends HTMLElement {
             this.state.childrenAges = [];
         }
 
-        // Ensure adults do not exceed maxAdults
-        if (this.state.adults > this.maxAdults) {
-            this.state.adults = this.maxAdults;
+        // Ensure adults do not exceed adultsNumber
+        if (this.state.adults > this.adultsNumber) {
+            this.state.adults = this.adultsNumber;
         }
 
-        // Ensure children do not exceed maxChildren
-        if (this.state.children > this.maxChildren) {
-            this.state.children = this.maxChildren;
+        // Ensure children do not exceed childrenNumber
+        if (this.state.children > this.childrenNumber) {
+            this.state.children = this.childrenNumber;
         }
 
         // Ensure total guests do not exceed maxTotalGuests
@@ -150,16 +150,16 @@ class IRNMNGuestsSelector extends HTMLElement {
      * Get the maximum number of adults.
      * @return {Number} Max adults or default value of 5.
      */
-    getMaxAdults() {
-        return parseInt(this.getAttribute('max-adults')) || 5;
+    getAdultsNumber() {
+        return parseInt(this.getAttribute('adults-number')) || 5;
     }
 
     /**
      * Get the maximum number of children.
      * @return {Number} Max children or default value of 5.
      */
-    getMaxChildren() {
-        return parseInt(this.getAttribute('max-children')) || 5;
+    getChildrenNumber() {
+        return parseInt(this.getAttribute('children-number')) || 5;
     }
 
     /**
@@ -200,9 +200,9 @@ class IRNMNGuestsSelector extends HTMLElement {
                 <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
             </div>
             <div class="${CLASS_NAMES.guestControls}">
-                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.maxAdults ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
+                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.adultsNumber ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
                 ${this.enableChildren ? `
-                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.maxChildren ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
+                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.childrenNumber ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 ` : ''}
             </div>

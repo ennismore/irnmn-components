@@ -151,7 +151,7 @@ class IRNMNLocation extends HTMLElement {
 
             return `
                             <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
-                                ${location.name}
+                                ${location.hotelName}
                             </option>`;
         }).join('')}
                 </select>
