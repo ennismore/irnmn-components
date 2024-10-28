@@ -7,16 +7,16 @@ Web component that provides a fully interactive date selection interface with a 
 ## Attributes
 The following attributes can be added to the `IRNMNCalendar` element to customize its behavior:
 
-| Attribute                | Description                                                        | Default Value         |
-|--------------------------|--------------------------------------------------------------------|----------------------|
-| `label`                  | The label displayed above the input field.                         | `Check-in`           |
+| Attribute                | Description                                                       | Default Value        |
+|--------------------------|-------------------------------------------------------------------|----------------------|
+| `label`                  | The label displayed above the input field.                        | `Check-in`           |
 | `placeholder`            | Placeholder text for the input field.                             | `Select a date`      |
 | `name`                   | Unique name identifier for the calendar component.                | `irnmn-calendar`     |
-| `open-date`               | The starting date for the calendar (initial view).                | `Date.now()`         |
+| `opening-date`           | The starting date for the calendar (initial view).                | `Date.now()`         |
 | `checkin-date-name`      | Name for the hidden check-in date input field.                    | `startDate`          |
 | `checkout-date-name`     | Name for the hidden check-out date input field.                   | `endDate`            |
 | `weekdays`               | Comma-separated list of weekday names (e.g., `Mon,Tue,...`).      | Disabled by default  |
-| `date-locale`               | The date format      | en-GB default  |
+| `date-locale`            | The date format                                                   | en-GB default  |
 
 ## Methods
 The following methods are exposed by the component for internal logic and can be extended if needed:
@@ -65,7 +65,7 @@ Here's an example of how to use the `IRNMNCalendar` component in your HTML:
     label="Select Your Dates"
     placeholder="Choose a date"
     name="booking-calendar"
-    open-date="2024-01-01"
+    opening-date="2024-01-01"
     checkin-date-name="start-date"
     checkout-date-name="end-date"
     weekdays="Mon,Tue,Wed,Thu,Fri,Sat,Sun">

@@ -33,7 +33,7 @@ Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 
 ```html
 <irnmn-location 
-    locations='[{"hotelCode": "H001", "name": "Hotel One", "maxRooms": 5}, {"hotelCode": "H002", "name": "Hotel Two", "maxRooms": 10}]'
+    locations='[{"hotelCode": "H001", "name": "Hotel One", "roomsNumber": 5}, {"hotelCode": "H002", "name": "Hotel Two", "roomsNumber": 10}]'
     label="Choose a Hotel"
     id="hotel-select"
     name="hotel"
@@ -42,11 +42,11 @@ Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 </irnmn-location>
 ```
 
-In this example, the `locations` attribute contains a JSON string that defines multiple locations, each with attributes such as `hotelCode`, `name`, and `maxRooms`. The dropdown is rendered dynamically based on this data.
+In this example, the `locations` attribute contains a JSON string that defines multiple locations, each with attributes such as `hotelCode`, `name`, and `roomsNumber`. The dropdown is rendered dynamically based on this data.
 
 ## Behavior
 
-- **Dynamic Data Attributes**: The component automatically generates `data-*` attributes for each location based on the keys in the provided location objects. For example, a location object with properties like `hotelCode`, `maxRooms`, and `name` will create corresponding `data-hotel-code`, `data-max-rooms`, and `data-name` attributes in the dropdown options.
+- **Dynamic Data Attributes**: The component automatically generates `data-*` attributes for each location based on the keys in the provided location objects. For example, a location object with properties like `hotelCode`, `roomsNumber`, and `name` will create corresponding `data-hotel-code`, `data-rooms-number`, and `data-name` attributes in the dropdown options.
 - **Form Synchronization**: When a location is selected, the component updates other elements in the form based on the selected location’s attributes. This ensures that the form stays in sync with the selected location’s data.
 
 ## Error Handling
