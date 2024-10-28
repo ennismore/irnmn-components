@@ -211,6 +211,15 @@ class IRNMNLocation extends HTMLElement {
         Object.entries(selectedLocation).forEach(([attrName, attributeValue]) => {
             if (attrName === 'name') return; // Exclude the attribute "name"
 
+            if (attrName === 'externalServiceUrl' && attributeValue) {
+                try {
+                    const url = new URL(attributeValue);
+                    this.parentForm.action = url.href;
+                } catch (e) {
+                    console.error("Invalid URL for externalServiceUrl", e);
+                }
+            }
+
             const formattedAttrName = attrName.replace(/([A-Z])/g, '-$1').toLowerCase();
 
             this.parentForm.querySelectorAll(`[${formattedAttrName}]`).forEach(element => {
