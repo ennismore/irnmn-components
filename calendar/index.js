@@ -104,12 +104,10 @@ class IRNMNCalendar extends HTMLElement {
     getOpeningDate() {
         const openingDateAttr = this.getAttribute('opening-date');
         const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(openingDateAttr);
-
         if (openingDateAttr && isValidDate) {
             return new Date(openingDateAttr);
-        } else {
-            return new Date();
         }
+        return this.today;
     }
 
     /**
@@ -188,7 +186,6 @@ class IRNMNCalendar extends HTMLElement {
 
     renderCalendar() {
         this.setProperties();
-        this.verifyOpeningDate();
         this.render();
         this.loadFromSessionStorage();
 
@@ -289,22 +286,6 @@ class IRNMNCalendar extends HTMLElement {
             this.appendChild(this.errorMessageElement);
         } else {
             this.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
-        }
-    }
-
-    /**
-     * Use Today as the minimum date for the calendar
-     * @return {void}
-     */
-    verifyOpeningDate() {
-        /**
-         * Prevent issues with timezone, setting the time to 00:00:00
-         */
-        this.today.setHours(0, 0, 0, 0);
-        this.openingDate.setHours(0, 0, 0, 0);
-
-        if (this.openingDate < this.today) {
-            this.openingDate = this.today;
         }
     }
 
