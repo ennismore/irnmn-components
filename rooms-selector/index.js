@@ -96,7 +96,9 @@ class IRNMNRoomsSelector extends HTMLElement {
         const enableChildrenAttr = this.getAttribute('enable-children');
         return (
             enableChildrenAttr === 'true' ||
-            (enableChildrenAttr !== 'false' && enableChildrenAttr !== 'null' && enableChildrenAttr)
+            (enableChildrenAttr !== 'false' &&
+                enableChildrenAttr !== 'null' &&
+                enableChildrenAttr)
         );
     }
 
@@ -110,7 +112,9 @@ class IRNMNRoomsSelector extends HTMLElement {
         );
         return (
             enableChildrenAgesAttr === 'true' ||
-            (enableChildrenAgesAttr !== 'false' && enableChildrenAgesAttr !== 'null' && enableChildrenAgesAttr)
+            (enableChildrenAgesAttr !== 'false' &&
+                enableChildrenAgesAttr !== 'null' &&
+                enableChildrenAgesAttr)
         );
     }
 

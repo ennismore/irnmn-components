@@ -107,14 +107,13 @@ class IRNMNCalendar extends HTMLElement {
         const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(openingDateAttr);
 
         if (!openingDateAttr || !isValidDate) {
-           return this.today;
+            return this.today;
         }
 
         const openingDate = new Date(openingDateAttr);
 
         // Return the current date if the opening date has already passed
         return openingDate > this.today ? openingDate : this.today;
-       
     }
 
     /**
@@ -180,7 +179,10 @@ class IRNMNCalendar extends HTMLElement {
      * @return {Boolean} Show error or default value false.
      */
     getShowError() {
-        return this.hasAttribute('show-error') && this.getAttribute('show-error') === 'true';
+        return (
+            this.hasAttribute('show-error') &&
+            this.getAttribute('show-error') === 'true'
+        );
     }
 
     /**
@@ -285,10 +287,9 @@ class IRNMNCalendar extends HTMLElement {
 
     renderErrorMessage() {
         if (this.showError) {
-            this.errorMessageElement = this.createElementWithClasses(
-                'div',
-                [CLASS_NAMES.errorMessage],
-            );
+            this.errorMessageElement = this.createElementWithClasses('div', [
+                CLASS_NAMES.errorMessage,
+            ]);
             this.errorMessageElement.textContent = this.errorMessage;
             this.appendChild(this.errorMessageElement);
         } else {

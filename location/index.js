@@ -130,7 +130,10 @@ class IRNMNLocation extends HTMLElement {
      * @return {Boolean} Show error flag or default value false.
      */
     get showError() {
-        return this.hasAttribute('show-error') && this.getAttribute('show-error') === 'true';
+        return (
+            this.hasAttribute('show-error') &&
+            this.getAttribute('show-error') === 'true'
+        );
     }
 
     /**
@@ -160,21 +163,21 @@ class IRNMNLocation extends HTMLElement {
                 <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}" required>
                     <option value="" disabled selected>${this.placeholder}</option>
                     ${this.locations
-                .map((location) => {
-                    // Dynamically create the data attributes based on the locations obj
-                    const dataAttributes = Object.entries(location)
-                        .map(([key, value]) => {
-                            const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-                            return `${dataAttrName}="${value}"`;
-                        })
-                        .join(' ');
+                        .map((location) => {
+                            // Dynamically create the data attributes based on the locations obj
+                            const dataAttributes = Object.entries(location)
+                                .map(([key, value]) => {
+                                    const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                                    return `${dataAttrName}="${value}"`;
+                                })
+                                .join(' ');
 
-                    return `
+                            return `
                             <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
                                 ${location.hotelName}
                             </option>`;
-                })
-                .join('')}
+                        })
+                        .join('')}
                 </select>
             </div>
         `;
@@ -214,7 +217,7 @@ class IRNMNLocation extends HTMLElement {
         const selectedOption = selectedOptions[0];
 
         if (!selectedOption.value) {
-            return
+            return;
         }
         this.setAttribute('show-error', false);
         this.updateOtherComponents(selectedOption.dataset);
