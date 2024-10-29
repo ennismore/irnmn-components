@@ -34,7 +34,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['opening-date', 'date-locale'];
+        return ['opening-date', 'date-locale', 'show-error'];
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -61,6 +61,8 @@ class IRNMNCalendar extends HTMLElement {
         this.startStorageKey = this.getStartStorageKey();
         this.endStorageKey = this.getEndStorageKey();
         this.dateLocale = this.getDateLocale();
+        this.showError = this.getShowError();
+        this.errorMessage = this.getErrorMessage();
         this.formatDateValues = this.getFormatDateValues();
     }
 
@@ -161,6 +163,22 @@ class IRNMNCalendar extends HTMLElement {
         return this.getAttribute('format-date-values') || 'YYYY-MM-DD';
     }
 
+    /**
+     * Get the show error attribute.
+     * @return {Boolean} Show error or default value false.
+     */
+    getShowError() {
+        return this.hasAttribute('show-error') && this.getAttribute('show-error') === 'true';
+    }
+
+    /**
+     * Get the error message to display when an error occurs.
+     * @return {String} Error message or default value 'An error occurred'.
+     */
+    getErrorMessage() {
+        return this.getAttribute('error-message') || 'This field is required';
+    }
+
     renderCalendar() {
         this.setProperties();
         this.verifyOpeningDate();
@@ -210,6 +228,7 @@ class IRNMNCalendar extends HTMLElement {
         this.renderCalendarPanel();
         this.renderHiddenInputs();
         this.loadMonthButtons();
+        this.renderErrorMessage();
     }
 
     renderInputGroup() {
@@ -251,6 +270,19 @@ class IRNMNCalendar extends HTMLElement {
             required: 'required',
         });
         this.append(this.startInput, this.endInput);
+    }
+
+    renderErrorMessage() {
+        if (this.showError) {
+            this.errorMessageElement = this.createElementWithClasses(
+                'div',
+                [CLASS_NAMES.errorMessage],
+            );
+            this.errorMessageElement.textContent = this.errorMessage;
+            this.appendChild(this.errorMessageElement);
+        } else {
+            this.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
+        }
     }
 
     /**
@@ -388,6 +420,7 @@ class IRNMNCalendar extends HTMLElement {
             clearSessionData(this.startStorageKey, this.endStorageKey);
         } else if (this.state.checkin && this.state.checkout) {
             this.setRangeInputFields();
+            this.setAttribute('show-error', 'false'); // Clear error message when valid location is selected
         } else if (this.state.checkin) {
             this.setSingleInputField();
         }

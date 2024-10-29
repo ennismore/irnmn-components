@@ -14,5 +14,6 @@ export const CLASS_NAMES = {
     resetBtn: `${prefix}__reset-btn`,
     weekDay: `${prefix}__weekday`,
     weekDayHeader: `${prefix}__weekday-header`,
-    daysWrapper: `${prefix}__days-wrapper`
+    daysWrapper: `${prefix}__days-wrapper`,
+    errorMessage: `validation-message`,
 };

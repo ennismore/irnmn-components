@@ -11,6 +11,16 @@ class IRNMNLocation extends HTMLElement {
         this.locations = [];
     }
 
+    static get observedAttributes() {
+        return ['show-error'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (name === 'show-error' && oldValue !== newValue) {
+            this.renderErrorMessage();
+        }
+    }
+
     // Make connectedCallback asynchronous to await for locations
     async connectedCallback() {
         this.parentForm = this.closest('form');
@@ -116,6 +126,14 @@ class IRNMNLocation extends HTMLElement {
     }
 
     /**
+     * Get the show error flag for the location select.
+     * @return {Boolean} Show error flag or default value false.
+     */
+    get showError() {
+        return this.hasAttribute('show-error') && this.getAttribute('show-error') === 'true';
+    }
+
+    /**
      * Get the error message for the location select.
      *
      * @return {String} Error message or default value 'Please select a valid location'.
@@ -142,23 +160,22 @@ class IRNMNLocation extends HTMLElement {
                 <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}" required>
                     <option value="" disabled selected>${this.placeholder}</option>
                     ${this.locations
-                        .map((location) => {
-                            // Dynamically create the data attributes based on the locations obj
-                            const dataAttributes = Object.entries(location)
-                                .map(([key, value]) => {
-                                    const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-                                    return `${dataAttrName}="${value}"`;
-                                })
-                                .join(' ');
+                .map((location) => {
+                    // Dynamically create the data attributes based on the locations obj
+                    const dataAttributes = Object.entries(location)
+                        .map(([key, value]) => {
+                            const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
+                            return `${dataAttrName}="${value}"`;
+                        })
+                        .join(' ');
 
-                            return `
+                    return `
                             <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
                                 ${location.hotelName}
                             </option>`;
-                        })
-                        .join('')}
+                })
+                .join('')}
                 </select>
-                <span class="${CLASS_NAMES.errorMessage}"></span>
             </div>
         `;
     }
@@ -195,17 +212,13 @@ class IRNMNLocation extends HTMLElement {
             return;
         }
         const selectedOption = selectedOptions[0];
-        const errorMessageEl = this.querySelector(
-            `.${CLASS_NAMES.errorMessage}`,
-        );
 
         if (!selectedOption.value) {
-            errorMessageEl.textContent = this.errorMessage;
-        } else {
-            errorMessageEl.textContent = ''; // Clear error message when valid location is selected
-            this.updateOtherComponents(selectedOption.dataset);
-            saveToSessionStorage(this.inputName, selectedOption.value);
+            return
         }
+        this.setAttribute('show-error', false);
+        this.updateOtherComponents(selectedOption.dataset);
+        saveToSessionStorage(this.inputName, selectedOption.value);
     }
 
     /**
@@ -246,6 +259,17 @@ class IRNMNLocation extends HTMLElement {
                     });
             },
         );
+    }
+
+    renderErrorMessage() {
+        if (this.showError) {
+            const errorMessageElement = document.createElement('div');
+            errorMessageElement.classList.add(CLASS_NAMES.errorMessage);
+            errorMessageElement.textContent = this.errorMessage;
+            this.appendChild(errorMessageElement);
+        } else {
+            this.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
+        }
     }
 }
 

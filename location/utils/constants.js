@@ -6,5 +6,5 @@ export const CLASS_NAMES = {
     label: `${prefix}__label`,
     container: `${prefix}__container`,
     select: `${prefix}__select`,
-    errorMessage: `${prefix}__error-message`
+    errorMessage: `validation-message`
 };
