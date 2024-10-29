@@ -102,7 +102,14 @@ class IRNMNCalendar extends HTMLElement {
      * @return {Date} Open date or default to the current date.
      */
     getOpeningDate() {
-        return new Date(this.getAttribute('opening-date') || Date.now());
+        const openingDateAttr = this.getAttribute('opening-date');
+        const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(openingDateAttr);
+
+        if (openingDateAttr && isValidDate) {
+            return new Date(openingDateAttr);
+        } else {
+            return Date.now();
+        }
     }
 
     /**
