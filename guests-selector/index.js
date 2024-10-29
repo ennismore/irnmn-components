@@ -310,12 +310,8 @@ class IRNMNGuestsSelector extends HTMLElement {
             `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        if (adultsPickerBtn) {
-            adultsPickerBtn.disabled = true;
-        }
-        if (childrenPickerBtn) {
-            childrenPickerBtn.disabled = true;
-        }
+        adultsPickerBtn?.disabled = true;
+        childrenPickerBtn?.disabled = true;
     }
 
     enableIncrementButtons() {
@@ -326,12 +322,8 @@ class IRNMNGuestsSelector extends HTMLElement {
             `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        if (adultsPickerBtn) {
-            adultsPickerBtn.disabled = false;
-        }
-        if (childrenPickerBtn) {
-            childrenPickerBtn.disabled = false;
-        }
+        adultsPickerBtn?.disabled = false;
+        childrenPickerBtn?.disabled = false;
     }
 
     renderChildrenAgeDropdowns() {
