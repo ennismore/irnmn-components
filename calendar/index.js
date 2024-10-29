@@ -99,15 +99,22 @@ class IRNMNCalendar extends HTMLElement {
 
     /**
      * Get the open date for the calendar (either from attribute or current date).
+     * Verify if the openingDate has already passed, if so, default to the current date.
      * @return {Date} Open date or default to the current date.
      */
     getOpeningDate() {
-        const openingDateAttr = this.getAttribute('opening-date');
+        let openingDateAttr = this.getAttribute('opening-date');
         const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(openingDateAttr);
-        if (openingDateAttr && isValidDate) {
-            return new Date(openingDateAttr);
+
+        if (!openingDateAttr || !isValidDate) {
+           return this.today;
         }
-        return this.today;
+
+        const openingDate = new Date(openingDateAttr);
+
+        // Return the current date if the opening date has already passed
+        return openingDate > this.today ? openingDate : this.today;
+       
     }
 
     /**
