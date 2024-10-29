@@ -108,7 +108,7 @@ class IRNMNCalendar extends HTMLElement {
         if (openingDateAttr && isValidDate) {
             return new Date(openingDateAttr);
         } else {
-            return Date.now();
+            return new Date();
         }
     }
 

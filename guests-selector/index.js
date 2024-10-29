@@ -258,17 +258,19 @@ class IRNMNGuestsSelector extends HTMLElement {
             'irnmn-number-picker.children-picker',
         );
 
-        // Listen for the valueChanged event from the "Adults" picker
-        adultsPicker.addEventListener('valueChanged', (e) => {
-            this.state.adults = e.detail.value;
-            this.checkIfTotalGuestsReached();
-            // Emit event
-            this.dispatchEvent(
-                new CustomEvent('irnmn-roomValuesChange', {
-                    detail: this.state,
-                }),
-            );
-        });
+        if (adultsPicker) {
+            // Listen for the valueChanged event from the "Adults" picker
+            adultsPicker.addEventListener('valueChanged', (e) => {
+                this.state.adults = e.detail.value;
+                this.checkIfTotalGuestsReached();
+                // Emit event
+                this.dispatchEvent(
+                    new CustomEvent('irnmn-roomValuesChange', {
+                        detail: this.state,
+                    }),
+                );
+            });
+        }
 
         if (childrenPicker) {
             // Listen for the valueChanged event from the "Children" picker
@@ -301,36 +303,34 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     disableIncrementButtons() {
-        const adultsPicker = this.querySelector(
-            'irnmn-number-picker.adult-picker',
+        const adultsPickerBtn = this.querySelector(
+            `irnmn-number-picker.adult-picker .${CLASS_NAMES.incrementBtn}`,
         );
-        const childrenPicker = this.querySelector(
-            'irnmn-number-picker.children-picker',
+        const childrenPickerBtn = this.querySelector(
+            `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled =
-            true;
-        if (childrenPicker) {
-            childrenPicker.querySelector(
-                `.${CLASS_NAMES.incrementBtn}`,
-            ).disabled = true;
+        if (adultsPickerBtn) {
+            adultsPickerBtn.disabled = true;
+        }
+        if (childrenPickerBtn) {
+            childrenPickerBtn.disabled = true;
         }
     }
 
     enableIncrementButtons() {
-        const adultsPicker = this.querySelector(
-            'irnmn-number-picker.adult-picker',
+        const adultsPickerBtn = this.querySelector(
+            `irnmn-number-picker.adult-picker .${CLASS_NAMES.incrementBtn}`,
         );
-        const childrenPicker = this.querySelector(
-            'irnmn-number-picker.children-picker',
+        const childrenPickerBtn = this.querySelector(
+            `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        adultsPicker.querySelector(`.${CLASS_NAMES.incrementBtn}`).disabled =
-            false;
-        if (childrenPicker) {
-            childrenPicker.querySelector(
-                `.${CLASS_NAMES.incrementBtn}`,
-            ).disabled = false;
+        if (adultsPickerBtn) {
+            adultsPickerBtn.disabled = false;
+        }
+        if (childrenPickerBtn) {
+            childrenPickerBtn.disabled = false;
         }
     }
 
