@@ -99,17 +99,22 @@ class IRNMNCalendar extends HTMLElement {
 
     /**
      * Get the open date for the calendar (either from attribute or current date).
+     * Verify if the openingDate has already passed, if so, default to the current date.
      * @return {Date} Open date or default to the current date.
      */
     getOpeningDate() {
-        const openingDateAttr = this.getAttribute('opening-date');
+        let openingDateAttr = this.getAttribute('opening-date');
         const isValidDate = /^\d{4}-\d{2}-\d{2}$/.test(openingDateAttr);
 
-        if (openingDateAttr && isValidDate) {
-            return new Date(openingDateAttr);
-        } else {
-            return new Date();
+        if (!openingDateAttr || !isValidDate) {
+           return this.today;
         }
+
+        const openingDate = new Date(openingDateAttr);
+
+        // Return the current date if the opening date has already passed
+        return openingDate > this.today ? openingDate : this.today;
+       
     }
 
     /**
@@ -188,7 +193,6 @@ class IRNMNCalendar extends HTMLElement {
 
     renderCalendar() {
         this.setProperties();
-        this.verifyOpeningDate();
         this.render();
         this.loadFromSessionStorage();
 
@@ -289,22 +293,6 @@ class IRNMNCalendar extends HTMLElement {
             this.appendChild(this.errorMessageElement);
         } else {
             this.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
-        }
-    }
-
-    /**
-     * Use Today as the minimum date for the calendar
-     * @return {void}
-     */
-    verifyOpeningDate() {
-        /**
-         * Prevent issues with timezone, setting the time to 00:00:00
-         */
-        this.today.setHours(0, 0, 0, 0);
-        this.openingDate.setHours(0, 0, 0, 0);
-
-        if (this.openingDate < this.today) {
-            this.openingDate = this.today;
         }
     }
 
