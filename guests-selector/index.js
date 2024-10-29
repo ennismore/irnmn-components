@@ -310,8 +310,12 @@ class IRNMNGuestsSelector extends HTMLElement {
             `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        adultsPickerBtn?.disabled = true;
-        childrenPickerBtn?.disabled = true;
+        if (adultsPickerBtn) {
+            adultsPickerBtn.disabled = true;
+        }
+        if (childrenPickerBtn) {
+            childrenPickerBtn.disabled = true;
+        }
     }
 
     enableIncrementButtons() {
