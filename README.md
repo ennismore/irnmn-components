@@ -5,7 +5,7 @@ This repository contains a collection of web components for use in Irnmn project
 This repo contains all components in one repo. If there are many updates we may consider moving each theme to it's own repo. For now, you can inlcude the whole repo into your existing build setup using `npm` and a `package.json`. eg: 
 
 "dependencies": {
-    "irnmn-components": "github:ennismore/
+    "irnmn-components": "github:ennismore/irnmn-components#<tag-name>"
 }
 
 
