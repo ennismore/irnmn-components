@@ -242,6 +242,7 @@ class IRNMNCalendar extends HTMLElement {
         this.renderHiddenInputs();
         this.loadMonthButtons();
         this.renderErrorMessage();
+        this.bindClickOutside();
     }
 
     renderInputGroup() {
@@ -576,6 +577,18 @@ class IRNMNCalendar extends HTMLElement {
             element.setAttribute(attr, attributes[attr]),
         );
         return element;
+    }
+
+    bindClickOutside() {
+        document.addEventListener('click', (event) => {
+            if (
+                this.calendarVisible &&
+                !this.contains(event.target) &&
+                !this.panel.contains(event.target)
+            ) {
+                this.toggleCalendar();
+            }
+        });
     }
 }
 
