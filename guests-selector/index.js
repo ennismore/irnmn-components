@@ -326,8 +326,12 @@ class IRNMNGuestsSelector extends HTMLElement {
             `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
         );
 
-        adultsPickerBtn?.disabled = false;
-        childrenPickerBtn?.disabled = false;
+        if (adultsPickerBtn) {
+            adultsPickerBtn.disabled = false;
+        }
+        if (childrenPickerBtn) {
+            childrenPickerBtn.disabled = false;
+        }
     }
 
     renderChildrenAgeDropdowns() {
