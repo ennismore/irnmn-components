@@ -11,6 +11,7 @@ export const CLASS_NAMES = {
     checkin: `is-checkin`,
     checkout: `is-checkout`,
     inRange: `is-in-range`,
+    isSingle: `is-single`,
     resetBtn: `${prefix}__reset-btn`,
     weekDay: `${prefix}__weekday`,
     weekDayHeader: `${prefix}__weekday-header`,

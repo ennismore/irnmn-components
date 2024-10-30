@@ -330,6 +330,20 @@ class IRNMNCalendar extends HTMLElement {
                 dayBtn.addEventListener('click', (e) =>
                     this.handleDayClick(dayBtn),
                 );
+                dayBtn.addEventListener('mouseover', (e) => {
+                    if (this.state.checkin && !this.state.checkout) {
+                        const time = parseInt(dayBtn.dataset.time);
+                        clearHighlights(this.dayButtons, [CLASS_NAMES.inRange]);
+                        this.highlightRange(this.state.checkin, time);
+                    }
+                });
+                dayBtn.addEventListener('focus', (e) => {
+                    if (this.state.checkin && !this.state.checkout) {
+                        const time = parseInt(dayBtn.dataset.time);
+                        clearHighlights(this.dayButtons, [CLASS_NAMES.inRange]);
+                        this.highlightRange(this.state.checkin, time);
+                    }
+                });
                 daysContainer.appendChild(dayBtn);
                 this.dayButtons.push(dayBtn);
             });
@@ -345,35 +359,41 @@ class IRNMNCalendar extends HTMLElement {
     handleDayClick(dayBtn) {
         const time = parseInt(dayBtn.dataset.time);
 
-        // If no check-in is set, set it
-        if (!this.state.checkin) {
-            this.setDate(
-                'checkin',
-                time,
-                dayBtn,
-                `checkin-selected-${this.name}`,
-            );
-        }
-        // If no checkout is set and the selected time is after check-in, set checkout
-        else if (!this.state.checkout && time > this.state.checkin) {
-            this.setDate(
-                'checkout',
-                time,
-                dayBtn,
-                `checkout-selected-${this.name}`,
-            );
-            this.highlightRange(this.state.checkin, this.state.checkout);
-            this.toggleCalendar();
-        }
-        // Otherwise, reset and set a new check-in
-        else {
-            this.resetDates();
-            this.setDate(
-                'checkin',
-                time,
-                dayBtn,
-                `checkin-selected-${this.name}`,
-            );
+        switch (true) {
+            // If no check-in is set, set it
+            case !this.state.checkin:
+                this.setDate(
+                    'checkin',
+                    time,
+                    dayBtn,
+                    `checkin-selected-${this.name}`,
+                );
+                this.highlightRange(this.state.checkin, this.state.checkin);
+                break;
+
+            // If no checkout is set and the selected time is after check-in, set checkout
+            case !this.state.checkout && time > this.state.checkin:
+                this.setDate(
+                    'checkout',
+                    time,
+                    dayBtn,
+                    `checkout-selected-${this.name}`,
+                );
+                this.highlightRange(this.state.checkin, this.state.checkout);
+                this.toggleCalendar();
+                break;
+
+            // Otherwise, reset and set a new check-in
+            default:
+                this.resetDates();
+                this.setDate(
+                    'checkin',
+                    time,
+                    dayBtn,
+                    `checkin-selected-${this.name}`,
+                );
+                this.highlightRange(this.state.checkin, this.state.checkin);
+                break;
         }
 
         this.updateInputField();
@@ -396,6 +416,7 @@ class IRNMNCalendar extends HTMLElement {
                 CLASS_NAMES.checkin,
                 CLASS_NAMES.checkout,
                 CLASS_NAMES.inRange,
+                CLASS_NAMES.isSingle,
             ]);
             this.applyHighlights();
         });
@@ -404,6 +425,7 @@ class IRNMNCalendar extends HTMLElement {
     applyHighlights() {
         if (this.state.checkin) {
             this.highlightDayForTime(this.state.checkin, CLASS_NAMES.checkin);
+            this.highlightRange(this.state.checkin, this.state.checkin);
         }
 
         if (this.state.checkout) {
@@ -475,6 +497,7 @@ class IRNMNCalendar extends HTMLElement {
             CLASS_NAMES.checkin,
             CLASS_NAMES.checkout,
             CLASS_NAMES.inRange,
+            CLASS_NAMES.isSingle,
         ]);
         this.updateInputField(true);
     }
@@ -493,6 +516,11 @@ class IRNMNCalendar extends HTMLElement {
                 highlightButton(button, CLASS_NAMES.inRange);
             }
         });
+        // highlight the check-in button as a single date if endTime is less than startTime
+        const isSingle = (startTime < endTime);
+        const checkinButton = this.dayButtons.find((button) => button.classList.contains(CLASS_NAMES.checkin));
+        if (!checkinButton) { return; }
+        checkinButton.classList.toggle(CLASS_NAMES.isSingle, !isSingle);
     }
 
     toggleCalendar() {
