@@ -8,6 +8,12 @@ This repo contains all components in one repo. If there are many updates we may 
     "irnmn-components": "github:ennismore/irnmn-components#<tag-name>"
 }
 
+Example: 
+
+```bash
+npm i https://github.com/ennismore/irnmn-components.git#v1.0.4
+```
+
 
 ## Usage
 The only build script currently is just to run some linting and formatting. You can run `npm run prettier:js` to format all `.js` files. There is also a pre-commit hook that will fire that will lint all files before commiting.
