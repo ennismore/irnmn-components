@@ -13,5 +13,5 @@ All the new releases will be documented in this file. The semhantic versioning s
 - The non-compatible inline if statements
 
 ## v1.0.1
-### Added
-- First release with the following components: irnmn-video, irnmn-calendar, irnmn-guests-selector, irnmn-location, irnmn-number-picker, irnmn-rooms-selector, irnmn-select, irnmn-text
+### Added - irnmn-video, irnmn-calendar, irnmn-guests-selector, irnmn-location, irnmn-number-picker, irnmn-rooms-selector, irnmn-select, irnmn-text
+- First release with the irnmnm components
