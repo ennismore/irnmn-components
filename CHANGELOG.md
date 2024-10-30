@@ -1,6 +1,6 @@
 # Changelog
 
-All the new releases will be documented in this file. The semhantic versioning should follow these parameters:
+All new releases are documented in this file. The semantic versioning should follow these parameters:
 
 ## [Release version] - [Date YYYY-MM-DD]
 ### [Added/Changed/Fixed/Removed] - [component]
