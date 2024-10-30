@@ -7,6 +7,13 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.0.3
+### fixed - irnmn-calendar, irnmn-number-picker
+- Fix accessibility issues :
+  - keyboard navigation for irnmn-calendar
+  - aria labels for irnmn-number-picker
+- Fix irnmn-calendar close panel on click ouside
+- Improve irnmn-calendar to handle in-range days on hover / focus
 
 ## v1.0.2
 ### Fixed - irnmn-guests-selector
