@@ -506,7 +506,6 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     highlightRange(startTime, endTime) {
-        let rangeFound = false;
         this.dayButtons.forEach((button) => {
             const time = parseInt(button.dataset.time);
             if (time > startTime && time < endTime) {
