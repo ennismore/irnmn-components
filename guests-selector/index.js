@@ -220,6 +220,10 @@ class IRNMNGuestsSelector extends HTMLElement {
             children: 'Children',
             childAge: 'Child age',
             remove: 'Remove',
+            ariaLabelMoreAdults: 'Add one adult',
+            ariaLabelLessAdults: 'Remove one adult',
+            ariaLabelMoreChildren: 'Add one child',
+            ariaLabelLessChildren: 'Remove one child',
         };
         const customLabels = JSON.parse(this.getAttribute('labels')) || {};
         return { ...defaultLabels, ...customLabels };
@@ -236,20 +240,38 @@ class IRNMNGuestsSelector extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomContainer}">
-            <div class="${CLASS_NAMES.roomHeader}">
-                <span class="${CLASS_NAMES.roomLabel}">${this.label} (max ${this.maxTotalGuests} ${this.labels.guests})</span>
-                <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
-            </div>
-            <div class="${CLASS_NAMES.guestControls}">
-                <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.adultsNumber ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
+                <div class="${CLASS_NAMES.roomHeader}">
+                    <span class="${CLASS_NAMES.roomLabel}">${this.label} (max ${this.maxTotalGuests} ${this.labels.guests})</span>
+                    <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
+                </div>
+                <div class="${CLASS_NAMES.guestControls}">
+                    <irnmn-number-picker
+                        class="adult-picker"
+                        label="${this.enableChildren ? this.labels.adults : this.labels.guests}"
+                        name="${this.name}.adults"
+                        min="1"
+                        max="${this.adultsNumber ?? this.maxTotalGuests}"
+                        initial-value="${this.state.adults}"
+                        aria-label-more="${this.labels.ariaLabelMoreAdults}"
+                        aria-label-less="${this.labels.ariaLabelLessAdults}">
+                    </irnmn-number-picker>
                 ${this.enableChildren
                 ? `
-                <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.childrenNumber ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
-                <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
+                    <irnmn-number-picker
+                        class="children-picker"
+                        label="${this.labels.children}"
+                        name="${this.name}.children"
+                        min="0"
+                        max="${this.childrenNumber ?? this.maxTotalGuests}"
+                        initial-value="${this.state.children}"
+                        aria-label-more="${this.labels.ariaLabelMoreChildren}"
+                        aria-label-less="${this.labels.ariaLabelLessChildren}">
+                    </irnmn-number-picker>
+                    <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 `
                 : ''
             }
-            </div>
+                </div>
             </div>
         `;
     }

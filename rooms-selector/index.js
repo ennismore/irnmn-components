@@ -180,6 +180,10 @@ class IRNMNRoomsSelector extends HTMLElement {
             childAge: 'Child age',
             selectRoom: 'Select number of rooms',
             remove: 'Remove',
+            ariaLabelMoreAdults: 'Add one adult',
+            ariaLabelLessAdults: 'Remove one adult',
+            ariaLabelMoreChildren: 'Add one child',
+            ariaLabelLessChildren: 'Remove one child',
         };
         const customLabels = JSON.parse(this.getAttribute('labels')) || {};
         return { ...defaultLabels, ...customLabels };

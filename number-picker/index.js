@@ -21,6 +21,8 @@ class IRNMNNumberPicker extends HTMLElement {
         this.name = this.getName();
         this.min = this.getMin();
         this.max = this.getMax();
+        this.ariaLabelLess = this.getAriaLabelLess();
+        this.ariaLabelMore = this.getAriaLabelMore();
     }
 
     /**
@@ -29,6 +31,22 @@ class IRNMNNumberPicker extends HTMLElement {
      */
     getLabel() {
         return this.getAttribute('label') || 'Number';
+    }
+
+    /**
+     * Get the aria-label for the decrement button.
+     * @return {String} Aria label or default value 'Decrease value'.
+     */
+    getAriaLabelLess() {
+        return this.getAttribute('aria-label-less') || 'Decrease value';
+    }
+
+    /**
+     * Get the aria-label for the increment button.
+     * @return {String} Aria label or default value 'Increase value'.
+     */
+    getAriaLabelMore() {
+        return this.getAttribute('aria-label-more') || 'Increase value';
     }
 
     /**
@@ -68,9 +86,9 @@ class IRNMNNumberPicker extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.numberPicker}">
                 <span class="${CLASS_NAMES.label}">${this.label}</span>
-                <button type="button" class="${CLASS_NAMES.decrementBtn}">-</button>
+                <button type="button" aria-label="${this.ariaLabelLess}" class="${CLASS_NAMES.decrementBtn}">-</button>
                 <span class="${CLASS_NAMES.numberValue}">${this.state.count}</span>
-                <button type="button" class="${CLASS_NAMES.incrementBtn}">+</button>
+                <button type="button" aria-label="${this.ariaLabelMore}" class="${CLASS_NAMES.incrementBtn}">+</button>
                 <input type="hidden" name="${this.name}" value="${this.state.count}">
             </div>
         `;
