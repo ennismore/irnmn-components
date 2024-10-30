@@ -64,7 +64,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.renderChildrenAgeDropdowns();
 
         Promise.resolve().then(() => {
-            this.checkIfTotalGuestsReached();
+            this.updateCounterButtonsStates();
         });
     }
 
@@ -242,14 +242,13 @@ class IRNMNGuestsSelector extends HTMLElement {
             </div>
             <div class="${CLASS_NAMES.guestControls}">
                 <irnmn-number-picker class="adult-picker" label="${this.enableChildren ? this.labels.adults : this.labels.guests}" name="${this.name}.adults" min="1" max="${this.adultsNumber ?? this.maxTotalGuests}" initial-value="${this.state.adults}"></irnmn-number-picker>
-                ${
-                    this.enableChildren
-                        ? `
+                ${this.enableChildren
+                ? `
                 <irnmn-number-picker class="children-picker" label="${this.labels.children}" name="${this.name}.children" min="0" max="${this.childrenNumber ?? this.maxTotalGuests}" initial-value="${this.state.children}"></irnmn-number-picker>
                 <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 `
-                        : ''
-                }
+                : ''
+            }
             </div>
             </div>
         `;
@@ -267,7 +266,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             // Listen for the valueChanged event from the "Adults" picker
             adultsPicker.addEventListener('valueChanged', (e) => {
                 this.state.adults = e.detail.value;
-                this.checkIfTotalGuestsReached();
+                this.updateCounterButtonsStates();
                 // Emit event
                 this.dispatchEvent(
                     new CustomEvent('irnmn-roomValuesChange', {
@@ -281,7 +280,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             // Listen for the valueChanged event from the "Children" picker
             childrenPicker.addEventListener('valueChanged', (e) => {
                 this.state.children = e.detail.value;
-                this.checkIfTotalGuestsReached();
+                this.updateCounterButtonsStates();
                 this.renderChildrenAgeDropdowns();
                 // Emit event
                 this.dispatchEvent(
@@ -298,44 +297,62 @@ class IRNMNGuestsSelector extends HTMLElement {
         );
     }
 
-    checkIfTotalGuestsReached() {
+    /**
+     * Updates the states of the counter buttons based on the current number of adults and children.
+     * Disables increment or decrement buttons if the limits are reached.
+     */
+    updateCounterButtonsStates() {
         const totalGuests = this.state.adults + this.state.children;
+        let disableAdultsIncrement = false;
+        let disableAdultsDecrement = false;
+        let disableChildrenIncrement = false;
+        let disableChildrenDecrement = false;
+
+        // Check if adults reached max or min limit
+        if (this.state.adults >= this.adultsNumber) {
+            disableAdultsIncrement = true;
+        } else if (this.state.adults <= 1) {
+            disableAdultsDecrement = true;
+        }
+
+        // Check if children reached max or min limit
+        if (this.state.children >= this.childrenNumber) {
+            disableChildrenIncrement = true;
+        } else if (this.state.children <= 0) {
+            disableChildrenDecrement = true;
+        }
+
+        // Check if total guests reached max limit
         if (totalGuests >= this.maxTotalGuests) {
-            this.disableIncrementButtons();
-        } else {
-            this.enableIncrementButtons();
+            disableAdultsIncrement = true;
+            disableChildrenIncrement = true;
         }
+
+        // Apply the final states to the buttons
+        this.setButtonState('incrementBtn', disableAdultsIncrement, disableChildrenIncrement);
+        this.setButtonState('decrementBtn', disableAdultsDecrement, disableChildrenDecrement);
     }
 
-    disableIncrementButtons() {
+    /**
+     * Sets the state of the buttons for adult and children pickers.
+     *
+     * @param {string} buttonType - The type of button to be targeted (e.g., 'incrementBtn', 'decrementBtn').
+     * @param {boolean} [disableAdults=true] - Whether to disable the adult picker button.
+     * @param {boolean} [disableChildren=true] - Whether to disable the children picker button.
+     */
+    setButtonState(buttonType, disableAdults = true, disableChildren = true) {
         const adultsPickerBtn = this.querySelector(
-            `irnmn-number-picker.adult-picker .${CLASS_NAMES.incrementBtn}`,
+            `irnmn-number-picker.adult-picker .${CLASS_NAMES[buttonType]}`
         );
         const childrenPickerBtn = this.querySelector(
-            `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
+            `irnmn-number-picker.children-picker .${CLASS_NAMES[buttonType]}`
         );
 
         if (adultsPickerBtn) {
-            adultsPickerBtn.disabled = true;
+            adultsPickerBtn.disabled = disableAdults;
         }
         if (childrenPickerBtn) {
-            childrenPickerBtn.disabled = true;
-        }
-    }
-
-    enableIncrementButtons() {
-        const adultsPickerBtn = this.querySelector(
-            `irnmn-number-picker.adult-picker .${CLASS_NAMES.incrementBtn}`,
-        );
-        const childrenPickerBtn = this.querySelector(
-            `irnmn-number-picker.children-picker .${CLASS_NAMES.incrementBtn}`,
-        );
-
-        if (adultsPickerBtn) {
-            adultsPickerBtn.disabled = false;
-        }
-        if (childrenPickerBtn) {
-            childrenPickerBtn.disabled = false;
+            childrenPickerBtn.disabled = disableChildren;
         }
     }
 
