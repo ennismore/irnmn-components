@@ -213,7 +213,9 @@ class IRNMNCalendar extends HTMLElement {
 
     async connectedCallback() {
         this.renderCalendar();
-        // Load from sessionStorage and apply necessary classes
+
+        this.bindKeyboardEvents();
+        this.bindClickOutside();
 
         // Listen for custom events tied to the specific "name" attribute
         document.addEventListener(`checkin-selected-${this.name}`, (e) =>
@@ -242,7 +244,6 @@ class IRNMNCalendar extends HTMLElement {
         this.renderHiddenInputs();
         this.loadMonthButtons();
         this.renderErrorMessage();
-        this.bindClickOutside();
     }
 
     renderInputGroup() {
@@ -589,6 +590,99 @@ class IRNMNCalendar extends HTMLElement {
                 this.toggleCalendar();
             }
         });
+    }
+
+    /**
+     * Binds keyboard events to the calendar component.
+     * - Prevents form submission on Enter key press and toggles the calendar visibility.
+     * - Closes the calendar on Escape key press.
+     * - Navigates through calendar days using arrow keys.
+     */
+    bindKeyboardEvents() {
+        document.addEventListener('keydown', (event) => {
+            const focusedElement = document.activeElement;
+
+            // Check if the focus is within the component
+            if (!this.contains(document.activeElement)) {
+                return;
+            }
+            if (event.key === 'Enter') {
+                // Prevent form submission on pressing enter key except for the day buttons
+                if (!focusedElement.classList.contains('irnmn-calendar__day-btn')) {
+                    event.preventDefault();
+                }
+                if (!this.calendarVisible) {
+                    this.toggleCalendar();
+                    // Focus on the day button with "is-checkin" class if it exists, otherwise focus on the first day button
+                    const checkinButton = this.querySelector('.irnmn-calendar__day-btn.is-checkin');
+                    const firstDayButton = this.querySelector('.irnmn-calendar__day-btn:not([disabled])');
+                    if (checkinButton) {
+                        checkinButton.focus();
+                    } else if (firstDayButton) {
+                        firstDayButton.focus();
+                    }
+                }
+            }
+            // close on pressing escape key
+            if (this.calendarVisible && event.key === 'Escape') {
+                this.toggleCalendar();
+                this.inputElement.focus();
+            }
+            // Navigate through days using arrow keys
+            if (focusedElement.classList.contains('irnmn-calendar__day-btn')) {
+                let newFocusElement;
+                switch (event.key) {
+                    case 'ArrowUp':
+                    case 'ArrowRight':
+                        newFocusElement = this.getNextDayButton(focusedElement, 'right');
+                        break;
+                    case 'ArrowDown':
+                        newFocusElement = this.getNextDayButton(focusedElement, 'down');
+                        break;
+                    case 'ArrowLeft':
+                        newFocusElement = this.getNextDayButton(focusedElement, 'left');
+                        break;
+                    case 'ArrowUp':
+                        newFocusElement = this.getNextDayButton(focusedElement, 'up');
+                        break;
+                }
+                if (newFocusElement && !newFocusElement.disabled) {
+                    newFocusElement.focus();
+                }
+            }
+        });
+    }
+
+    /**
+     * Retrieves the next day button based on the current button and direction.
+     *
+     * @param {HTMLElement} currentButton - The currently selected button element.
+     * @param {string} direction - The direction to move to find the next button.
+     *                             Possible values are 'right', 'down', 'left', 'up'.
+     * @returns {HTMLElement|null} - The next button element in the specified direction, or null if none exists.
+     */
+    getNextDayButton(currentButton, direction) {
+        const buttons = Array.from(this.querySelectorAll('.irnmn-calendar__day-btn:not([disabled])'));
+        const currentIndex = buttons.indexOf(currentButton);
+
+        let newIndex;
+
+        switch (direction) {
+            case 'right':
+                newIndex = currentIndex + 1;
+                break;
+            case 'down':
+                newIndex = currentIndex + 7;
+                break;
+            case 'left':
+                newIndex = currentIndex - 1;
+                break;
+            case 'up':
+                newIndex = currentIndex - 7;
+                break;
+        }
+
+        return buttons[newIndex] || null;
     }
 }
 
