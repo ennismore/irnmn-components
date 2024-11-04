@@ -12,6 +12,7 @@
     <script src="../guests-selector/index.js" type="module"></script>
     <script src="../rooms-selector/index.js" type="module"></script>
     <script src="../select/index.js" type="module"></script>
+    <script src="../guests-summary/index.js" type="module"></script>
 </head>
 <body>
     <h1>Calendar</h1>
@@ -63,6 +64,7 @@
             date-locale="en-gb"
             />
         </irnmn-calendar>
+        <irnmn-guests-summary storage-key="irnmn-rooms"></irnmn-guests-summary>
         <irnmn-rooms-selector
             rooms-number="5"
             min-rooms="1"
@@ -114,6 +116,7 @@
 
 
         <irnmn-rooms-selector
+        name="irnmn-test-rooms"
         rooms-number="5"
         min-rooms="1"
         label="Select Number of Rooms"
@@ -126,6 +129,7 @@
         labels='{"adults": "Adults", "children": "Children", "rooms": "Rooms", "ariaLabelMoreAdults": "Add more adults", "ariaLabelLessAdults": "Remove an adult", "ariaLabelMoreChildren": "Add more children", "ariaLabelLessChildren": "Remove a child"}'
         >
         </irnmn-rooms-selector>
+        <irnmn-guests-summary storage-key="irnmn-test-rooms"></irnmn-guests-summary>
 
         <button type="submit">Submit</button>
     </form>
