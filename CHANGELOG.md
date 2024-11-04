@@ -7,6 +7,10 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.1.0
+### Added - irnmn-guests-summary
+### Fixed - irnmn-rooms-selector
+- Added dispatchSyncEvent logic to the component to trigger changes on storageKey
 
 ## v1.0.2
 ### Fixed - irnmn-guests-selector
