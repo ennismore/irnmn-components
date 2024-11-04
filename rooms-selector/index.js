@@ -3,6 +3,7 @@ import { CLASS_NAMES } from './utils/constants.js';
 import {
     saveToSessionStorage,
     getFromSessionStorage,
+    dispatchSyncEvent,
 } from '../utils/components.js';
 
 class IRNMNRoomsSelector extends HTMLElement {
@@ -271,6 +272,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 this.removeRoom(i, roomContainer);
             }
         }
+
+        this.syncState();
     }
 
     checkIfOneRoom() {
@@ -331,6 +334,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         // Add event listeners to track changes in the room's state
         this.trackRoomChanges(roomGuests);
         this.checkIfOneRoom();
+        this.syncState();
     }
 
     /**
@@ -436,7 +440,12 @@ class IRNMNRoomsSelector extends HTMLElement {
             );
             roomCountSelect.value = this.state.rooms.length;
             roomCountSelect.dispatchEvent(new Event('change'));
+            this.syncState();
         });
+    }
+
+    syncState() {
+        dispatchSyncEvent('irnmn-rooms-updated', this.state.rooms);
     }
 }
 
