@@ -7,6 +7,10 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.0.4
+### Fixed - irnmn-guests-selector
+- Change select name from "rooms" to "rooms-total" to avoid conflicts when passing form data to BE
+
 ## v1.0.3
 ### fixed - irnmn-calendar, irnmn-number-picker
 - Fix accessibility issues :
