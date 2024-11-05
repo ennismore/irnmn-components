@@ -12,6 +12,18 @@ All new releases are documented in this file. The semantic versioning should fol
 ### Fixed - irnmn-rooms-selector
 - Added dispatchSyncEvent logic to the component to trigger changes on storageKey
 
+## v1.0.4
+### Fixed - irnmn-guests-selector
+- Change select name from "rooms" to "rooms-total" to avoid conflicts when passing form data to BE
+
+## v1.0.3
+### fixed - irnmn-calendar, irnmn-number-picker
+- Fix accessibility issues :
+  - keyboard navigation for irnmn-calendar
+  - aria labels for irnmn-number-picker
+- Fix irnmn-calendar close panel on click ouside
+- Improve irnmn-calendar to handle in-range days on hover / focus
+
 ## v1.0.2
 ### Fixed - irnmn-guests-selector
 - The non-compatible inline if statements

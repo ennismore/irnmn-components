@@ -255,8 +255,9 @@ class IRNMNGuestsSelector extends HTMLElement {
                         aria-label-more="${this.labels.ariaLabelMoreAdults}"
                         aria-label-less="${this.labels.ariaLabelLessAdults}">
                     </irnmn-number-picker>
-                ${this.enableChildren
-                ? `
+                ${
+                    this.enableChildren
+                        ? `
                     <irnmn-number-picker
                         class="children-picker"
                         label="${this.labels.children}"
@@ -269,8 +270,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                     </irnmn-number-picker>
                     <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 `
-                : ''
-            }
+                        : ''
+                }
                 </div>
             </div>
         `;
@@ -351,8 +352,16 @@ class IRNMNGuestsSelector extends HTMLElement {
         }
 
         // Apply the final states to the buttons
-        this.setButtonState('incrementBtn', disableAdultsIncrement, disableChildrenIncrement);
-        this.setButtonState('decrementBtn', disableAdultsDecrement, disableChildrenDecrement);
+        this.setButtonState(
+            'incrementBtn',
+            disableAdultsIncrement,
+            disableChildrenIncrement,
+        );
+        this.setButtonState(
+            'decrementBtn',
+            disableAdultsDecrement,
+            disableChildrenDecrement,
+        );
     }
 
     /**
@@ -364,10 +373,10 @@ class IRNMNGuestsSelector extends HTMLElement {
      */
     setButtonState(buttonType, disableAdults = true, disableChildren = true) {
         const adultsPickerBtn = this.querySelector(
-            `irnmn-number-picker.adult-picker .${CLASS_NAMES[buttonType]}`
+            `irnmn-number-picker.adult-picker .${CLASS_NAMES[buttonType]}`,
         );
         const childrenPickerBtn = this.querySelector(
-            `irnmn-number-picker.children-picker .${CLASS_NAMES[buttonType]}`
+            `irnmn-number-picker.children-picker .${CLASS_NAMES[buttonType]}`,
         );
 
         if (adultsPickerBtn) {

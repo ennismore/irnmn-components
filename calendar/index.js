@@ -636,14 +636,22 @@ class IRNMNCalendar extends HTMLElement {
             }
             if (event.key === 'Enter') {
                 // Prevent form submission on pressing enter key except for the day buttons
-                if (!focusedElement.classList.contains('irnmn-calendar__day-btn')) {
+                if (
+                    !focusedElement.classList.contains(
+                        'irnmn-calendar__day-btn',
+                    )
+                ) {
                     event.preventDefault();
                 }
                 if (!this.calendarVisible) {
                     this.toggleCalendar();
                     // Focus on the day button with "is-checkin" class if it exists, otherwise focus on the first day button
-                    const checkinButton = this.querySelector('.irnmn-calendar__day-btn.is-checkin');
-                    const firstDayButton = this.querySelector('.irnmn-calendar__day-btn:not([disabled])');
+                    const checkinButton = this.querySelector(
+                        '.irnmn-calendar__day-btn.is-checkin',
+                    );
+                    const firstDayButton = this.querySelector(
+                        '.irnmn-calendar__day-btn:not([disabled])',
+                    );
                     if (checkinButton) {
                         checkinButton.focus();
                     } else if (firstDayButton) {
@@ -662,16 +670,28 @@ class IRNMNCalendar extends HTMLElement {
                 switch (event.key) {
                     case 'ArrowUp':
                     case 'ArrowRight':
-                        newFocusElement = this.getNextDayButton(focusedElement, 'right');
+                        newFocusElement = this.getNextDayButton(
+                            focusedElement,
+                            'right',
+                        );
                         break;
                     case 'ArrowDown':
-                        newFocusElement = this.getNextDayButton(focusedElement, 'down');
+                        newFocusElement = this.getNextDayButton(
+                            focusedElement,
+                            'down',
+                        );
                         break;
                     case 'ArrowLeft':
-                        newFocusElement = this.getNextDayButton(focusedElement, 'left');
+                        newFocusElement = this.getNextDayButton(
+                            focusedElement,
+                            'left',
+                        );
                         break;
                     case 'ArrowUp':
-                        newFocusElement = this.getNextDayButton(focusedElement, 'up');
+                        newFocusElement = this.getNextDayButton(
+                            focusedElement,
+                            'up',
+                        );
                         break;
                 }
                 if (newFocusElement && !newFocusElement.disabled) {
@@ -690,7 +710,9 @@ class IRNMNCalendar extends HTMLElement {
      * @returns {HTMLElement|null} - The next button element in the specified direction, or null if none exists.
      */
     getNextDayButton(currentButton, direction) {
-        const buttons = Array.from(this.querySelectorAll('.irnmn-calendar__day-btn:not([disabled])'));
+        const buttons = Array.from(
+            this.querySelectorAll('.irnmn-calendar__day-btn:not([disabled])'),
+        );
         const currentIndex = buttons.indexOf(currentButton);
 
         let newIndex;
