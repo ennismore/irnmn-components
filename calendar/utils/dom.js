@@ -30,26 +30,35 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
     daysContainer.className = CLASS_NAMES.daysContainer;
     daysContainer.setAttribute('role', 'grid');
 
-    // Optional: Create the weekdays header row if the weekDays parameter is provided
+    // Optional: Create the weekdays header row
     if (weekDays) {
         const weekdayHeader = createWeekdayHeader(weekDays);
         daysWrapper.appendChild(weekdayHeader);
     }
 
-    // Calculate the start day of the month and adjust so Monday is the first day
-    const firstDayOfMonth = new Date(month.year, month.month, 1);
-    const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust Sunday to be 6, Monday to be 0
+    // Render the days (placeholders + actual days)
+    month.days.forEach((day) => {
+        if (day.disabled) {
+            // Create placeholder for disabled days
+            const disabledButton = document.createElement('button');
+            disabledButton.type = 'button';
+            disabledButton.disabled = true;
+            disabledButton.classList.add(CLASS_NAMES.emptyDay);
+            daysContainer.appendChild(disabledButton);
+        } else {
+            // Create actual day buttons
+            const dayBtn = createDayButton(day, dateLocale);
+            daysContainer.appendChild(dayBtn);
+        }
+    });
 
-    // Use the utility function to add empty placeholders
-    addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
-
-    // Append the days of the month to the daysContainer
     daysWrapper.appendChild(daysContainer);
     monthEl.appendChild(monthTitle);
     monthEl.appendChild(daysWrapper);
 
     return monthEl;
 }
+
 
 
 /**
@@ -59,6 +68,8 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
  * @return {HTMLElement} The button element
  */
 export function createDayButton(day, dateLocale = 'en-gb') {
+
+    // Handle actual days
     const dayBtn = document.createElement('button');
     dayBtn.type = 'button';
     dayBtn.textContent = day.day;
@@ -66,10 +77,19 @@ export function createDayButton(day, dateLocale = 'en-gb') {
     dayBtn.classList.add(CLASS_NAMES.dayBtn);
     dayBtn.setAttribute('role', 'gridcell');
 
-    dayBtn.setAttribute('aria-label', `Select date ${new Intl.DateTimeFormat(dateLocale, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }).format(day.date)}`);
+    dayBtn.setAttribute(
+        'aria-label',
+        `Select date ${new Intl.DateTimeFormat(dateLocale, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+        }).format(day.date)}`
+    );
 
     return dayBtn;
 }
+
 
 /**
  * Creates the weekday header - row element

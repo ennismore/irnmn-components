@@ -17,4 +17,5 @@ export const CLASS_NAMES = {
     weekDayHeader: `${prefix}__weekday-header`,
     daysWrapper: `${prefix}__days-wrapper`,
     errorMessage: `validation-message`,
+    emptyDay: `${prefix}__empty-day`,
 };
