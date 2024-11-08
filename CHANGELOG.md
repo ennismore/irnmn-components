@@ -9,8 +9,15 @@ All new releases are documented in this file. The semantic versioning should fol
 ------
 ## v1.1.0
 ### Added - irnmn-guests-summary
-### Fixed - irnmn-rooms-selector
 - Added dispatchSyncEvent logic to the component to trigger changes on storageKey
+
+## v1.0.6
+### Fixed - irnmn-calendar
+- Make opening day selectable
+
+## v1.0.5
+### Fixed - irnmn-calendar
+- Create disabled buttons to fix week days offset
 
 ## v1.0.4
 ### Fixed - irnmn-guests-selector

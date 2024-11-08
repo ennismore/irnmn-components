@@ -70,7 +70,9 @@ class IRNMNCalendar extends HTMLElement {
      * Get the current date
      */
     getToday() {
-        return new Date();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
     }
 
     /**
@@ -111,6 +113,7 @@ class IRNMNCalendar extends HTMLElement {
         }
 
         const openingDate = new Date(openingDateAttr);
+        openingDate.setHours(0, 0, 0, 0);
 
         // Return the current date if the opening date has already passed
         return openingDate > this.today ? openingDate : this.today;
@@ -303,52 +306,41 @@ class IRNMNCalendar extends HTMLElement {
         const months = getNext12Months(this.openingDate);
 
         months.forEach((month) => {
-            const monthEl = createMonthElement(
-                month,
-                this.weekDays,
-                this.dateLocale,
-            );
+            // Create and render the entire month (days + placeholders)
+            const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
+
+            // Append the rendered month element to the calendar
             this.monthsWrapper.appendChild(monthEl);
 
-            const daysContainer = monthEl.querySelector(
-                `.${CLASS_NAMES.daysContainer}`,
-            );
+            // Attach event listeners to all rendered day buttons
+            const dayButtons = monthEl.querySelectorAll(`.${CLASS_NAMES.dayBtn}`);
+            dayButtons.forEach((dayBtn) => {
+                const time = parseInt(dayBtn.dataset.time);
 
-            // Calculate the first day of the month and how many empty slots before Monday
-            const firstDayOfMonth = new Date(month.year, month.month, 1);
-            const startDay = (firstDayOfMonth.getDay() + 6) % 7; // Adjust to make Monday = 0
+                if (time < this.openingDate.getTime()) {
+                    dayBtn.disabled = true; // Disable past dates
+                }
 
-            // Use the utility function to add empty placeholders
-            addEmptyDays(daysContainer, startDay, CLASS_NAMES.emptyDay);
-
-            // Render the days of the month
-            month.days.forEach((day) => {
-                const dayBtn = createDayButton(day, this.dateLocale);
-
-                if (day.date < this.openingDate) dayBtn.disabled = true;
-
-                dayBtn.addEventListener('click', (e) =>
-                    this.handleDayClick(dayBtn),
-                );
-                dayBtn.addEventListener('mouseover', (e) => {
+                dayBtn.addEventListener('click', () => this.handleDayClick(dayBtn));
+                dayBtn.addEventListener('mouseover', () => {
                     if (this.state.checkin && !this.state.checkout) {
-                        const time = parseInt(dayBtn.dataset.time);
                         clearHighlights(this.dayButtons, [CLASS_NAMES.inRange]);
                         this.highlightRange(this.state.checkin, time);
                     }
                 });
-                dayBtn.addEventListener('focus', (e) => {
+                dayBtn.addEventListener('focus', () => {
                     if (this.state.checkin && !this.state.checkout) {
-                        const time = parseInt(dayBtn.dataset.time);
                         clearHighlights(this.dayButtons, [CLASS_NAMES.inRange]);
                         this.highlightRange(this.state.checkin, time);
                     }
                 });
-                daysContainer.appendChild(dayBtn);
+
+                // Track the button for state management
                 this.dayButtons.push(dayBtn);
             });
         });
     }
+
 
     /**
      * Handle the click event on a day button
