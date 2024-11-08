@@ -1,7 +1,9 @@
 import { CLASS_NAMES } from './utils/constants.js';
 
 import {
+    dispatchSyncEvent,
     saveToSessionStorage,
+    handleSyncEvent,
     getFromSessionStorage,
 } from '../utils/components.js';
 
@@ -20,8 +22,7 @@ class IRNMNLocation extends HTMLElement {
             this.renderErrorMessage();
         }
     }
-
-    // Make connectedCallback asynchronous to await for locations
+  
     async connectedCallback() {
         this.parentForm = this.closest('form');
 
@@ -29,18 +30,46 @@ class IRNMNLocation extends HTMLElement {
 
         /**
          * Render the first time only when locations are loaded
-         * async method to wait for locations to be fetched
          */
         this.render();
         this.attachEventListeners();
         Promise.resolve().then(() => this.setDefaultValue());
+
+        // Add event listener for custom sync events
+        document.addEventListener('locationSync', this.syncLocation.bind(this));
     }
 
-    /**
-     * Get the locations from the attribute or fetch from the endpoint.
-     *
-     * @return {Array} Locations array or empty.
-     */
+    disconnectedCallback() {
+        // Remove the custom sync event listener to avoid memory leaks
+        document.removeEventListener('locationSync', this.syncLocation.bind(this));
+    }
+
+    syncLocation(event) {
+        handleSyncEvent(
+            event,
+            { selectedValue: this.querySelector(`input[name="${this.inputName}"]`)?.value || '' },
+            (newState) => {
+                // Update the preselected value in <irnmn-select>
+                const irnmnSelect = this.querySelector('irnmn-select');
+                if (irnmnSelect) {
+                    irnmnSelect.setAttribute('preselected', newState.selectedValue);
+                    irnmnSelect.selectedOption = irnmnSelect.options.findIndex(
+                        (option) => option.value === newState.selectedValue
+                    );
+                    irnmnSelect.render();
+                }
+    
+                // Update the hidden input value
+                const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+                if (hiddenInput) {
+                    hiddenInput.value = newState.selectedValue;
+                }
+            }
+        );
+    }
+    
+    
+
     async getLocations() {
         const locationsEndpoint = this.getAttribute('locations-endpoint');
 
@@ -51,11 +80,6 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
-    /**
-     * Parse the locations from the attribute.
-     * async method to wait for the response
-     * @return {Array} Locations array or empty.
-     */
     async parseLocations() {
         const locationsAttr = this.getAttribute('locations');
 
@@ -66,13 +90,7 @@ class IRNMNLocation extends HTMLElement {
             return [];
         }
     }
-    /**
-     * Fetch the locations from the provided endpoint.
-     * async method to wait for the response
-     * @param {String} locationsEndpoint - The URL to fetch the locations from.
-     *
-     * @return {Array} Locations array or empty.
-     */
+
     async fetchLocations(locationsEndpoint) {
         try {
             const response = await fetch(locationsEndpoint);
@@ -83,52 +101,26 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
-    /**
-     * Get the label for the location select.
-     * @return {String} Label or default value 'Select Location'.
-     */
     get label() {
         return this.getAttribute('label') || 'Select Location';
     }
 
-    /**
-     * Get the label for the location select.
-     * @return {String} Label or default value 'Select Location'.
-     */
     get default() {
         return this.getAttribute('default') || false;
     }
 
-    /**
-     * Get the ID for the location select.
-     * @return {String} ID or default value 'irnmn-location-select'.
-     */
     get inputId() {
         return this.getAttribute('id') || 'irnmn-location-select';
     }
 
-    /**
-     * Get the name for the location select.
-     *
-     * @return {String} Name or default value 'location'.
-     */
     get inputName() {
         return this.getAttribute('name') || 'location';
     }
 
-    /**
-     * Get the placeholder for the location select.
-     *
-     * @return {String} Placeholder or default value 'Select a location'.
-     */
     get placeholder() {
         return this.getAttribute('placeholder') || 'Select a location';
     }
 
-    /**
-     * Get the show error flag for the location select.
-     * @return {Boolean} Show error flag or default value false.
-     */
     get showError() {
         return (
             this.hasAttribute('show-error') &&
@@ -136,11 +128,6 @@ class IRNMNLocation extends HTMLElement {
         );
     }
 
-    /**
-     * Get the error message for the location select.
-     *
-     * @return {String} Error message or default value 'Please select a valid location'.
-     */
     get errorMessage() {
         return (
             this.getAttribute('error-message') ||
@@ -148,81 +135,98 @@ class IRNMNLocation extends HTMLElement {
         );
     }
 
-    /**
-     * Render the component only if locations data is available.
-     */
     render() {
         if (!this.locations || this.locations.length === 0) {
             console.error('No locations provided');
             return;
         }
-
+    
+        const options = this.locations.map((location) => ({
+            value: location.hotelCode, // Used as the unique identifier
+            name: location.hotelName, // Used as the display text
+        }));
+    
+        // Get the hidden input value or default value
+        const preselectedValue = getFromSessionStorage(this.inputName) || this.default || '';
+    
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
-                <select id="${this.inputId}" name="${this.inputName}" class="${CLASS_NAMES.select}" required>
-                    <option value="" disabled selected>${this.placeholder}</option>
-                    ${this.locations
-                        .map((location) => {
-                            // Dynamically create the data attributes based on the locations obj
-                            const dataAttributes = Object.entries(location)
-                                .map(([key, value]) => {
-                                    const dataAttrName = `data-${key.replace(/([A-Z])/g, '-$1').toLowerCase()}`;
-                                    return `${dataAttrName}="${value}"`;
-                                })
-                                .join(' ');
-
-                            return `
-                            <option value="${location.hotelCode}" ${dataAttributes} class="${CLASS_NAMES.option}">
-                                ${location.hotelName}
-                            </option>`;
-                        })
-                        .join('')}
-                </select>
+                <irnmn-select 
+                    id="${this.inputId}" 
+                    name="${this.inputName}" 
+                    heading-text="${this.label}" 
+                    options='${JSON.stringify(options)}' 
+                    placeholder="${this.placeholder}" 
+                    preselected="${preselectedValue}">
+                </irnmn-select>
+                <!-- Hidden input to hold the selected hotelCode -->
+                <input 
+                    type="hidden" 
+                    name="${this.inputName}" 
+                    value="${preselectedValue}">
             </div>
         `;
     }
+    
+    
+    
 
     attachEventListeners() {
-        const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
-        selectElement.addEventListener('change', (event) =>
-            this.handleLocationChange(event),
+        const irnmnSelect = this.querySelector('irnmn-select');
+
+        // Listen to the custom "optionSelected" event from irnmn-select
+        irnmnSelect.addEventListener('optionSelected', (event) =>
+            this.handleLocationChange(event.detail),
         );
     }
 
     setDefaultValue() {
-        const selectedLocation =
-            getFromSessionStorage(this.inputName) || this.default;
+        const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+        const selectedLocation = hiddenInput?.value || this.default || '';
+    
         if (selectedLocation) {
-            const selectElement = this.querySelector(`.${CLASS_NAMES.select}`);
-            selectElement.value = selectedLocation;
-            const event = new Event('change', { bubbles: true });
-            selectElement.dispatchEvent(event);
+            const irnmnSelect = this.querySelector('irnmn-select');
+            if (irnmnSelect) {
+                irnmnSelect.setAttribute('preselected', selectedLocation);
+            }
         }
     }
+    
 
     /**
      * Handles the change event for the location select element.
-     * It updates the other components within the parent form based on the selected location.
+     * Logs the selected location and updates other components within the form.
      *
-     * @param {Event} event - The change event object.
+     * @param {Object} selectedDetail - The detail object from the "optionSelected" event.
      *
      * @return {void}
      */
-    handleLocationChange(event) {
-        const selectedOptions = event.target.selectedOptions;
-        if (!selectedOptions.length) {
+    handleLocationChange(selectedDetail) {
+        if (!selectedDetail || !selectedDetail.value) {
             return;
         }
-        const selectedOption = selectedOptions[0];
-
-        if (!selectedOption.value) {
-            return;
-        }
+    
         this.setAttribute('show-error', false);
-        this.updateOtherComponents(selectedOption.dataset);
-        saveToSessionStorage(this.inputName, selectedOption.value);
+    
+        // Log the selected location for debugging
+        console.log('Selected Location:', selectedDetail);
+    
+        // Update the hidden input value
+        const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+        if (hiddenInput) {
+            hiddenInput.value = selectedDetail.value;
+        }
+    
+        // Save to session storage
+        saveToSessionStorage(this.inputName, selectedDetail.value);
+    
+        // Dispatch a sync event to update other components
+        dispatchSyncEvent('locationSync', { selectedValue: selectedDetail.value });
     }
+    
+    
+    
 
     /**
      * Updates the components within the parent form based on the selected location's properties.
@@ -232,6 +236,7 @@ class IRNMNLocation extends HTMLElement {
      * @return {void}
      */
     updateOtherComponents(selectedLocation) {
+        console.log(selectedLocation)
         Object.entries(selectedLocation).forEach(
             ([attrName, attributeValue]) => {
                 if (attrName === 'name') return; // Exclude the attribute "name"

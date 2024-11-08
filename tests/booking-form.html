@@ -23,7 +23,7 @@
         <irnmn-location
             label="Select a Destination"
             id="location-select"
-            name="destination"
+            name="location"
             placeholder="Choose a location"
             error-message="Please select a location"
             locations='[
@@ -44,7 +44,7 @@
                 {"name": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 10, "minRooms": 2, "openingDate": "2025-11-01", "dateLocale": "en-gb"},
                 {"name": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "minRooms": 1, "openingDate": "2024-12-01", "dateLocale": "fr-fr"}
             ]'
-            locations-endpoint="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v2/locations"
+            locations-endpoint="https://ennismore-local.vipdev.lndo.site/21c-museum-hotels/wp-json/booking-system/v2/locations"
             >
         </irnmn-location>
 
@@ -99,12 +99,8 @@
         action="https://ennismore-develop.go-vip.net/21c-museum-hotels/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking Form 3</h2>
 
-        <irnmn-location label="Select a Destination" id="location-select" name="booking-location" default=""
-            placeholder="Choose a location" error-message="Please select a location" show-error="false" locations='[
-                        {"hotelName": "New York", "hotelCode": "NYC01", "roomsNumber": 5, "openingDate": "false", "dateLocale": "en-us", "maxTotalGuests": 6, "adultsNumber": 5, "childrenNumber": 3, "maxChildAge": 10, "enableChildren": true, "enableChildrenAges": true},
-                        {"hotelName": "Los Angeles", "hotelCode": "LA02", "roomsNumber": 6, "openingDate": "2025-11-01", "dateLocale": "en-gb", "maxTotalGuests": 5, "adultsNumber": 5, "childrenNumber": 2, "maxChildAge": 15, "enableChildren": true, "enableChildrenAges": false},
-                        {"hotelName": "Chicago", "hotelCode": "CHI03", "roomsNumber": 7, "openingDate": "2024-12-01", "dateLocale": "fr-fr", "maxTotalGuests": 4, "adultsNumber": 4, "childrenNumber": 0, "maxChildAge": 11, "enableChildren": false, "enableChildrenAges": false, "externalServiceUrl":"https://booking-ennismore.com"}
-                    ]'>
+        <irnmn-location label="Select a Destination" id="location-select" name="location" default=""
+            placeholder="Choose a location" error-message="Please select a location" show-error="false"  locations-endpoint="https://ennismore-local.vipdev.lndo.site/21c-museum-hotels/wp-json/booking-system/v2/locations">
             ]'>
         </irnmn-location>
 
