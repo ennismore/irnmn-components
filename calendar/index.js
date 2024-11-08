@@ -70,7 +70,9 @@ class IRNMNCalendar extends HTMLElement {
      * Get the current date
      */
     getToday() {
-        return new Date();
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        return today;
     }
 
     /**
@@ -111,6 +113,7 @@ class IRNMNCalendar extends HTMLElement {
         }
 
         const openingDate = new Date(openingDateAttr);
+        openingDate.setHours(0, 0, 0, 0);
 
         // Return the current date if the opening date has already passed
         return openingDate > this.today ? openingDate : this.today;
@@ -301,23 +304,23 @@ class IRNMNCalendar extends HTMLElement {
 
     loadMonthButtons() {
         const months = getNext12Months(this.openingDate);
-    
+
         months.forEach((month) => {
             // Create and render the entire month (days + placeholders)
             const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
-    
+
             // Append the rendered month element to the calendar
             this.monthsWrapper.appendChild(monthEl);
-    
+
             // Attach event listeners to all rendered day buttons
             const dayButtons = monthEl.querySelectorAll(`.${CLASS_NAMES.dayBtn}`);
             dayButtons.forEach((dayBtn) => {
                 const time = parseInt(dayBtn.dataset.time);
-    
+
                 if (time < this.openingDate.getTime()) {
                     dayBtn.disabled = true; // Disable past dates
                 }
-    
+
                 dayBtn.addEventListener('click', () => this.handleDayClick(dayBtn));
                 dayBtn.addEventListener('mouseover', () => {
                     if (this.state.checkin && !this.state.checkout) {
@@ -331,13 +334,13 @@ class IRNMNCalendar extends HTMLElement {
                         this.highlightRange(this.state.checkin, time);
                     }
                 });
-    
+
                 // Track the button for state management
                 this.dayButtons.push(dayBtn);
             });
         });
     }
-    
+
 
     /**
      * Handle the click event on a day button

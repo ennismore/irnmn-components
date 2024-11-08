@@ -7,6 +7,10 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.0.6
+### Fixed - irnmn-calendar
+- Make opening day selectable
+
 ## v1.0.5
 ### Fixed - irnmn-calendar
 - Create disabled buttons to fix week days offset
