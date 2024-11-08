@@ -131,22 +131,47 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
+    /**
+     * Gets the label for the location dropdown.
+     *
+     * @return {string} The label text or the default "Select Location".
+     */
     get label() {
         return this.getAttribute('label') || 'Select Location';
     }
 
+    /**
+     * Gets the default value for the location dropdown.
+     *
+     * @return {string} The default value or an empty string.
+     */
     get default() {
         return this.getAttribute('default') || false;
     }
 
+    /**
+     * Gets the input ID for the location dropdown.
+     *
+     * @return {string} The input ID or a default value.
+     */
     get inputId() {
         return this.getAttribute('id') || 'irnmn-location-select';
     }
 
+    /**
+     * Gets the input name for the location dropdown.
+     *
+     * @return {string} The input name or a default value.
+     */
     get inputName() {
         return this.getAttribute('name') || 'location';
     }
 
+    /**
+     * Gets the placeholder for the location dropdown.
+     *
+     * @return {string} The placeholder text or a default value.
+     */
     get placeholder() {
         return this.getAttribute('placeholder') || 'Select a location';
     }
