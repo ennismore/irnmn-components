@@ -17,15 +17,25 @@ class IRNMNLocation extends HTMLElement {
         return ['show-error'];
     }
 
+    /**
+     * Handles attribute changes for the component.
+     *
+     * @param {string} name - The name of the attribute.
+     * @param {string|null} oldValue - The old value of the attribute.
+     * @param {string|null} newValue - The new value of the attribute.
+     */
     attributeChangedCallback(name, oldValue, newValue) {
         if (name === 'show-error' && oldValue !== newValue) {
             this.renderErrorMessage();
         }
     }
-  
+
+    /**
+     * Lifecycle method called when the component is added to the DOM.
+     * Initializes locations, renders the component, and attaches event listeners.
+     */
     async connectedCallback() {
         this.parentForm = this.closest('form');
-
         this.locations = await this.getLocations();
 
         /**
@@ -39,6 +49,10 @@ class IRNMNLocation extends HTMLElement {
         document.addEventListener('locationSync', this.syncLocation.bind(this));
     }
 
+    /**
+     * Lifecycle method called when the component is removed from the DOM.
+     * Cleans up event listeners to prevent memory leaks.
+     */
     disconnectedCallback() {
         // Remove the custom sync event listener to avoid memory leaks
         document.removeEventListener('locationSync', this.syncLocation.bind(this));
@@ -70,6 +84,11 @@ class IRNMNLocation extends HTMLElement {
     
     
 
+    /**
+     * Fetches locations either from the provided attribute or from an endpoint.
+     *
+     * @return {Array} The list of locations or an empty array.
+     */
     async getLocations() {
         const locationsEndpoint = this.getAttribute('locations-endpoint');
 
@@ -80,6 +99,11 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
+    /**
+     * Parses the locations from the `locations` attribute.
+     *
+     * @return {Array} The list of locations or an empty array.
+     */
     async parseLocations() {
         const locationsAttr = this.getAttribute('locations');
 
@@ -91,6 +115,12 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
+    /**
+     * Fetches locations from the provided endpoint.
+     *
+     * @param {string} locationsEndpoint - The URL to fetch the locations from.
+     * @return {Array} The list of locations or an empty array.
+     */
     async fetchLocations(locationsEndpoint) {
         try {
             const response = await fetch(locationsEndpoint);
@@ -172,6 +202,9 @@ class IRNMNLocation extends HTMLElement {
     
     
 
+    /**
+     * Attaches event listeners to the component.
+     */
     attachEventListeners() {
         const irnmnSelect = this.querySelector('irnmn-select');
 
@@ -181,6 +214,9 @@ class IRNMNLocation extends HTMLElement {
         );
     }
 
+    /**
+     * Sets the default value for the dropdown and hidden input.
+     */
     setDefaultValue() {
         const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
         const selectedLocation = hiddenInput?.value || this.default || '';
