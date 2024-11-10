@@ -45,7 +45,7 @@ class IrnmnSelect extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
-                <div id="irnmn-select-header" class="${CLASS_NAMES.header}" tabindex="0">
+                <div id="irnmn-select-header" class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : '' }" tabindex="0">
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                 </div>
                 <ul id="option-list" class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox" aria-labelledby="irnmn-select-header">
