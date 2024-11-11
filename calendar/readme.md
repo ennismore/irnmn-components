@@ -47,10 +47,6 @@ document.addEventListener('checkin-selected-irnmn-calendar', (event) => {
 - Only one month is displayed at a time, enhancing the user experience.
 - Smooth transitions are provided between months.
 
-### CSS Injection
-- External CSS is dynamically loaded and injected directly into the component using the `loadAndInjectCSS` utility.
-- This ensures that styles are applied consistently and allows for easy updates to the CSS.
-
 ## Accessibility
 - **ARIA Roles**: The component uses ARIA roles such as `role="region"`, `role="grid"`, and `role="columnheader"` to enhance screen reader compatibility.
 - **Keyboard Navigation**: The calendar supports keyboard interactions, allowing users to navigate and select dates using arrow keys.

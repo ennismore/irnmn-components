@@ -7,6 +7,13 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.1.0
+### Added - irnmn-guests-summary
+- Added dispatchSyncEvent logic to the component to trigger changes on storageKey
+
+### Fixed - irnmn-location
+- Change the output to be used the irnmn-select instead of the native browser dropdown
+
 ## v1.0.6
 ### Fixed - irnmn-calendar
 - Make opening day selectable

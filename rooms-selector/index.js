@@ -3,6 +3,7 @@ import { CLASS_NAMES } from './utils/constants.js';
 import {
     saveToSessionStorage,
     getFromSessionStorage,
+    dispatchSyncEvent,
 } from '../utils/components.js';
 
 class IRNMNRoomsSelector extends HTMLElement {
@@ -70,7 +71,7 @@ class IRNMNRoomsSelector extends HTMLElement {
      *
      */
     loadFromSessionStorage() {
-        const rooms = getFromSessionStorage('irnmn-rooms');
+        const rooms = getFromSessionStorage(`${this.name}`);
         if (rooms) {
             this.state.rooms = JSON.parse(rooms);
             if (this.state.rooms.length > this.roomsNumber) {
@@ -86,12 +87,18 @@ class IRNMNRoomsSelector extends HTMLElement {
         } else {
             this.updateRoomCount(this.minRooms); // minimum rooms on init by default if nothing saved in storage
         }
+        this.syncState(); // Initial sync
     }
 
     /**
      * Check if children are enabled.
      * @return {Boolean} True if children are enabled, false otherwise.
+     * Get the name attribute of the component, that will be used in the form data.
      */
+    get name() {
+        return this.getAttribute('name') || 'irnmn-rooms';
+    }
+
     getEnableChildren() {
         const enableChildrenAttr = this.getAttribute('enable-children');
         return (
@@ -271,6 +278,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 this.removeRoom(i, roomContainer);
             }
         }
+
+        this.syncState();
     }
 
     checkIfOneRoom() {
@@ -331,6 +340,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         // Add event listeners to track changes in the room's state
         this.trackRoomChanges(roomGuests);
         this.checkIfOneRoom();
+        this.syncState();
     }
 
     /**
@@ -351,8 +361,9 @@ class IRNMNRoomsSelector extends HTMLElement {
         // Remove the room from the state
         this.state.rooms.splice(roomIndex - 1, 1);
         // update session storage
-        saveToSessionStorage('irnmn-rooms', JSON.stringify(this.state.rooms));
+        saveToSessionStorage(`${this.name}`, JSON.stringify(this.state.rooms));
         this.checkIfOneRoom();
+        this.syncState();
     }
 
     /**
@@ -420,6 +431,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 'irnmn-rooms',
                 JSON.stringify(this.state.rooms),
             );
+            saveToSessionStorage(`${this.name}`, JSON.stringify(this.state.rooms));
+            this.syncState();
         });
         // Listen for the 'roomRemoved' event from the room-guests component
         roomGuests.addEventListener('irnmn-roomRemoved', (event) => {
@@ -436,7 +449,12 @@ class IRNMNRoomsSelector extends HTMLElement {
             );
             roomCountSelect.value = this.state.rooms.length;
             roomCountSelect.dispatchEvent(new Event('change'));
+            this.syncState();
         });
+    }
+
+    syncState() {
+        dispatchSyncEvent(`${this.name}-updated`, this.state.rooms);
     }
 }
 
