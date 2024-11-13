@@ -244,13 +244,17 @@ class IRNMNLocation extends HTMLElement {
      */
     setDefaultValue() {
         const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
-        const selectedLocation = hiddenInput?.value || this.default || '';
+        const selectedValue = hiddenInput?.value || this.default || '';
     
-        if (selectedLocation) {
+        if (selectedValue) {
             const irnmnSelect = this.querySelector('irnmn-select');
             if (irnmnSelect) {
-                irnmnSelect.setAttribute('preselected', selectedLocation);
+                irnmnSelect.setAttribute('preselected', selectedValue);
             }
+            const selectedLocation = this.locations.find(
+                (location) => location.hotelCode === selectedValue,
+            );
+            this.updateOtherComponents(selectedLocation);
         }
     }
     
