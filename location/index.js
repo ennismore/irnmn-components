@@ -278,7 +278,11 @@ class IRNMNLocation extends HTMLElement {
         if (hiddenInput) {
             hiddenInput.value = selectedDetail.value;
         }
-    
+        // Get the selected location object from locations
+        const selectedLocation = this.locations.find(
+            (location) => location.hotelCode === selectedDetail.value,
+        );
+        this.updateOtherComponents(selectedLocation);
         // Save to session storage
         saveToSessionStorage(this.inputName, selectedDetail.value);
     
