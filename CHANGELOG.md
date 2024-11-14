@@ -11,6 +11,7 @@ All new releases are documented in this file. The semantic versioning should fol
 ## v1.1.1
 ### Fixed - irnmn-location
 - Update other components based on the locations key selected by the user
+- Turn the hidden field required as default
 
 ### Changed - irnmn-guests-summary
 - Added new option to display the sum of the guests (adults + children)
