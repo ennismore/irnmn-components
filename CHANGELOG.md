@@ -7,6 +7,18 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+
+## v1.1.1
+### Fixed - irnmn-location
+- Update other components based on the locations key selected by the user
+
+### Changed - irnmn-guests-summary
+- Added new option to display the sum of the guests (adults + children)
+- Optimize the HTML summary rendering using an external method (appendSummary)
+
+### Changed - irnmn-select
+- Listen "Enter" button to open/close the dropdown
+
 ## v1.1.0
 ### Added - irnmn-guests-summary
 - Added dispatchSyncEvent logic to the component to trigger changes on storageKey

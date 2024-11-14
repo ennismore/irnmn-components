@@ -18,6 +18,16 @@ class IRNMNGuestsSummary extends HTMLElement {
         return this.getAttribute('storage-key');
     }
 
+    /**
+     * Returns a boolean indicating whether to display the total number of guests.
+     * If true, the summary will show the total number of adults and children.
+     * If false, the summary will only show the number of rooms, adults, and children if they are greater than zero.
+     *  
+     */
+    get sumGuests() {
+        return this.getAttribute('sum-guests') === 'true';
+    }
+
     /** 
     *
     * Parses the labels attribute as JSON and returns an object with default values as fallbacks.
@@ -103,20 +113,28 @@ class IRNMNGuestsSummary extends HTMLElement {
     render() {
         const { rooms, adults, children } = this.summary;
         const { room: roomLabel, rooms: roomsLabel, adult: adultLabel, adults: adultsLabel, child: childLabel, children: childrenLabel } = this.labels;
-
         let summaryText = '';
 
-        if (rooms > 0) {
-            summaryText += `${rooms} ${rooms > 1 ? roomsLabel : roomLabel}`;
+
+        summaryText += this.appendSummary(summaryText, rooms, roomLabel, roomsLabel);
+
+        if (this.sumGuests) {
+            summaryText += this.appendSummary(summaryText, adults + children, adultLabel, adultsLabel);
+        } else {
+            summaryText += this.appendSummary(summaryText, adults, adultLabel, adultsLabel);
+            summaryText += this.appendSummary(summaryText, children, childLabel, childrenLabel);
         }
-        if (adults > 0) {
-            summaryText += `${summaryText ? ', ' : ''}${adults} ${adults > 1 ? adultsLabel : adultLabel}`;
-        }
-        if (children > 0) {
-            summaryText += `${summaryText ? ', ' : ''}${children} ${children !== 1 ? childrenLabel : childLabel}`;
-        }
+       
 
         this.innerHTML = `<p>${summaryText}</p>`;
+    }
+
+    appendSummary(summaryText, count, singularLabel, pluralLabel) {
+        if (count > 0) {
+            return `${summaryText ? ', ' : ''}${count} ${count > 1 ? pluralLabel : singularLabel}`;
+        }
+        return '';
+
     }
 }
 

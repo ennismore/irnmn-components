@@ -122,7 +122,8 @@ class IrnmnSelect extends HTMLElement {
             header &&
             (event.key === 'ArrowDown' ||
                 event.key === 'ArrowUp' ||
-                event.key === ' ')
+                event.key === ' ' || 
+                event.key === 'Enter')
         ) {
             event.preventDefault();
             this.toggleList();
