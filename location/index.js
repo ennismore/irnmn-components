@@ -219,7 +219,8 @@ class IRNMNLocation extends HTMLElement {
                 <input 
                     type="hidden" 
                     name="${this.inputName}" 
-                    value="${preselectedValue}">
+                    value="${preselectedValue}"
+                    required>
             </div>
         `;
     }
