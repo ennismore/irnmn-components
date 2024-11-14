@@ -150,7 +150,8 @@ class IrnmnSelect extends HTMLElement {
             case 'End':
                 newIndex = this.options.length - 1;
                 break;
-            case 'Enter' || ' ':
+            case 'Enter':
+            case ' ':
                 this.selectOption(currentIndex);
                 this.closeList();
                 return;
