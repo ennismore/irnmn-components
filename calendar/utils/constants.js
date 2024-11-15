@@ -18,4 +18,6 @@ export const CLASS_NAMES = {
     daysWrapper: `${prefix}__days-wrapper`,
     errorMessage: `validation-message`,
     emptyDay: `${prefix}__empty-day`,
+    openAtTop: `${prefix}__panel--open-at-top`,
+    openAtBottom: `${prefix}__panel--open-at-bottom`,
 };

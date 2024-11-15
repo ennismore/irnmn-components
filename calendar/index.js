@@ -520,14 +520,37 @@ class IRNMNCalendar extends HTMLElement {
         toggleVisibility(this.panel, this.calendarVisible);
 
         if (this.calendarVisible) {
+            this.determineRenderPosition();
             document.addEventListener('keydown', this.handleEscKey.bind(this));
         } else {
-            document.removeEventListener(
-                'keydown',
-                this.handleEscKey.bind(this),
-            );
+            document.removeEventListener('keydown', this.handleEscKey.bind(this));
         }
     }
+
+    /**
+     * Determines whether the calendar should render above or below the inputElement.
+     * Adds the appropriate class to the panel.
+     * @return {void}
+     */
+    determineRenderPosition() {
+        // Get the bounding rectangle of the inputElement
+        const inputRect = this.inputElement.getBoundingClientRect();
+        const viewportHeight = window.innerHeight;
+
+        // Calculate available space above and below the inputElement
+        const spaceAbove = inputRect.top;
+        const spaceBelow = viewportHeight - inputRect.bottom;
+
+        // Clear any existing render classes
+        this.panel.classList.remove(CLASS_NAMES.openAtTop, CLASS_NAMES.openAtBottom);
+
+        if (spaceAbove > spaceBelow) {
+            this.panel.classList.add(CLASS_NAMES.openAtTop);
+        } else {
+            this.panel.classList.add(CLASS_NAMES.openAtBottom);
+        }
+    }
+    
 
     handleEscKey(event) {
         if (event.key === 'Escape') toggleVisibility(this.panel, false);
@@ -726,6 +749,6 @@ class IRNMNCalendar extends HTMLElement {
 
         return buttons[newIndex] || null;
     }
+  
 }
-
 customElements.define('irnmn-calendar', IRNMNCalendar);

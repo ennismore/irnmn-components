@@ -20,6 +20,9 @@ All new releases are documented in this file. The semantic versioning should fol
 ### Changed - irnmn-select
 - Listen "Enter" button to open/close the dropdown
 
+### Fixed - irnmn-calendar
+- Add extra classes to determine if the calendar should be render at the top/bottom of the calendar input
+
 ## v1.1.0
 ### Added - irnmn-guests-summary
 - Added dispatchSyncEvent logic to the component to trigger changes on storageKey
