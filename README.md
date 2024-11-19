@@ -24,3 +24,13 @@ To test a component locally, you need to run a local dev server. A simple approa
 For now, there is no current deployment process. Each component should be pulled into the build process of the site it is being used in. This may change in future.
 
 For each change to be correctly pulled in, we need to create a "release" tag and update that in the target dependency `package.json` file. Once you have made enough changes that a new release is needed, the process for this should be to create a new branch named `release/v1.0.1` and give it the new version number. Make updates to the `changelog.md` file with all changes that will be part of this release version. Add a tag number `git tag -a v1.0.1 -m "version 1.0.1"`. Checkout `main` branch and then merge the release branch into main and push. You will also need to push the tags `git push --tags. You can also create a PR from the release branch and merge via github process.
+
+## Import the components in a custom build (like a child-theme)
+After installing the irnmn-components using npm, it's still necessary to import the components in the custom build.
+
+Example:
+
+```bash
+import "irnmn-components/location";
+import "irnmn-components/calendar";
+```

@@ -33,7 +33,7 @@ Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 
 ```html
 <irnmn-location 
-    locations='[{"hotelCode": "H001", "name": "Hotel One", "roomsNumber": 5}, {"hotelCode": "H002", "name": "Hotel Two", "roomsNumber": 10}]'
+    locations='[{"hotelCode": "H001", "hotelName": "Hotel One", "roomsNumber": 5}, {"hotelCode": "H002", "hotelName": "Hotel Two", "roomsNumber": 10}]'
     label="Choose a Hotel"
     id="hotel-select"
     name="hotel"
@@ -43,6 +43,15 @@ Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 ```
 
 In this example, the `locations` attribute contains a JSON string that defines multiple locations, each with attributes such as `hotelCode`, `name`, and `roomsNumber`. The dropdown is rendered dynamically based on this data.
+
+It's also possible to include the location object using an external api endpoint.
+In the parent-theme, by default, the following endpoint will retrieve the JSON object in the expected format.
+
+```html
+<irnmn-location 
+    locations-endpoint="/wp-json/booking-system/v2/locations">
+</irnmn-location>
+```
 
 ## Behavior
 
