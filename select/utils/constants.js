@@ -7,6 +7,7 @@ export const CLASS_NAMES = {
     list: `${prefix}__list`,
     listOpen: `${prefix}__list--open`,
     item: `${prefix}__item`,
+    itemSelectable: `${prefix}__item--selectable`,
     itemUnselectable: `${prefix}__item--unselectable`,
     openUpwards: 'open-upwards',
 };
