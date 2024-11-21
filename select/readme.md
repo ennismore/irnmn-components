@@ -21,6 +21,12 @@ The component exposes the following methods for internal logic and user interact
 - `toggleDropdown()`: Toggles the visibility of the options dropdown.
 - `selectOption(value)`: Programmatically selects an option based on its value.
 - `clearSelection()`: Clears the current selection, resetting to the placeholder state.
+- `getSelectableOptions()`: Returns a list of all selectable options within the dropdown.
+- `findVisibleOptionIndex(startIndex, direction)`: Finds the index of the next visible option, starting from a given index and moving in the specified direction (1 for forward, -1 for backward).
+- `findNextVisibleOptionIndex(currentIndex)`: Finds the index of the next visible option, starting from the current index and moving forward.
+- `findPreviousVisibleOptionIndex(currentIndex)`: Finds the index of the previous visible option, starting from the current index and moving backward.
+- `findFirstVisibleOptionIndex()`: Finds the index of the first visible option in the dropdown.
+- `findLastVisibleOptionIndex()`: Finds the index of the last visible option in the dropdown.
 
 ## Behavior
 The `<irnmn-select>` component offers the following behavior:
@@ -28,6 +34,7 @@ The `<irnmn-select>` component offers the following behavior:
 - **Preselected Option**: If a `preselected` value is provided, the component automatically selects the corresponding option upon initialization.
 - **Dynamic Placeholder**: When no option is selected, the placeholder text is displayed. Once an option is selected, it replaces the placeholder.
 - **ARIA Accessibility**: The component uses appropriate ARIA roles and attributes to ensure compatibility with screen readers and other assistive technologies.
+- **Enhanced Focus and Navigation**: The component ensures that dynamically hidden options are skipped during focus and tabbing.
 
 ## Example
 
