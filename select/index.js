@@ -21,6 +21,10 @@ class IrnmnSelect extends HTMLElement {
         return this.getAttribute('placeholder') || null;
     }
 
+    get labelId() {
+        return this.getAttribute('label-id') || null;
+    }
+
     get options() {
         const optionsAttr = this.getAttribute('options');
         return optionsAttr ? JSON.parse(optionsAttr) : [];
@@ -44,11 +48,11 @@ class IrnmnSelect extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" aria-labelledby="irnmn-select-header">
-                <div id="irnmn-select-header" class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : '' }" tabindex="0">
+            <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" >
+                <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : '' }" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : '' }>
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                 </div>
-                <ul id="option-list" class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox" aria-labelledby="irnmn-select-header">
+                <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
                     ${
                         this.placeholder
                             ? `
@@ -170,7 +174,6 @@ class IrnmnSelect extends HTMLElement {
         this.isOpen = !this.isOpen;
 
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
-        const select = this.querySelector(`.${CLASS_NAMES.select}`);
         const header = this.querySelector(`.${CLASS_NAMES.header}`);
 
         if (this.isOpen) {
@@ -183,7 +186,7 @@ class IrnmnSelect extends HTMLElement {
         }
 
         list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
-        select.setAttribute('aria-expanded', this.isOpen);
+        header.setAttribute('aria-expanded', this.isOpen);
 
         if (this.isOpen) {
             this.focusItem(
@@ -198,7 +201,7 @@ class IrnmnSelect extends HTMLElement {
         this.isOpen = false;
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         list.classList.remove(CLASS_NAMES.listOpen);
-        this.querySelector(`.${CLASS_NAMES.select}`).setAttribute(
+        this.querySelector(`.${CLASS_NAMES.header}`).setAttribute(
             'aria-expanded',
             'false',
         );
