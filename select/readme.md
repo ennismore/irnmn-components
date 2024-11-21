@@ -12,6 +12,7 @@ The following attributes can be added to the `irnmn-select` element to customize
 | `heading-text`  | Text displayed as the heading for the select dropdown.           | `Select an Option`  |
 | `placeholder`   | First item text displayed when menu list is open.                | `""`                |
 | `preselected`   | Sets the initially selected option from the available options.   | `null`              |
+| `label-id`      | Value of the aria-labelledby                                     | `null`              |
 | `options`       | A JSON array of options with `name` and `value` properties.      | `[]`                |
 
 ## Methods
@@ -35,11 +36,10 @@ Here's an example of how to use the `irnmn-select` component in your HTML:
 ```html
 <irnmn-select 
     class="location-select"
-    id="location-select"
-    aria-labelledby="location-label"
     heading-text="Please select" 
     placeholder="Go to" 
     preselected="Bentonville"
+    label-id="select-label"
     options='[
         {"name":"Bentonville, Arkansas", "value":"Bentonville"}, 
         {"name":"Chicago, Illinois", "value":"Chicago"}, 
