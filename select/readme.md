@@ -34,7 +34,7 @@ The `<irnmn-select>` component offers the following behavior:
 - **Preselected Option**: If a `preselected` value is provided, the component automatically selects the corresponding option upon initialization.
 - **Dynamic Placeholder**: When no option is selected, the placeholder text is displayed. Once an option is selected, it replaces the placeholder.
 - **ARIA Accessibility**: The component uses appropriate ARIA roles and attributes to ensure compatibility with screen readers and other assistive technologies.
-- **Enhanced Focus and Navigation**: The component ensures that dynamically hidden options are skipped during focus and tabbing, providing a seamless and accessible navigation experience for users.
+- **Enhanced Focus and Navigation**: The component ensures that dynamically hidden options are skipped during focus and tabbing.
 
 ## Example
 
