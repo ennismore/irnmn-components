@@ -13,6 +13,7 @@ All new releases are documented in this file. The semantic versioning should fol
 - Fix accessibility issues :
   - Added label-id attribute
   - Moved role, aria-expanded, aria-haspopup and aria-labelledby attributes to header
+  - Added helper functions to ensure only visible options are focussed on
 
 ## v1.1.1
 ### Fixed - irnmn-location
