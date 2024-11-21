@@ -64,7 +64,7 @@ class IrnmnSelect extends HTMLElement {
                     ${this.options
                         .map(
                             (option, index) => `
-                        <li class="${CLASS_NAMES.item}" 
+                        <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemSelectable}" 
                             role="option" 
                             tabindex="-1"
                             aria-selected="${this.selectedOption === index ? 'true' : 'false'}"
@@ -141,18 +141,16 @@ class IrnmnSelect extends HTMLElement {
 
         switch (event.key) {
             case 'ArrowDown':
-                newIndex = (currentIndex + 1) % this.options.length;
+                newIndex = this.findNextVisibleOptionIndex(currentIndex);
                 break;
             case 'ArrowUp':
-                newIndex =
-                    (currentIndex - 1 + this.options.length) %
-                    this.options.length;
+                newIndex = this.findPreviousVisibleOptionIndex(currentIndex);
                 break;
             case 'Home':
-                newIndex = 0;
+                newIndex = this.findFirstVisibleOptionIndex();
                 break;
             case 'End':
-                newIndex = this.options.length - 1;
+                newIndex = this.findLastVisibleOptionIndex();
                 break;
             case 'Enter':
             case ' ':
@@ -176,26 +174,59 @@ class IrnmnSelect extends HTMLElement {
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         const header = this.querySelector(`.${CLASS_NAMES.header}`);
 
-        if (this.isOpen) {
-            this.determineDropdownPosition();
-            this.focusItem(
-                this.selectedOption !== null ? this.selectedOption : 0,
-            );
-        } else {
-            list.classList.remove(CLASS_NAMES.openUpwards);
-        }
-
         list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
         header.setAttribute('aria-expanded', this.isOpen);
 
         if (this.isOpen) {
+            this.determineDropdownPosition();
+
+            const firstVisibleOptionIndex = this.findFirstVisibleOptionIndex();
+
             this.focusItem(
-                this.selectedOption !== null ? this.selectedOption : 0,
+                this.selectedOption !== null ? this.selectedOption : firstVisibleOptionIndex,
             );
         } else {
+            list.classList.remove(CLASS_NAMES.openUpwards);
             header.focus();
         }
     }
+
+    findVisibleOptionIndex(startIndex, direction) {
+        const options = this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`);
+        const totalOptions = options.length;
+    
+        // Loop through options, wrapping around using modular arithmetic
+        for (let i = 0; i < totalOptions; i++) {
+            const index = (startIndex + i * direction + totalOptions) % totalOptions;
+            // Return index of the first visible option
+            if (getComputedStyle(options[index]).display !== 'none') {
+                return index;
+            }
+        }
+        // Return startIndex if no visible options found
+        return startIndex;
+    }
+    
+    findNextVisibleOptionIndex(currentIndex) {
+        // Find the next visible option starting from the current index
+        return this.findVisibleOptionIndex(currentIndex + 1, 1);
+    }
+    
+    findPreviousVisibleOptionIndex(currentIndex) {
+        // Find the previous visible option starting from the current index
+        return this.findVisibleOptionIndex(currentIndex - 1, -1);
+    }
+    
+    findFirstVisibleOptionIndex() {
+        // Find the first visible option, starting from the beginning
+        return this.findVisibleOptionIndex(0, 1);
+    }
+    
+    findLastVisibleOptionIndex() {
+        const options = this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`);
+        // Find the last visible option, starting from the end
+        return this.findVisibleOptionIndex(options.length - 1, -1);
+    }     
 
     closeList() {
         this.isOpen = false;
