@@ -191,8 +191,13 @@ class IrnmnSelect extends HTMLElement {
         }
     }
 
+    getSelectableOptions() {
+        // Retrieve and return all selectable options
+        return Array.from(this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`));
+    }
+    
     findVisibleOptionIndex(startIndex, direction) {
-        const options = this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`);
+        const options = this.getSelectableOptions();
         const totalOptions = options.length;
     
         // Loop through options, wrapping around using modular arithmetic
@@ -223,7 +228,7 @@ class IrnmnSelect extends HTMLElement {
     }
     
     findLastVisibleOptionIndex() {
-        const options = this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`);
+        const options = this.getSelectableOptions();
         // Find the last visible option, starting from the end
         return this.findVisibleOptionIndex(options.length - 1, -1);
     }     
