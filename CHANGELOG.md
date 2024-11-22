@@ -7,6 +7,8 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v.1.2.1
+### Added - irnmn-slider
 
 ## v1.1.2
 ### Fixed - irnmn-select
