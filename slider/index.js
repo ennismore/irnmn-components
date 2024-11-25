@@ -1,6 +1,6 @@
 class IRNMNSlider extends HTMLElement {
-
     CLASSNAMES = [];
+    eventListeners = [];
 
     constructor() {
         super();
@@ -34,8 +34,20 @@ class IRNMNSlider extends HTMLElement {
         this.initSlider();
     }
 
-    initSlider() {
+    /**
+     * Clean up event listeners using global eventListeners array
+     * 
+     * @returns {void}
+     */
+    disconnectedCallback() {
+        this.eventListeners.forEach(({ element, event, handler }) => {
+            element.removeEventListener(event, handler);
+        });
+        this.eventListeners = [];
+    }
 
+
+    initSlider() {
         const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
         try {
             if (!swipeContainer) {
@@ -68,21 +80,47 @@ class IRNMNSlider extends HTMLElement {
         this.querySelector(this.CLASSNAMES.TOTAL_SLIDES).textContent = totalSlides;
 
 
-        /**
-         * Update slides position using translateX method
-         * 
-         * @returns { void }
-         */
-        const updateSlides = () => {
-            swipeContainer.style.transition = 'transform 0.3s ease';
-            swipeContainer.style.transform = `translateX(-${this.currentSlide * 100}%)`;
+    /**
+     * Add event listeners for navigation and touch/drag
+     * Passing the total slides count to update the pagination separately
+     * 
+     * @param {HTMLElement} swipeContainer - The swipe container element
+     * @param {number} totalSlides - The total number of slides
+     * 
+     * @returns {void}
+     */
+    addEventListeners(swipeContainer, totalSlides) {
+        const clonedSlidesCount = swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES).length;
 
-            // Update pagination indicator
-            const displayedSlideIndex =
-                this.currentSlide === 0
-                    ? totalSlides // Show last slide index when on the first clone
-                    : this.currentSlide === clonedSlidesCount - 1
-                    ? 1 // Show first slide index when on the last clone
+        const updateSlides = () => this.updateSlides(swipeContainer, clonedSlidesCount, totalSlides);
+        const resetPosition = () => this.resetPosition(swipeContainer, clonedSlidesCount, totalSlides);
+        const nextSlide = () => this.moveToNextSlide(updateSlides, clonedSlidesCount);
+        const prevSlide = () => this.moveToPrevSlide(updateSlides, clonedSlidesCount);
+
+        this.setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides);
+
+        this.addListener(this.querySelector(this.CLASSNAMES.PREV_BUTTON), 'click', prevSlide);
+        this.addListener(this.querySelector(this.CLASSNAMES.NEXT_BUTTON), 'click', nextSlide);
+
+        this.addListener(swipeContainer, 'transitionend', resetPosition);
+    }
+
+    /**
+     * Add the event listener globally to be used across component
+     * It will be removed in disconnectedCallback
+     * 
+     * @param {HTMLElement} element - The element to add the event listener to
+     * @param {string} event - The event to listen for
+     * @param {Function} handler - The event handler
+     * 
+     * @returns {void}
+     */
+    addListener(element, event, handler) {
+        if (element) {
+            element.addEventListener(event, handler);
+            this.eventListeners.push({ element, event, handler });
+        }
+    }
                     : this.currentSlide;
             this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent = displayedSlideIndex;
         };
@@ -149,29 +187,13 @@ class IRNMNSlider extends HTMLElement {
             isDragging = false;
         };
 
-        /**
-         * Add event listeners to the swipe wrapper
-         * 
-         */
-        swipeContainer.addEventListener('touchstart', touchStart);
-        swipeContainer.addEventListener('touchmove', touchMove);
-        swipeContainer.addEventListener('touchend', touchEnd);
-        swipeContainer.addEventListener('mousedown', touchStart);
-        swipeContainer.addEventListener('mousemove', touchMove);
-        swipeContainer.addEventListener('mouseup', touchEnd);
-        swipeContainer.addEventListener('mouseleave', touchEnd);
-
-        // Navigation button event listeners
-        this.querySelector(this.CLASSNAMES.PREV_BUTTON).addEventListener('click', prevSlide);
-        this.querySelector(this.CLASSNAMES.NEXT_BUTTON).addEventListener('click', nextSlide);
-
-        // Transition end event to reset position when looping
-        swipeContainer.addEventListener('transitionend', resetPosition);
-
-
-        // Start from the first real slide
-        this.currentSlide = 1;
-        swipeContainer.style.transform = `translateX(-${this.currentSlide * 100}%)`;
+        this.addListener(swipeContainer, 'touchstart', touchStart);
+        this.addListener(swipeContainer, 'touchmove', touchMove);
+        this.addListener(swipeContainer, 'touchend', touchEnd);
+        this.addListener(swipeContainer, 'mousedown', touchStart);
+        this.addListener(swipeContainer, 'mousemove', touchMove);
+        this.addListener(swipeContainer, 'mouseup', touchEnd);
+        this.addListener(swipeContainer, 'mouseleave', touchEnd);
     }
 }
 
