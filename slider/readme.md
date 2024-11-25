@@ -13,6 +13,7 @@ The following attributes can be added to the `IRNMNSlider` element to customize 
 | Attribute      | Description                                                                                      | Default Value                |
 |----------------|--------------------------------------------------------------------------------------------------|------------------------------|
 | `selectors`    | A JSON string that defines the class names for key slider elements.                              | N/A (required)               |
+| `transition`    | The CSS transition to be used in the sliders.                              | 0.3 ease               |
 
 ### Example `selectors` JSON
 
