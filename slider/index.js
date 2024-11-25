@@ -30,6 +30,15 @@ class IRNMNSlider extends HTMLElement {
         return classnames;
     }
 
+    /**
+     * Get the transition value from the attribute or fallback
+     * 
+     * @returns {string} - The transition string
+     */
+    get transition() {
+        return this.getAttribute('transition') || '0.3s ease';
+    }
+
     connectedCallback() {
         this.initSlider();
     }
@@ -175,7 +184,7 @@ class IRNMNSlider extends HTMLElement {
      * Update slides position and pagination
      */
     updateSlides(swipeContainer, clonedSlidesCount, totalSlides) {
-        swipeContainer.style.transition = 'transform 0.3s ease';
+        swipeContainer.style.transition = this.transition;
         swipeContainer.style.transform = `translateX(-${this.currentSlide * 100}%)`;
 
         const displayedSlideIndex =
@@ -247,7 +256,7 @@ class IRNMNSlider extends HTMLElement {
 
         const touchEnd = () => {
             if (!isDragging) return;
-            swipeContainer.style.transition = 'transform 0.3s ease';
+            swipeContainer.style.transition = this.transition;
             if (currentX > 50) prevSlide();
             else if (currentX < -50) nextSlide();
             else updateSlides();
