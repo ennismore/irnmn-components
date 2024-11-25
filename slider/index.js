@@ -16,8 +16,12 @@ class IRNMNSlider extends HTMLElement {
      */
     get selectors() {
         let selectors = this.getAttribute('selectors');
-        selectors = JSON.parse(selectors);
         let classnames = [];
+        try {
+            selectors = JSON.parse(selectors);
+        } catch (error) {
+            console.error('Error parsing selectors:', error);
+        }
         // replace classnames with selectors
         for (let key in selectors) {
             classnames[key.toUpperCase()] = selectors[key];
@@ -33,8 +37,12 @@ class IRNMNSlider extends HTMLElement {
     initSlider() {
 
         const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
-        if ( !swipeContainer ) {
-            console.error('Swipe container not found');
+        try {
+            if (!swipeContainer) {
+                throw new Error('Swipe container not found');
+            }
+        } catch (error) {
+            console.error(error);
             return;
         }
         const slides = swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES);
