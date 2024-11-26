@@ -187,12 +187,20 @@ class IRNMNSlider extends HTMLElement {
         swipeContainer.style.transition = this.transition;
         swipeContainer.style.transform = `translateX(-${this.currentSlide * 100}%)`;
 
-        const displayedSlideIndex =
-            this.currentSlide === 0
-                ? totalSlides
-                : this.currentSlide === clonedSlidesCount - 1
-                    ? 1
-                    : this.currentSlide;
+        let displayedSlideIndex;
+
+        switch (this.currentSlide) {
+            case 0:
+            displayedSlideIndex = totalSlides;
+            break;
+            case clonedSlidesCount - 1:
+            displayedSlideIndex = 1;
+            break;
+            default:
+            displayedSlideIndex = this.currentSlide;
+            break;
+        }
+
         this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent = displayedSlideIndex;
     }
 
