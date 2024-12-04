@@ -135,6 +135,7 @@ class IRNMNSlider extends HTMLElement {
      */
     initializePosition(swipeContainer) {
         this.currentSlide = 1;
+        swipeContainer.style.transition = 'none';
         swipeContainer.style.transform = `translateX(-${this.currentSlide * 100}%)`;
     }
 
