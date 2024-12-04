@@ -104,7 +104,7 @@ class IRNMNSlider extends HTMLElement {
         // Remove navigation and pagination controls if they exist
         this.querySelector(this.CLASSNAMES.PREV_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.NEXT_BUTTON)?.remove();
-        this.querySelector(this.CLASSNAMES.CURRENT_SLIDE)?.remove();
+        this.querySelector(this.CLASSNAMES.CONTROLS)?.remove();
     }
 
     /**
