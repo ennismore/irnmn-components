@@ -3,7 +3,6 @@ class IRNMNSlider extends HTMLElement {
     eventListeners = [];
     slides = [];
     slideOffsets = [];
-    swipeContainer = null;
     currentSlide = 1;
 
     constructor() {
@@ -43,13 +42,13 @@ class IRNMNSlider extends HTMLElement {
     }
 
     connectedCallback() {
-        this.swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
-        if (!this.swipeContainer) {
+        const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
+        if (!swipeContainer) {
             console.error('Swipe container not found');
             return;
         }
-        this.initSlider();
-        this.setupResizeListener();
+        this.initSlider(swipeContainer);
+        this.setupResizeListener(swipeContainer);
     }    
 
     /**
@@ -65,9 +64,9 @@ class IRNMNSlider extends HTMLElement {
     }
 
 
-    initSlider() {
+    initSlider(swipeContainer) {
         try {
-            if (!this.swipeContainer) {
+            if (!swipeContainer) {
                 throw new Error('Swipe container not found');
             }
         } catch (error) {
@@ -76,11 +75,11 @@ class IRNMNSlider extends HTMLElement {
         }
 
         // Initialize slides
-        this.slides = Array.from(this.swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
 
         // Accessbility attributes
-        this.swipeContainer.setAttribute('role', 'region');
-        this.swipeContainer.setAttribute('aria-label', 'Slideshow with multiple slides');
+        swipeContainer.setAttribute('role', 'region');
+        swipeContainer.setAttribute('aria-label', 'Slideshow with multiple slides');
     
         const totalSlides = this.slides.length;
     
@@ -97,11 +96,11 @@ class IRNMNSlider extends HTMLElement {
         }
         this.dataset.sliderInitialized = "true";
     
-        this.cloneSlides();
-        this.calculateSlideOffsets();
+        this.cloneSlides(swipeContainer,);
+        this.calculateSlideOffsets(swipeContainer);
         this.updateTotalSlides(totalSlides);
-        this.initializePosition();
-        this.addEventListeners(totalSlides);
+        this.initializePosition(swipeContainer);
+        this.addEventListeners(swipeContainer, totalSlides);
     }
 
     /**
@@ -109,20 +108,42 @@ class IRNMNSlider extends HTMLElement {
      * and center the current slide when the window is resized.
      * Debounces the resize handler to optimize performance.
      *
+     * @param {HTMLElement} swipeContainer - The container element for the slider
      * @returns {void}
      */
-    setupResizeListener() {
+    setupResizeListener(swipeContainer) {
         let resizeTimeout;
 
         const onResize = () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                if (!this.swipeContainer) return;
+                if (!swipeContainer) return;
 
                 // Recalculate offsets and center the current slide
-                this.calculateSlideOffsets(this.swipeContainer);
-                this.centerSlide(this.swipeContainer);
+                this.calculateSlideOffsets(swipeContainer);
+                this.centerSlide(swipeContainer);
             }, 150);
+        };
+
+        window.addEventListener('resize', onResize);
+
+        // Track the resize listener for cleanup
+        this.eventListeners.push({ element: window, event: 'resize', handler: onResize });
+    }
+
+    /**
+     * Sets up the resize event listener to recalculate offsets
+     * and center the current slide when the window is resized.
+     * 
+     * @returns {void}
+     */
+    setupResizeListener(swipeContainer) {
+        const onResize = () => {
+            if (!swipeContainer) return;
+
+            // Recalculate offsets and center the current slide
+            this.calculateSlideOffsets(swipeContainer);
+            this.centerSlide(swipeContainer);
         };
 
         window.addEventListener('resize', onResize);
@@ -149,14 +170,14 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Clone first and last slides to enable looping
      */
-    cloneSlides() {
+    cloneSlides(swipeContainer) {
         const firstClone = this.slides[0].cloneNode(true);
         const lastClone = this.slides[this.slides.length - 1].cloneNode(true);
-        this.swipeContainer.appendChild(firstClone); // Add the first clone at the end
-        this.swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
+        swipeContainer.appendChild(firstClone); // Add the first clone at the end
+        swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
         
         // Update the slides property to include the clones
-        this.slides = Array.from(this.swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
     }
 
     /**
@@ -189,36 +210,38 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Initialize the slider position
      * 
+     * @param {HTMLElement} swipeContainer - The swipe container element
      * @returns {void}
      */
-    initializePosition() {
+    initializePosition(swipeContainer) {
         this.currentSlide = 1;
-        this.swipeContainer.style.transition = 'none';
-        this.centerSlide(this.swipeContainer);
+        swipeContainer.style.transition = 'none';
+        this.centerSlide(swipeContainer);
     }
 
     /**
      * Add event listeners for navigation and touch/drag
      * Passing the total slides count to update the pagination separately
      * 
+     * @param {HTMLElement} swipeContainer - The swipe container element
      * @param {number} totalSlides - The total number of slides
      * 
      * @returns {void}
      */
-    addEventListeners(totalSlides) {
+    addEventListeners(swipeContainer, totalSlides) {
         const clonedSlidesCount = this.slides.length;
 
-        const updateSlides = () => this.updateSlides(this.swipeContainer, clonedSlidesCount, totalSlides);
-        const resetPosition = () => this.resetPosition(this.swipeContainer, clonedSlidesCount, totalSlides);
+        const updateSlides = () => this.updateSlides(swipeContainer, clonedSlidesCount, totalSlides);
+        const resetPosition = () => this.resetPosition(swipeContainer, clonedSlidesCount, totalSlides);
         const nextSlide = () => this.moveToNextSlide(updateSlides, clonedSlidesCount);
         const prevSlide = () => this.moveToPrevSlide(updateSlides, clonedSlidesCount);
 
-        this.setupDragAndDrop(this.swipeContainer, nextSlide, prevSlide, updateSlides);
+        this.setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides);
 
         this.addListener(this.querySelector(this.CLASSNAMES.PREV_BUTTON), 'click', prevSlide);
         this.addListener(this.querySelector(this.CLASSNAMES.NEXT_BUTTON), 'click', nextSlide);
 
-        this.addListener(this.swipeContainer, 'transitionend', resetPosition);
+        this.addListener(swipeContainer, 'transitionend', resetPosition);
     }
 
     /**
@@ -243,20 +266,21 @@ class IRNMNSlider extends HTMLElement {
      * Calculates the translation value based on the current slide's offset and width,
      * ensuring that the slide is perfectly centered horizontally.
      *
+     * @param {HTMLElement} swipeContainer - The container element holding all the slides
      * @returns {void}
      */
-    centerSlide() {
+    centerSlide(swipeContainer) {
         const offset = this.slideOffsets[this.currentSlide];
         const slideWidth = this.slides[this.currentSlide].offsetWidth;
-        this.swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px))`;
+        swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px))`;
     }
 
     /**
      * Update slides position and pagination
      */
-    updateSlides(clonedSlidesCount, totalSlides) {
-        this.swipeContainer.style.transition = this.transition;
-        this.centerSlide(this.swipeContainer);
+    updateSlides(swipeContainer, clonedSlidesCount, totalSlides) {
+        swipeContainer.style.transition = this.transition;
+        this.centerSlide(swipeContainer);
 
         let displayedSlideIndex;
 
@@ -278,14 +302,14 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Reset the position on the transition end
      */
-    resetPosition(clonedSlidesCount, totalSlides) {
+    resetPosition(swipeContainer, clonedSlidesCount, totalSlides) {
         if (this.currentSlide === 0) {
             this.currentSlide = totalSlides;
         } else if (this.currentSlide === clonedSlidesCount - 1) {
             this.currentSlide = 1;
         }
-        this.swipeContainer.style.transition = 'none';
-        this.centerSlide(this.swipeContainer);
+        swipeContainer.style.transition = 'none';
+        this.centerSlide(swipeContainer);
     }
 
     /**
@@ -307,13 +331,14 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Setup drag and drop (or touch) event listeners
      * 
+     * @param {HTMLElement} swipeContainer - The swipe container element
      * @param {Function} nextSlide - The function to move to the next slide
      * @param {Function} prevSlide - The function to move to the previous slide
      * @param {Function} updateSlides - The function to update the slides
      * 
      * @returns {void}
      */
-    setupDragAndDrop(nextSlide, prevSlide, updateSlides) {
+    setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides) {
         let startX = 0;
         let currentX = 0;
         let isDragging = false;
@@ -321,7 +346,7 @@ class IRNMNSlider extends HTMLElement {
         const touchStart = (e) => {
             startX = e.touches ? e.touches[0].clientX : e.clientX;
             isDragging = true;
-            this.swipeContainer.style.transition = 'none';
+            swipeContainer.style.transition = 'none';
         };
 
         const touchMove = (e) => {
@@ -329,12 +354,12 @@ class IRNMNSlider extends HTMLElement {
             currentX = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
             const offset = this.slideOffsets[this.currentSlide];
             const slideWidth = this.slides[this.currentSlide].offsetWidth;
-            this.swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px + ${currentX}px))`;
+            swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px + ${currentX}px))`;
         };
 
         const touchEnd = () => {
             if (!isDragging) return;
-            this.swipeContainer.style.transition = this.transition;
+            swipeContainer.style.transition = this.transition;
             if (currentX > 50) prevSlide();
             else if (currentX < -50) nextSlide();
             else updateSlides();
@@ -342,13 +367,13 @@ class IRNMNSlider extends HTMLElement {
             isDragging = false;
         };
 
-        this.addListener(this.swipeContainer, 'touchstart', touchStart);
-        this.addListener(this.swipeContainer, 'touchmove', touchMove);
-        this.addListener(this.swipeContainer, 'touchend', touchEnd);
-        this.addListener(this.swipeContainer, 'mousedown', touchStart);
-        this.addListener(this.swipeContainer, 'mousemove', touchMove);
-        this.addListener(this.swipeContainer, 'mouseup', touchEnd);
-        this.addListener(this.swipeContainer, 'mouseleave', touchEnd);
+        this.addListener(swipeContainer, 'touchstart', touchStart);
+        this.addListener(swipeContainer, 'touchmove', touchMove);
+        this.addListener(swipeContainer, 'touchend', touchEnd);
+        this.addListener(swipeContainer, 'mousedown', touchStart);
+        this.addListener(swipeContainer, 'mousemove', touchMove);
+        this.addListener(swipeContainer, 'mouseup', touchEnd);
+        this.addListener(swipeContainer, 'mouseleave', touchEnd);
     }
 }
 
