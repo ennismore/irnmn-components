@@ -42,13 +42,7 @@ class IRNMNSlider extends HTMLElement {
     }
 
     connectedCallback() {
-        const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
-        if (!swipeContainer) {
-            console.error('Swipe container not found');
-            return;
-        }
-        this.initSlider(swipeContainer);
-        this.setupResizeListener(swipeContainer);
+        this.initSlider();
     }    
 
     /**
@@ -65,14 +59,12 @@ class IRNMNSlider extends HTMLElement {
 
 
     initSlider(swipeContainer) {
-        try {
-            if (!swipeContainer) {
-                throw new Error('Swipe container not found');
-            }
-        } catch (error) {
-            console.error(error);
+        const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
+        if (!swipeContainer) {
+            console.error('Swipe container not found');
             return;
         }
+        this.setupResizeListener(swipeContainer);
 
         // Initialize slides
         this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
