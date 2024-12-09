@@ -58,7 +58,7 @@ class IRNMNSlider extends HTMLElement {
     }
 
 
-    initSlider(swipeContainer) {
+    initSlider() {
         const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
         if (!swipeContainer) {
             console.error('Swipe container not found');
