@@ -7,11 +7,10 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
-## v.1.2.1
-### Added - irnmn-slider
-
 ## v1.1.2
 ### Fixed - irnmn-select
+### Added - irnmn-slider
+- Updated Location dropdown. Value in attribute "default" now has priority over sessionStorage value
 - Fix accessibility issues :
   - Added label-id attribute
   - Moved role, aria-expanded, aria-haspopup and aria-labelledby attributes to header
