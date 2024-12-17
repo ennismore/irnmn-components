@@ -5,13 +5,15 @@ This repository contains a collection of web components for use in Irnmn project
 This repo contains all components in one repo. If there are many updates we may consider moving each theme to it's own repo. For now, you can inlcude the whole repo into your existing build setup using `npm` and a `package.json`. eg:
 
 "dependencies": {
-    "irnmn-components": "github:ennismore/irnmn-components#<tag-name>"
+    "irnmn-components": "github:ennismore/irnmn-components#v1.1.2"
 }
+
+Always include a version number (ie #v1.1.2). For new websites, use the latest Release version number and for existing websites, use the version that's tested with the website and known to work without any issues.
 
 Example:
 
 ```bash
-npm i https://github.com/ennismore/irnmn-components.git#v1.0.4
+npm i https://github.com/ennismore/irnmn-components.git#v1.1.2
 ```
 
 
