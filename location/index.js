@@ -146,7 +146,7 @@ class IRNMNLocation extends HTMLElement {
      * @return {string} The default value or an empty string.
      */
     get default() {
-        return this.getAttribute('default') || false;
+        return this.getAttribute('default') || null;
     }
 
     /**
@@ -202,7 +202,7 @@ class IRNMNLocation extends HTMLElement {
         }));
     
         // Get the hidden input value or default value
-        const preselectedValue = getFromSessionStorage(this.inputName) || this.default || '';
+        const preselectedValue = this.default || getFromSessionStorage(this.inputName) || '';
     
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
@@ -245,7 +245,7 @@ class IRNMNLocation extends HTMLElement {
      */
     setDefaultValue() {
         const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
-        const selectedValue = hiddenInput?.value || this.default || '';
+        const selectedValue = this.default || hiddenInput?.value || '';
     
         if (selectedValue) {
             const irnmnSelect = this.querySelector('irnmn-select');
