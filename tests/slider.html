@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Web components</title>
+    <link rel="stylesheet" href="tests.css">
+    <script src="../slider/index.js" type="module"></script>
+</head>
+
+<body>
+    <h1>SLIDER</h1>
+        <irnmn-slider selectors='{
+            "SWIPE_CONTAINER": ".slider-container",
+            "SLIDES": ".slider-slide",
+            "NAVIGATION": ".slider-navigation",
+            "PREV_BUTTON": ".slider-prev",
+            "NEXT_BUTTON": ".slider-next",
+            "CURRENT_SLIDE": ".current-slide",
+            "TOTAL_SLIDES": ".total-slides"
+        }'>
+            <div class="slider-container">
+                <div class="slider-slide">Slide 1</div>
+                <div class="slider-slide">Slide 2</div>
+                <div class="slider-slide">Slide 3</div>
+                <div class="slider-slide">Slide 4</div>
+                <div class="slider-slide">Slide 5</div>
+                <div class="slider-slide">Slide 6</div>
+            </div>
+            <div class="slider-navigation">
+                <button class="slider-prev">Previous</button>
+                <span>
+                    <span class="current-slide">1</span> /
+                    <span class="total-slides">3</span>
+                </span>
+                <button class="slider-next">Next</button>
+            </div>
+        </irnmn-slider>
+        <script>
+            document.querySelector('.slider-container').addEventListener('slideChange', function(event) {
+                console.log('Slide changed to:', event.detail.currentSlideDisplayedIndex);
+                console.log(event.detail);
+            });
+        </script>
+</body>
+</html>

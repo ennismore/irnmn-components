@@ -14,7 +14,7 @@
 /* Day Buttons Container Styling */
 .irnmn-calendar__days {
     display: grid;
-    grid-template-columns: repeat(7, 1fr); 
+    grid-template-columns: repeat(7, 1fr);
     gap: 0.2rem; /* Spacing between day buttons */
     text-align: center;
     margin-top: 0.5rem;
@@ -40,7 +40,7 @@
 /* Selected and Range Highlighting */
 .is-checkin,
 .is-checkout {
-    background-color: #202020; 
+    background-color: #202020;
     color: white;
 }
 
@@ -63,4 +63,19 @@
 .irnmn-calendar__panel {
     background-color: #ffffff;
     padding: 1rem;
+}
+
+.slider-container {
+    display: flex;
+    transition: transform 0.3s ease;
+    width: 100%;
+}
+
+.slider-slide {
+    flex-shrink: 0;
+    margin: 0;
+    width: 100%; /* Each slide takes full container width */
+    height: 100px; /* Fixed height for the slider */
+    cursor: grab;
+    padding: 0 10px;
 }

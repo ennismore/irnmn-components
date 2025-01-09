@@ -7,6 +7,12 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.1.3
+### Fixed - irnmn-slider
+### Added - irnmn-slider
+- Fix displaying current slide number on pagination
+- Added a custom event "slideChange" to be catched outside of the component
+
 ## v1.1.2
 ### Fixed - irnmn-select
 ### Added - irnmn-slider

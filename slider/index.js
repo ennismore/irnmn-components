@@ -13,7 +13,7 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Get the selectors from the attribute
      * to be used as classnames obj
-     * 
+     *
      * @returns {object} - The selectors object
      */
     get selectors() {
@@ -34,7 +34,7 @@ class IRNMNSlider extends HTMLElement {
 
     /**
      * Get the transition value from the attribute or fallback
-     * 
+     *
      * @returns {string} - The transition string
      */
     get transition() {
@@ -43,11 +43,11 @@ class IRNMNSlider extends HTMLElement {
 
     connectedCallback() {
         this.initSlider();
-    }    
+    }
 
     /**
      * Clean up event listeners using global eventListeners array
-     * 
+     *
      * @returns {void}
      */
     disconnectedCallback() {
@@ -72,9 +72,9 @@ class IRNMNSlider extends HTMLElement {
         // Accessbility attributes
         swipeContainer.setAttribute('role', 'region');
         swipeContainer.setAttribute('aria-label', 'Slideshow with multiple slides');
-    
+
         const totalSlides = this.slides.length;
-    
+
         /**
          * Handle single slide case
          */
@@ -82,12 +82,12 @@ class IRNMNSlider extends HTMLElement {
             this.renderSingleSlide(this.slides[0]);
             return;
         }
-    
+
         if (this.dataset.sliderInitialized === "true") {
             return;
         }
         this.dataset.sliderInitialized = "true";
-    
+
         this.cloneSlides(swipeContainer,);
         this.calculateSlideOffsets(swipeContainer);
         this.updateTotalSlides(totalSlides);
@@ -126,7 +126,7 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Sets up the resize event listener to recalculate offsets
      * and center the current slide when the window is resized.
-     * 
+     *
      * @returns {void}
      */
     setupResizeListener(swipeContainer) {
@@ -146,13 +146,13 @@ class IRNMNSlider extends HTMLElement {
 
     /**
      * Fall back to a single slide if only one slide is present
-     * 
+     *
      * @param {HTMLElement} singleSlide - The single slide element
      * @returns {void}
      */
     renderSingleSlide(singleSlide) {
         singleSlide.style.cssText = 'display: block; margin: 0 auto;'; // Inline styles for single slide
-    
+
         // Remove navigation and pagination controls if they exist
         this.querySelector(this.CLASSNAMES.PREV_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.NEXT_BUTTON)?.remove();
@@ -167,7 +167,7 @@ class IRNMNSlider extends HTMLElement {
         const lastClone = this.slides[this.slides.length - 1].cloneNode(true);
         swipeContainer.appendChild(firstClone); // Add the first clone at the end
         swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
-        
+
         // Update the slides property to include the clones
         this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
     }
@@ -184,14 +184,14 @@ class IRNMNSlider extends HTMLElement {
         let cumulativeOffset = 0;
 
         this.slides.forEach((slide) => {
-            cumulativeOffset += slide.offsetWidth; 
+            cumulativeOffset += slide.offsetWidth;
             this.slideOffsets.push(cumulativeOffset);
         });
     }
 
     /**
      * Update the total number of slides
-     * 
+     *
      * @param {number} totalSlides - The total number of slides
      * @returns {void}
      */
@@ -201,7 +201,7 @@ class IRNMNSlider extends HTMLElement {
 
     /**
      * Initialize the slider position
-     * 
+     *
      * @param {HTMLElement} swipeContainer - The swipe container element
      * @returns {void}
      */
@@ -214,10 +214,10 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Add event listeners for navigation and touch/drag
      * Passing the total slides count to update the pagination separately
-     * 
+     *
      * @param {HTMLElement} swipeContainer - The swipe container element
      * @param {number} totalSlides - The total number of slides
-     * 
+     *
      * @returns {void}
      */
     addEventListeners(swipeContainer, totalSlides) {
@@ -239,11 +239,11 @@ class IRNMNSlider extends HTMLElement {
     /**
      * Add the event listener globally to be used across component
      * It will be removed in disconnectedCallback
-     * 
+     *
      * @param {HTMLElement} element - The element to add the event listener to
      * @param {string} event - The event to listen for
      * @param {Function} handler - The event handler
-     * 
+     *
      * @returns {void}
      */
     addListener(element, event, handler) {
@@ -278,17 +278,27 @@ class IRNMNSlider extends HTMLElement {
 
         switch (this.currentSlide) {
             case 0:
-            displayedSlideIndex = totalSlides;
-            break;
+                displayedSlideIndex = totalSlides;
+                break;
             case clonedSlidesCount - 1:
-            displayedSlideIndex = 1;
-            break;
+                displayedSlideIndex = 1;
+                break;
             default:
-            displayedSlideIndex = this.currentSlide;
-            break;
+                displayedSlideIndex = this.currentSlide;
+                break;
         }
-
-        this.slides.textContent = displayedSlideIndex;
+        this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent = displayedSlideIndex;
+        // Dispatch a custom event when the slide changes
+        const slideChangeEvent = new CustomEvent('slideChange', {
+            detail: {
+                currentSlideIndex: this.currentSlide,
+                currentSlideDisplayedIndex: displayedSlideIndex,
+                currentSlideElement: this.slides[this.currentSlide],
+                totalSlides: totalSlides,
+                clonedSlidesCount: clonedSlidesCount
+            }
+        });
+        swipeContainer.dispatchEvent(slideChangeEvent);
     }
 
     /**
@@ -322,12 +332,12 @@ class IRNMNSlider extends HTMLElement {
 
     /**
      * Setup drag and drop (or touch) event listeners
-     * 
+     *
      * @param {HTMLElement} swipeContainer - The swipe container element
      * @param {Function} nextSlide - The function to move to the next slide
      * @param {Function} prevSlide - The function to move to the previous slide
      * @param {Function} updateSlides - The function to update the slides
-     * 
+     *
      * @returns {void}
      */
     setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides) {
