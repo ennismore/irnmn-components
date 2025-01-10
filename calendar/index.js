@@ -307,13 +307,19 @@ class IRNMNCalendar extends HTMLElement {
 
         months.forEach((month) => {
             // Create and render the entire month (days + placeholders)
-            const monthEl = createMonthElement(month, this.weekDays, this.dateLocale);
+            const monthEl = createMonthElement(
+                month,
+                this.weekDays,
+                this.dateLocale,
+            );
 
             // Append the rendered month element to the calendar
             this.monthsWrapper.appendChild(monthEl);
 
             // Attach event listeners to all rendered day buttons
-            const dayButtons = monthEl.querySelectorAll(`.${CLASS_NAMES.dayBtn}`);
+            const dayButtons = monthEl.querySelectorAll(
+                `.${CLASS_NAMES.dayBtn}`,
+            );
             dayButtons.forEach((dayBtn) => {
                 const time = parseInt(dayBtn.dataset.time);
 
@@ -321,7 +327,9 @@ class IRNMNCalendar extends HTMLElement {
                     dayBtn.disabled = true; // Disable past dates
                 }
 
-                dayBtn.addEventListener('click', () => this.handleDayClick(dayBtn));
+                dayBtn.addEventListener('click', () =>
+                    this.handleDayClick(dayBtn),
+                );
                 dayBtn.addEventListener('mouseover', () => {
                     if (this.state.checkin && !this.state.checkout) {
                         clearHighlights(this.dayButtons, [CLASS_NAMES.inRange]);
@@ -340,7 +348,6 @@ class IRNMNCalendar extends HTMLElement {
             });
         });
     }
-
 
     /**
      * Handle the click event on a day button
@@ -509,9 +516,13 @@ class IRNMNCalendar extends HTMLElement {
             }
         });
         // highlight the check-in button as a single date if endTime is less than startTime
-        const isSingle = (startTime < endTime);
-        const checkinButton = this.dayButtons.find((button) => button.classList.contains(CLASS_NAMES.checkin));
-        if (!checkinButton) { return; }
+        const isSingle = startTime < endTime;
+        const checkinButton = this.dayButtons.find((button) =>
+            button.classList.contains(CLASS_NAMES.checkin),
+        );
+        if (!checkinButton) {
+            return;
+        }
         checkinButton.classList.toggle(CLASS_NAMES.isSingle, !isSingle);
     }
 
@@ -523,7 +534,10 @@ class IRNMNCalendar extends HTMLElement {
             this.determineRenderPosition();
             document.addEventListener('keydown', this.handleEscKey.bind(this));
         } else {
-            document.removeEventListener('keydown', this.handleEscKey.bind(this));
+            document.removeEventListener(
+                'keydown',
+                this.handleEscKey.bind(this),
+            );
         }
     }
 
@@ -542,7 +556,10 @@ class IRNMNCalendar extends HTMLElement {
         const spaceBelow = viewportHeight - inputRect.bottom;
 
         // Clear any existing render classes
-        this.panel.classList.remove(CLASS_NAMES.openAtTop, CLASS_NAMES.openAtBottom);
+        this.panel.classList.remove(
+            CLASS_NAMES.openAtTop,
+            CLASS_NAMES.openAtBottom,
+        );
 
         if (spaceAbove > spaceBelow) {
             this.panel.classList.add(CLASS_NAMES.openAtTop);
@@ -550,7 +567,6 @@ class IRNMNCalendar extends HTMLElement {
             this.panel.classList.add(CLASS_NAMES.openAtBottom);
         }
     }
-    
 
     handleEscKey(event) {
         if (event.key === 'Escape') toggleVisibility(this.panel, false);
@@ -749,6 +765,5 @@ class IRNMNCalendar extends HTMLElement {
 
         return buttons[newIndex] || null;
     }
-  
 }
 customElements.define('irnmn-calendar', IRNMNCalendar);

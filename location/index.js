@@ -55,34 +55,44 @@ class IRNMNLocation extends HTMLElement {
      */
     disconnectedCallback() {
         // Remove the custom sync event listener to avoid memory leaks
-        document.removeEventListener('locationSync', this.syncLocation.bind(this));
+        document.removeEventListener(
+            'locationSync',
+            this.syncLocation.bind(this),
+        );
     }
 
     syncLocation(event) {
         handleSyncEvent(
             event,
-            { selectedValue: this.querySelector(`input[name="${this.inputName}"]`)?.value || '' },
+            {
+                selectedValue:
+                    this.querySelector(`input[name="${this.inputName}"]`)
+                        ?.value || '',
+            },
             (newState) => {
                 // Update the preselected value in <irnmn-select>
                 const irnmnSelect = this.querySelector('irnmn-select');
                 if (irnmnSelect) {
-                    irnmnSelect.setAttribute('preselected', newState.selectedValue);
+                    irnmnSelect.setAttribute(
+                        'preselected',
+                        newState.selectedValue,
+                    );
                     irnmnSelect.selectedOption = irnmnSelect.options.findIndex(
-                        (option) => option.value === newState.selectedValue
+                        (option) => option.value === newState.selectedValue,
                     );
                     irnmnSelect.render();
                 }
-    
+
                 // Update the hidden input value
-                const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+                const hiddenInput = this.querySelector(
+                    `input[name="${this.inputName}"]`,
+                );
                 if (hiddenInput) {
                     hiddenInput.value = newState.selectedValue;
                 }
-            }
+            },
         );
     }
-    
-    
 
     /**
      * Fetches locations either from the provided attribute or from an endpoint.
@@ -195,15 +205,16 @@ class IRNMNLocation extends HTMLElement {
             console.error('No locations provided');
             return;
         }
-    
+
         const options = this.locations.map((location) => ({
             value: location.hotelCode, // Used as the unique identifier
             name: location.hotelName, // Used as the display text
         }));
-    
+
         // Get the hidden input value or default value
-        const preselectedValue = this.default || getFromSessionStorage(this.inputName) || '';
-    
+        const preselectedValue =
+            this.default || getFromSessionStorage(this.inputName) || '';
+
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
@@ -224,9 +235,6 @@ class IRNMNLocation extends HTMLElement {
             </div>
         `;
     }
-    
-    
-    
 
     /**
      * Attaches event listeners to the component.
@@ -244,9 +252,11 @@ class IRNMNLocation extends HTMLElement {
      * Sets the default value for the dropdown and hidden input.
      */
     setDefaultValue() {
-        const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+        const hiddenInput = this.querySelector(
+            `input[name="${this.inputName}"]`,
+        );
         const selectedValue = this.default || hiddenInput?.value || '';
-    
+
         if (selectedValue) {
             const irnmnSelect = this.querySelector('irnmn-select');
             if (irnmnSelect) {
@@ -258,7 +268,6 @@ class IRNMNLocation extends HTMLElement {
             this.updateOtherComponents(selectedLocation);
         }
     }
-    
 
     /**
      * Handles the change event for the location select element.
@@ -272,14 +281,16 @@ class IRNMNLocation extends HTMLElement {
         if (!selectedDetail || !selectedDetail.value) {
             return;
         }
-    
+
         this.setAttribute('show-error', false);
-    
+
         // Log the selected location for debugging
         console.log('Selected Location:', selectedDetail);
-    
+
         // Update the hidden input value
-        const hiddenInput = this.querySelector(`input[name="${this.inputName}"]`);
+        const hiddenInput = this.querySelector(
+            `input[name="${this.inputName}"]`,
+        );
         if (hiddenInput) {
             hiddenInput.value = selectedDetail.value;
         }
@@ -290,13 +301,12 @@ class IRNMNLocation extends HTMLElement {
         this.updateOtherComponents(selectedLocation);
         // Save to session storage
         saveToSessionStorage(this.inputName, selectedDetail.value);
-    
+
         // Dispatch a sync event to update other components
-        dispatchSyncEvent('locationSync', { selectedValue: selectedDetail.value });
+        dispatchSyncEvent('locationSync', {
+            selectedValue: selectedDetail.value,
+        });
     }
-    
-    
-    
 
     /**
      * Updates the components within the parent form based on the selected location's properties.
@@ -306,7 +316,7 @@ class IRNMNLocation extends HTMLElement {
      * @return {void}
      */
     updateOtherComponents(selectedLocation) {
-        console.log(selectedLocation)
+        console.log(selectedLocation);
         Object.entries(selectedLocation).forEach(
             ([attrName, attributeValue]) => {
                 if (attrName === 'name') return; // Exclude the attribute "name"

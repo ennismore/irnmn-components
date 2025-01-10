@@ -431,7 +431,10 @@ class IRNMNRoomsSelector extends HTMLElement {
                 'irnmn-rooms',
                 JSON.stringify(this.state.rooms),
             );
-            saveToSessionStorage(`${this.name}`, JSON.stringify(this.state.rooms));
+            saveToSessionStorage(
+                `${this.name}`,
+                JSON.stringify(this.state.rooms),
+            );
             this.syncState();
         });
         // Listen for the 'roomRemoved' event from the room-guests component

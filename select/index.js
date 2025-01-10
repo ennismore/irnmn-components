@@ -49,7 +49,7 @@ class IrnmnSelect extends HTMLElement {
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" >
-                <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : '' }" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : '' }>
+                <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
                     ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                 </div>
                 <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
@@ -126,7 +126,7 @@ class IrnmnSelect extends HTMLElement {
             header &&
             (event.key === 'ArrowDown' ||
                 event.key === 'ArrowUp' ||
-                event.key === ' ' || 
+                event.key === ' ' ||
                 event.key === 'Enter')
         ) {
             event.preventDefault();
@@ -183,7 +183,9 @@ class IrnmnSelect extends HTMLElement {
             const firstVisibleOptionIndex = this.findFirstVisibleOptionIndex();
 
             this.focusItem(
-                this.selectedOption !== null ? this.selectedOption : firstVisibleOptionIndex,
+                this.selectedOption !== null
+                    ? this.selectedOption
+                    : firstVisibleOptionIndex,
             );
         } else {
             list.classList.remove(CLASS_NAMES.openUpwards);
@@ -193,16 +195,19 @@ class IrnmnSelect extends HTMLElement {
 
     getSelectableOptions() {
         // Retrieve and return all selectable options
-        return Array.from(this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`));
+        return Array.from(
+            this.querySelectorAll(`.${CLASS_NAMES.itemSelectable}`),
+        );
     }
-    
+
     findVisibleOptionIndex(startIndex, direction) {
         const options = this.getSelectableOptions();
         const totalOptions = options.length;
-    
+
         // Loop through options, wrapping around using modular arithmetic
         for (let i = 0; i < totalOptions; i++) {
-            const index = (startIndex + i * direction + totalOptions) % totalOptions;
+            const index =
+                (startIndex + i * direction + totalOptions) % totalOptions;
             // Return index of the first visible option
             if (getComputedStyle(options[index]).display !== 'none') {
                 return index;
@@ -211,27 +216,27 @@ class IrnmnSelect extends HTMLElement {
         // Return startIndex if no visible options found
         return startIndex;
     }
-    
+
     findNextVisibleOptionIndex(currentIndex) {
         // Find the next visible option starting from the current index
         return this.findVisibleOptionIndex(currentIndex + 1, 1);
     }
-    
+
     findPreviousVisibleOptionIndex(currentIndex) {
         // Find the previous visible option starting from the current index
         return this.findVisibleOptionIndex(currentIndex - 1, -1);
     }
-    
+
     findFirstVisibleOptionIndex() {
         // Find the first visible option, starting from the beginning
         return this.findVisibleOptionIndex(0, 1);
     }
-    
+
     findLastVisibleOptionIndex() {
         const options = this.getSelectableOptions();
         // Find the last visible option, starting from the end
         return this.findVisibleOptionIndex(options.length - 1, -1);
-    }     
+    }
 
     closeList() {
         this.isOpen = false;

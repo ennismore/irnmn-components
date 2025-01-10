@@ -8,7 +8,9 @@ class IRNMNBookingAllCom extends HTMLElement {
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
-        this.form.addEventListener('submit', (event) => this.handleAllComBookingEngine(event));
+        this.form.addEventListener('submit', (event) =>
+            this.handleAllComBookingEngine(event),
+        );
     }
 
     disconnectedCallback() {
@@ -45,9 +47,8 @@ class IRNMNBookingAllCom extends HTMLElement {
      *
      */
     handleAllComBookingEngine() {
-
         let formData = new FormData(this.form);
-        const hotelCode = formData.get("hotelCode");
+        const hotelCode = formData.get('hotelCode');
 
         // Check if the hotel code is part of the list of supported hotels
         if (!this.hotelCodes.includes(hotelCode)) return;
@@ -62,38 +63,50 @@ class IRNMNBookingAllCom extends HTMLElement {
         const monthIn = checkinDate.getMonth() + 1; // Months are zero-based
         const yearIn = checkinDate.getFullYear();
 
-        this.createInput(this.form, "destination", hotelCode);
-        this.createInput(this.form, "dayIn", dayIn);
-        this.createInput(this.form, "monthIn", monthIn);
-        this.createInput(this.form, "yearIn", yearIn);
-        this.createInput(this.form, "nightNb", nights);
+        this.createInput(this.form, 'destination', hotelCode);
+        this.createInput(this.form, 'dayIn', dayIn);
+        this.createInput(this.form, 'monthIn', monthIn);
+        this.createInput(this.form, 'yearIn', yearIn);
+        this.createInput(this.form, 'nightNb', nights);
 
         // Default needed for the all.com booking engine
-        this.createInput(this.form, "goto", "wl_intpartner_search");
+        this.createInput(this.form, 'goto', 'wl_intpartner_search');
 
         const locale = navigator.language || navigator.userLanguage;
         const languageCode = locale.substring(0, 2);
-        this.createInput(this.form, "code_langue", languageCode);
+        this.createInput(this.form, 'code_langue', languageCode);
 
         // currently only one room is supported. This will need to be updated if multiple rooms are supported
-        this.createInput(this.form, "roomNumber", 1);
-        this.createInput(this.form, "room[0].adultNumber", formData.get("adults"));
-        this.createInput(this.form, "room[0].childrenNumber", formData.get("children"));
+        this.createInput(this.form, 'roomNumber', 1);
+        this.createInput(
+            this.form,
+            'room[0].adultNumber',
+            formData.get('adults'),
+        );
+        this.createInput(
+            this.form,
+            'room[0].childrenNumber',
+            formData.get('children'),
+        );
 
         // Currently only one room is supported. This will need to be updated if multiple rooms are supported
         if (formData.get('children')) {
             for (let i = 0; i < formData.get('children'); i++) {
-                this.createInput(this.form, `room[0].childrenAge[${i}]`, this.childAge);
+                this.createInput(
+                    this.form,
+                    `room[0].childrenAge[${i}]`,
+                    this.childAge,
+                );
             }
         }
 
         // Promo code on all.com is very sensitive. If you enter a wrong code
         // it will not show any results.
-        let promoCode = formData.get("promoCode");
+        let promoCode = formData.get('promoCode');
         if (!promoCode) {
-            promoCode = thisData.get("rateCode");
+            promoCode = thisData.get('rateCode');
         }
-        this.createInput(this.form, "preferredCode", promoCode ?? '');
+        this.createInput(this.form, 'preferredCode', promoCode ?? '');
     }
 
     /**

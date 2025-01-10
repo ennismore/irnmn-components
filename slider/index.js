@@ -57,9 +57,10 @@ class IRNMNSlider extends HTMLElement {
         this.eventListeners = [];
     }
 
-
     initSlider() {
-        const swipeContainer = this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);
+        const swipeContainer = this.querySelector(
+            this.CLASSNAMES.SWIPE_CONTAINER,
+        );
         if (!swipeContainer) {
             console.error('Swipe container not found');
             return;
@@ -67,11 +68,16 @@ class IRNMNSlider extends HTMLElement {
         this.setupResizeListener(swipeContainer);
 
         // Initialize slides
-        this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
 
         // Accessbility attributes
         swipeContainer.setAttribute('role', 'region');
-        swipeContainer.setAttribute('aria-label', 'Slideshow with multiple slides');
+        swipeContainer.setAttribute(
+            'aria-label',
+            'Slideshow with multiple slides',
+        );
 
         const totalSlides = this.slides.length;
 
@@ -83,12 +89,12 @@ class IRNMNSlider extends HTMLElement {
             return;
         }
 
-        if (this.dataset.sliderInitialized === "true") {
+        if (this.dataset.sliderInitialized === 'true') {
             return;
         }
-        this.dataset.sliderInitialized = "true";
+        this.dataset.sliderInitialized = 'true';
 
-        this.cloneSlides(swipeContainer,);
+        this.cloneSlides(swipeContainer);
         this.calculateSlideOffsets(swipeContainer);
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
@@ -120,7 +126,11 @@ class IRNMNSlider extends HTMLElement {
         window.addEventListener('resize', onResize);
 
         // Track the resize listener for cleanup
-        this.eventListeners.push({ element: window, event: 'resize', handler: onResize });
+        this.eventListeners.push({
+            element: window,
+            event: 'resize',
+            handler: onResize,
+        });
     }
 
     /**
@@ -141,7 +151,11 @@ class IRNMNSlider extends HTMLElement {
         window.addEventListener('resize', onResize);
 
         // Track the resize listener for cleanup
-        this.eventListeners.push({ element: window, event: 'resize', handler: onResize });
+        this.eventListeners.push({
+            element: window,
+            event: 'resize',
+            handler: onResize,
+        });
     }
 
     /**
@@ -169,7 +183,9 @@ class IRNMNSlider extends HTMLElement {
         swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
 
         // Update the slides property to include the clones
-        this.slides = Array.from(swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
     }
 
     /**
@@ -196,7 +212,8 @@ class IRNMNSlider extends HTMLElement {
      * @returns {void}
      */
     updateTotalSlides(totalSlides) {
-        this.querySelector(this.CLASSNAMES.TOTAL_SLIDES).textContent = totalSlides;
+        this.querySelector(this.CLASSNAMES.TOTAL_SLIDES).textContent =
+            totalSlides;
     }
 
     /**
@@ -223,15 +240,32 @@ class IRNMNSlider extends HTMLElement {
     addEventListeners(swipeContainer, totalSlides) {
         const clonedSlidesCount = this.slides.length;
 
-        const updateSlides = () => this.updateSlides(swipeContainer, clonedSlidesCount, totalSlides);
-        const resetPosition = () => this.resetPosition(swipeContainer, clonedSlidesCount, totalSlides);
-        const nextSlide = () => this.moveToNextSlide(updateSlides, clonedSlidesCount);
-        const prevSlide = () => this.moveToPrevSlide(updateSlides, clonedSlidesCount);
+        const updateSlides = () =>
+            this.updateSlides(swipeContainer, clonedSlidesCount, totalSlides);
+        const resetPosition = () =>
+            this.resetPosition(swipeContainer, clonedSlidesCount, totalSlides);
+        const nextSlide = () =>
+            this.moveToNextSlide(updateSlides, clonedSlidesCount);
+        const prevSlide = () =>
+            this.moveToPrevSlide(updateSlides, clonedSlidesCount);
 
-        this.setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides);
+        this.setupDragAndDrop(
+            swipeContainer,
+            nextSlide,
+            prevSlide,
+            updateSlides,
+        );
 
-        this.addListener(this.querySelector(this.CLASSNAMES.PREV_BUTTON), 'click', prevSlide);
-        this.addListener(this.querySelector(this.CLASSNAMES.NEXT_BUTTON), 'click', nextSlide);
+        this.addListener(
+            this.querySelector(this.CLASSNAMES.PREV_BUTTON),
+            'click',
+            prevSlide,
+        );
+        this.addListener(
+            this.querySelector(this.CLASSNAMES.NEXT_BUTTON),
+            'click',
+            nextSlide,
+        );
 
         this.addListener(swipeContainer, 'transitionend', resetPosition);
     }
@@ -287,7 +321,8 @@ class IRNMNSlider extends HTMLElement {
                 displayedSlideIndex = this.currentSlide;
                 break;
         }
-        this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent = displayedSlideIndex;
+        this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent =
+            displayedSlideIndex;
         // Dispatch a custom event when the slide changes
         const slideChangeEvent = new CustomEvent('slideChange', {
             detail: {
@@ -295,8 +330,8 @@ class IRNMNSlider extends HTMLElement {
                 currentSlideDisplayedIndex: displayedSlideIndex,
                 currentSlideElement: this.slides[this.currentSlide],
                 totalSlides: totalSlides,
-                clonedSlidesCount: clonedSlidesCount
-            }
+                clonedSlidesCount: clonedSlidesCount,
+            },
         });
         swipeContainer.dispatchEvent(slideChangeEvent);
     }
@@ -326,7 +361,8 @@ class IRNMNSlider extends HTMLElement {
      * Move to the previous slide
      */
     moveToPrevSlide(updateSlides, clonedSlidesCount) {
-        this.currentSlide = (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
+        this.currentSlide =
+            (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
         updateSlides();
     }
 
