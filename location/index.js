@@ -218,18 +218,18 @@ class IRNMNLocation extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.container}">
                 <label for="${this.inputId}" class="${CLASS_NAMES.label}">${this.label}</label>
-                <irnmn-select 
-                    id="${this.inputId}" 
-                    name="${this.inputName}" 
-                    heading-text="${this.label}" 
-                    options='${JSON.stringify(options)}' 
-                    placeholder="${this.placeholder}" 
+                <irnmn-select
+                    id="${this.inputId}"
+                    name="${this.inputName}"
+                    heading-text="${this.label}"
+                    options='${JSON.stringify(options)}'
+                    placeholder="${this.placeholder}"
                     preselected="${preselectedValue}">
                 </irnmn-select>
                 <!-- Hidden input to hold the selected hotelCode -->
-                <input 
-                    type="hidden" 
-                    name="${this.inputName}" 
+                <input
+                    type="hidden"
+                    name="${this.inputName}"
                     value="${preselectedValue}"
                     required>
             </div>
@@ -284,9 +284,6 @@ class IRNMNLocation extends HTMLElement {
 
         this.setAttribute('show-error', false);
 
-        // Log the selected location for debugging
-        console.log('Selected Location:', selectedDetail);
-
         // Update the hidden input value
         const hiddenInput = this.querySelector(
             `input[name="${this.inputName}"]`,
@@ -316,7 +313,6 @@ class IRNMNLocation extends HTMLElement {
      * @return {void}
      */
     updateOtherComponents(selectedLocation) {
-        console.log(selectedLocation);
         Object.entries(selectedLocation).forEach(
             ([attrName, attributeValue]) => {
                 if (attrName === 'name') return; // Exclude the attribute "name"
