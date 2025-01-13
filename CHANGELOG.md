@@ -7,6 +7,12 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.1.4
+### Added - irnmn-booking-all-com
+- New component to handle form fields needed for redirecting to all.com
+- More info on fields here: [All.com booking params](https://ennismore.atlassian.net/wiki/spaces/EW/pages/4037246977/All.com+-+booking+platform+parameters)
+
+------
 ## v1.1.3
 ### Fixed - irnmn-slider
 ### Added - irnmn-slider
