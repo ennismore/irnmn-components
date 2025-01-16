@@ -162,8 +162,8 @@ class IRNMNGuestsSummary extends HTMLElement {
         let summarySpan = this.querySelector('.guest-summary');
 
         if (summarySpan) {
-           summarySpan.textContent = summaryText;
-           return;
+            summarySpan.textContent = summaryText;
+            return;
         }
 
         summarySpan = document.createElement('span');
@@ -189,7 +189,6 @@ class IRNMNGuestsSummary extends HTMLElement {
         return input;
     }
 
-
     /**
      * Updates the DOM with hidden input elements based on the provided state.
      *
@@ -204,14 +203,22 @@ class IRNMNGuestsSummary extends HTMLElement {
      *
      */
     updateInputValues(newState) {
-         this.querySelectorAll('input[type="hidden"]').forEach(input => input.remove());
+        this.querySelectorAll('input[type="hidden"]').forEach((input) =>
+            input.remove(),
+        );
 
         newState.forEach((room, index) => {
-            const adultsInput = this.createInput(`rooms[${index}].adults`, room.adults);
+            const adultsInput = this.createInput(
+                `rooms[${index}].adults`,
+                room.adults,
+            );
             this.insertAdjacentHTML('beforeend', adultsInput.outerHTML);
 
             if (room.children > 0) {
-                const childrenInput = this.createInput(`rooms[${index}].children`, room.children);
+                const childrenInput = this.createInput(
+                    `rooms[${index}].children`,
+                    room.children,
+                );
                 this.insertAdjacentHTML('beforeend', childrenInput.outerHTML);
 
                 // This is needed since the storage value does not remove the
@@ -219,9 +226,15 @@ class IRNMNGuestsSummary extends HTMLElement {
                 // TODO: Update the storage value to remove the childrenAges array when children are removed.
                 for (let ageIndex = 0; ageIndex < room.children; ageIndex++) {
                     const age = room.childrenAges[ageIndex];
-                    const childAgeInput = this.createInput(`rooms[${index}].childrenAges[${ageIndex}]`, age);
-                    this.insertAdjacentHTML('beforeend', childAgeInput.outerHTML);
-                };
+                    const childAgeInput = this.createInput(
+                        `rooms[${index}].childrenAges[${ageIndex}]`,
+                        age,
+                    );
+                    this.insertAdjacentHTML(
+                        'beforeend',
+                        childAgeInput.outerHTML,
+                    );
+                }
             }
         });
     }
