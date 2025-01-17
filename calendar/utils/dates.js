@@ -57,14 +57,24 @@ export function getNext12Months(openingDate) {
  * (change it later based on the component attribute)
  * @param {Date} date The date to format
  * @param {String} dateLocale The locale to format the date
- * @return {String} The formated date
+ * @param {String} [weekday] The format for the weekday (optional)
+ * @param {String} [dayFormat] The format for the day (optional, default is '2-digit')
+ * @param {String} [monthFormat] The format for the month (optional, default is 'short')
+ * @return {String} The formatted date
  */
-export function formatDateToLocale(date, dateLocale = 'en-gb') {
-    return new Intl.DateTimeFormat(dateLocale, {
-        day: '2-digit',
-        month: '2-digit',
+export function formatDateToLocale(date, dateLocale = 'en-gb', weekday = '', dayFormat = '2-digit', monthFormat = 'short') {
+    const options = {
+        day: dayFormat,
+        month: monthFormat,
         year: 'numeric'
-    }).format(date);
+    };
+
+    if (weekday !== '') {
+        options.weekday = weekday;
+    }
+
+    const dateString = new Intl.DateTimeFormat(dateLocale, options).format(date);
+    return dateString.replace(/,/g, '');
 }
 
 /**
