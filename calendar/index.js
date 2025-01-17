@@ -465,8 +465,20 @@ class IRNMNCalendar extends HTMLElement {
      * @return {String} The formatted date range
      */
     formatDateRange(checkinDate, checkoutDate) {
-        const formattedCheckinDate = formatDateToLocale(checkinDate, this.dateLocale, this.weekdayFormat, this.dayFormat, this.monthFormat);
-        const formattedCheckoutDate = formatDateToLocale(checkoutDate, this.dateLocale, this.weekdayFormat, this.dayFormat, this.monthFormat);
+        const formattedCheckinDate = formatDateToLocale(
+            checkinDate,
+            this.dateLocale,
+            this.weekdayFormat,
+            this.dayFormat,
+            this.monthFormat,
+        );
+        const formattedCheckoutDate = formatDateToLocale(
+            checkoutDate,
+            this.dateLocale,
+            this.weekdayFormat,
+            this.dayFormat,
+            this.monthFormat,
+        );
 
         return `${formattedCheckinDate} - ${formattedCheckoutDate}`;
     }
@@ -477,7 +489,10 @@ class IRNMNCalendar extends HTMLElement {
 
         if (checkinDate === null || checkoutDate === null) return;
 
-        this.inputElement.value = this.formatDateRange(checkinDate, checkoutDate);
+        this.inputElement.value = this.formatDateRange(
+            checkinDate,
+            checkoutDate,
+        );
         this.startInput.value = formatDate(checkinDate, this.formatDateValues); // Save in provided format
         this.endInput.value = formatDate(checkoutDate, this.formatDateValues); // Save in provided format
 
@@ -501,7 +516,7 @@ class IRNMNCalendar extends HTMLElement {
             this.dateLocale,
             this.weekdayFormat,
             this.dayFormat,
-            this.monthFormat
+            this.monthFormat,
         );
         this.startInput.value = formatDate(checkinDate, this.formatDateValues); // Save in provided format
         this.endInput.value = '';
@@ -642,7 +657,10 @@ class IRNMNCalendar extends HTMLElement {
 
         // Display the date range in the input field
         if (this.state.checkin && this.state.checkout) {
-            this.inputElement.value = this.formatDateRange(this.state.checkin, this.state.checkout);
+            this.inputElement.value = this.formatDateRange(
+                this.state.checkin,
+                this.state.checkout,
+            );
         } else if (this.state.checkin) {
             this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale, this.weekdayFormat, this.dayFormat, this.monthFormat)}`;
         }
