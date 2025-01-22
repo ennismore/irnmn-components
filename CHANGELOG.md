@@ -6,6 +6,12 @@ All new releases are documented in this file. The semantic versioning should fol
 ### [Added/Changed/Fixed/Removed] - [component]
 - Description of the changes
 
+
+------
+## v1.1.5
+### UPDATE - guest summary
+- Added hidden input fields to guest summary
+
 ------
 ## v1.1.4
 ### Added - irnmn-booking-all-com
