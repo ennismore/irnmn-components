@@ -66,6 +66,18 @@ class IRNMNCalendar extends HTMLElement {
         this.formatDateValues = this.getFormatDateValues();
     }
 
+    get weekdayFormat() {
+        return this.getAttribute('weekday-format') || '';
+    }
+
+    get dayFormat() {
+        return this.getAttribute('day-format') || '2-digit';
+    }
+
+    get monthFormat() {
+        return this.getAttribute('month-format') || 'short';
+    }
+
     /**
      * Get the current date
      */
@@ -445,11 +457,42 @@ class IRNMNCalendar extends HTMLElement {
         }
     }
 
-    setRangeInputFields() {
-        const checkinDate = new Date(this.state.checkin);
-        const checkoutDate = new Date(this.state.checkout);
+    /**
+     * Format a date range as a string in the requested format
+     *
+     * @param {Date} checkinDate The check-in date
+     * @param {Date} checkoutDate The check-out date
+     * @return {String} The formatted date range
+     */
+    formatDateRange(checkinDate, checkoutDate) {
+        const formattedCheckinDate = formatDateToLocale(
+            checkinDate,
+            this.dateLocale,
+            this.weekdayFormat,
+            this.dayFormat,
+            this.monthFormat,
+        );
+        const formattedCheckoutDate = formatDateToLocale(
+            checkoutDate,
+            this.dateLocale,
+            this.weekdayFormat,
+            this.dayFormat,
+            this.monthFormat,
+        );
 
-        this.inputElement.value = `${formatDateToLocale(checkinDate, this.dateLocale)} - ${formatDateToLocale(checkoutDate, this.dateLocale)}`;
+        return `${formattedCheckinDate} - ${formattedCheckoutDate}`;
+    }
+
+    setRangeInputFields() {
+        const checkinDate = new Date(this.state.checkin) ?? null;
+        const checkoutDate = new Date(this.state.checkout) ?? null;
+
+        if (checkinDate === null || checkoutDate === null) return;
+
+        this.inputElement.value = this.formatDateRange(
+            checkinDate,
+            checkoutDate,
+        );
         this.startInput.value = formatDate(checkinDate, this.formatDateValues); // Save in provided format
         this.endInput.value = formatDate(checkoutDate, this.formatDateValues); // Save in provided format
 
@@ -471,6 +514,9 @@ class IRNMNCalendar extends HTMLElement {
         this.inputElement.value = formatDateToLocale(
             checkinDate,
             this.dateLocale,
+            this.weekdayFormat,
+            this.dayFormat,
+            this.monthFormat,
         );
         this.startInput.value = formatDate(checkinDate, this.formatDateValues); // Save in provided format
         this.endInput.value = '';
@@ -611,9 +657,12 @@ class IRNMNCalendar extends HTMLElement {
 
         // Display the date range in the input field
         if (this.state.checkin && this.state.checkout) {
-            this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale)} - ${formatDateToLocale(this.state.checkout, this.dateLocale)}`;
+            this.inputElement.value = this.formatDateRange(
+                this.state.checkin,
+                this.state.checkout,
+            );
         } else if (this.state.checkin) {
-            this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale)}`;
+            this.inputElement.value = `${formatDateToLocale(this.state.checkin, this.dateLocale, this.weekdayFormat, this.dayFormat, this.monthFormat)}`;
         }
 
         this.applyHighlights(); // Apply the saved highlights to the calendar
