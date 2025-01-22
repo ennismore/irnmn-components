@@ -6,6 +6,13 @@ All new releases are documented in this file. The semantic versioning should fol
 ### [Added/Changed/Fixed/Removed] - [component]
 - Description of the changes
 
+------
+## v1.1.6
+### UPDATE - calendar
+- Merged branches with various fixes to main branch and deploying a new Release
+- Various fixes and updates to guests summary and calendar
+- Removed console logs
+- Added extra attributes to pass day, weekday and month formats and modified functions to except new args
 
 ------
 ## v1.1.5
