@@ -14,6 +14,10 @@ class IRNMNText extends HTMLElement {
         this.name = this.getAttribute('name');
         this.value = ''; // Holds the input value
         this.storageKey = `${this.name}-text`; // Key for session storage
+        
+        // Bind the storage event handler to maintain correct context
+        this.handleStorageChange = this.handleStorageChange.bind(this);
+        this.handleLocalStorageChange = this.handleLocalStorageChange.bind(this);
     }
 
     connectedCallback() {
@@ -24,6 +28,12 @@ class IRNMNText extends HTMLElement {
         document.addEventListener(`irnmn-text-updated-${this.name}`, (e) =>
             this.syncText(e),
         );
+        
+        // Add storage event listener for cross-window updates
+        window.addEventListener('storage', this.handleStorageChange);
+        
+        // Add custom event listener for same-window updates
+        document.addEventListener('sessionStorageChanged', this.handleLocalStorageChange);
     }
 
     disconnectedCallback() {
@@ -31,6 +41,33 @@ class IRNMNText extends HTMLElement {
             `irnmn-text-updated-${this.name}`,
             this.syncText,
         );
+        window.removeEventListener('storage', this.handleStorageChange);
+        document.removeEventListener('sessionStorageChanged', this.handleLocalStorageChange);
+    }
+
+    handleStorageChange(event) {
+        if (event.key === this.storageKey) {
+            const newValue = event.newValue;
+            if (newValue !== null && newValue !== this.value) {
+                this.value = newValue;
+                if (this.inputElement) {
+                    this.inputElement.value = newValue;
+                }
+            }
+        }
+    }
+
+    handleLocalStorageChange(event) {
+        const { key, value, targetName } = event.detail;
+        
+        // Only update if this component's name matches the target name
+        if (key === this.storageKey && value !== this.value && 
+            (!targetName || targetName === this.name)) {
+            this.value = value;
+            if (this.inputElement) {
+                this.inputElement.value = value;
+            }
+        }
     }
 
     /**
