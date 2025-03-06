@@ -207,6 +207,12 @@ class IRNMNGuestsSummary extends HTMLElement {
             input.remove(),
         );
 
+        const roomsTotalInput = this.createInput(
+            'rooms-total',
+            newState.length,
+        );
+        this.insertAdjacentHTML('beforeend', roomsTotalInput.outerHTML);
+
         newState.forEach((room, index) => {
             const adultsInput = this.createInput(
                 `rooms[${index}].adults`,
