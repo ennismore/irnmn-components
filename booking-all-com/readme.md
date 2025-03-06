@@ -24,7 +24,7 @@ The following methods are exposed by the component for internal logic and can be
 - `connectedCallback()`: Called when the element is added to the document. It sets up the form submission event listener.
 - `disconnectedCallback()`: Called when the element is removed from the document. It removes the form submission event listener.
 - `handleAllComBookingEngine(event)`: Handles the form submission, processes the form data, and creates hidden input fields.
-- `createInput(form, name, value)`: Creates a hidden input field and appends it to the form.
+- `createHiddenInput(form, name, value)`: (from utils/components.js) Creates a hidden input field and appends it to the form.
 
 ## Usage
 

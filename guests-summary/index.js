@@ -1,4 +1,4 @@
-import { getFromSessionStorage, handleSyncEvent } from '../utils/components.js';
+import { getFromSessionStorage, handleSyncEvent, createHiddenInput } from '../utils/components.js';
 
 /**
  * IRNMNGuestsSummary is a component that displays a summary of rooms, adults, and children.
@@ -173,23 +173,6 @@ class IRNMNGuestsSummary extends HTMLElement {
     }
 
     /**
-     * Create hidden input field.
-     *
-     * @param {HTMLElement} form
-     * @param {string} name
-     * @param {string} value
-     *
-     * @returns {HTMLElement} The hidden input element
-     */
-    createInput(name, value) {
-        let input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        return input;
-    }
-
-    /**
      * Updates the DOM with hidden input elements based on the provided state.
      *
      * This method first removes all existing hidden input elements. It then iterates
@@ -207,38 +190,35 @@ class IRNMNGuestsSummary extends HTMLElement {
             input.remove(),
         );
 
-        const roomsTotalInput = this.createInput(
+        createHiddenInput(
+            this,
             'rooms-total',
             newState.length,
         );
-        this.insertAdjacentHTML('beforeend', roomsTotalInput.outerHTML);
 
         newState.forEach((room, index) => {
-            const adultsInput = this.createInput(
+            createHiddenInput(
+                this,
                 `rooms[${index}].adults`,
                 room.adults,
             );
-            this.insertAdjacentHTML('beforeend', adultsInput.outerHTML);
 
             if (room.children > 0) {
-                const childrenInput = this.createInput(
+                createHiddenInput(
+                    this,
                     `rooms[${index}].children`,
                     room.children,
                 );
-                this.insertAdjacentHTML('beforeend', childrenInput.outerHTML);
 
                 // This is needed since the storage value does not remove the
                 // childrenAges array when children are removed from the room.
                 // TODO: Update the storage value to remove the childrenAges array when children are removed.
                 for (let ageIndex = 0; ageIndex < room.children; ageIndex++) {
                     const age = room.childrenAges[ageIndex];
-                    const childAgeInput = this.createInput(
+                    createHiddenInput(
+                        this,
                         `rooms[${index}].childrenAges[${ageIndex}]`,
                         age,
-                    );
-                    this.insertAdjacentHTML(
-                        'beforeend',
-                        childAgeInput.outerHTML,
                     );
                 }
             }
