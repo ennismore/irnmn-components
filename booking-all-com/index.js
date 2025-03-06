@@ -1,4 +1,4 @@
-import { createHiddenInput } from "../utils/components";
+import { createHiddenInput } from "../utils/components.js";
 class IRNMNBookingAllCom extends HTMLElement {
     constructor() {
         super();
