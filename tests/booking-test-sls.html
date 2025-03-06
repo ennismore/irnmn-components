@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Test Web components</title>
+    <link rel="stylesheet" href="css/select.css">
+    <link rel="stylesheet" href="tests.css">
+    <script src="../select/index.js" type="module"></script>
+    <script src="../location/index.js" type="module"></script>
+    <script src="../calendar/index.js" type="module"></script>
+    <script src="../text/index.js" type="module"></script>
+    <script src="../number-picker/index.js" type="module"></script>
+    <script src="../guests-selector/index.js" type="module"></script>
+    <script src="../rooms-selector/index.js" type="module"></script>
+    <script src="../select/index.js" type="module"></script>
+    <script src="../guests-summary/index.js" type="module"></script>
+    <script src="../booking-aic/index.js" type="module"></script>
+</head>
+
+<body>
+    <form method="GET" id="test-sls-bar"
+        action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
+        <h2>Booking BAR - SLS</h2>
+
+        <irnmn-booking-aic form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout"
+            hotel-codes='["C383"]'>
+        </irnmn-booking-aic>
+
+        <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Check in / out"
+            placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
+            open-date-message="You can't select a date before the opening date"
+            error-message="Please select a check in / check out date" show-error="false" input-name="date-selection"
+            checkin-date-name="checkin" checkout-date-name="checkout" name="checkInOutDates" weekdays="M,T,W,T,F,S,S"
+            date-locale="false">
+        </irnmn-calendar>
+
+        <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
+            placeholder="Select location" error-message="Please select a location" show-error="false" default=""
+            locations-endpoint="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v2/locations">
+        </irnmn-location>
+
+        <irnmn-guests-summary storage-key="irnmn-rooms" sum-guests="true" labels='{"adults":"guests"}'>
+        </irnmn-guests-summary>
+
+        <button type="submit">Check availability</button>
+    </form>
+
+    <hr>
+
+    <form method="GET" id="test-sls-panel"
+        action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
+        <h2>Booking PANEL - SLS</h2>
+
+        <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
+            hotel-codes='["C383"]'>
+        </irnmn-booking-aic>
+
+        <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
+            placeholder="Select location" error-message="Please select a location" show-error="false" default=""
+            locations-endpoint="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v2/locations">
+        </irnmn-location>
+
+        <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Check in / out"
+            placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
+            open-date-message="You can't select a date before the opening date"
+            error-message="Please select a check in / check out date" show-error="false" input-name="date-selection"
+            checkin-date-name="checkin" checkout-date-name="checkout" name="checkInOutDates" weekdays="M,T,W,T,F,S,S"
+            date-locale="false">
+        </irnmn-calendar>
+
+        <irnmn-rooms-selector
+            labels='{"room":"Room","rooms":"Rooms","guests":"Guests","adults":"Adults","children":"Children","childAge":"Child age","selectRoom":"","remove":"remove","ariaLabelMoreAdults":"Add more adults","ariaLabelLessAdults":"Remove an adult","ariaLabelMoreChildren":"Add more children","ariaLabelLessChildren":"Remove a child"}'
+            rooms-number="7" min-rooms="1" max-total-guests="4" adults-number="4" children-number="3"
+            enable-children="1" enable-children-ages="1">
+        </irnmn-rooms-selector>
+
+        <button type="submit">Check availability</button>
+    </form>
+
+</body>
+
+</html>
