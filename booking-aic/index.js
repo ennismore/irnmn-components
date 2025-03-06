@@ -88,15 +88,16 @@ class IRNMNBookingAIC extends HTMLElement {
         createHiddenInput(this.form, 'remainingGuests', remainingGuests);
         createHiddenInput(this.form, 'nights', nights);
 
-        // Change form action URL if we're on language other than EN, that AIC support
+        // Change form action URL if we're on language other than EN, that AIC support ( list from AIC documentation )
         const currentLang = this.getCurrentLanguage();
         if (!currentLang) return;
+        const baseUrl = 'https://allinclusive-collection.com';
         const supportedLangs = {
-            fr: `https://allinclusive-collection.com/fr/reservation/${hotelCode}/chambre/`,
-            de: `https://allinclusive-collection.com/de/buchung/${hotelCode}/schlafzimmer/`,
-            tr: `https://allinclusive-collection.com/tr/rezervasyon/${hotelCode}/yatak-odasi/`,
-            ru: `https://allinclusive-collection.com/ru/Бронирование/${hotelCode}/cпальня/`,
-            en: `https://allinclusive-collection.com/en/booking/${hotelCode}/room/`,
+            fr: `${baseUrl}/fr/reservation/${hotelCode}/chambre/`,
+            de: `${baseUrl}/de/buchung/${hotelCode}/schlafzimmer/`,
+            tr: `${baseUrl}/tr/rezervasyon/${hotelCode}/yatak-odasi/`,
+            ru: `${baseUrl}/ru/Бронирование/${hotelCode}/cпальня/`,
+            en: `${baseUrl}/en/booking/${hotelCode}/room/`,
         };
 
         if (supportedLangs[currentLang]) {

@@ -89,19 +89,22 @@ export function createHiddenInput(container, name, value) {
     let input = container.querySelector(`input[name="${name}"]`);
     if (input) {
         input.value = value;
-    } else {
-        input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        container.appendChild(input);
+        return input;
     }
+    input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    container.appendChild(input);
     return input;
 }
 
 /**
- * Handles the external URL by creating hidden input elements for the form based on the URL's search parameters.
+ * Handles the external URL by creating hidden input elements for the form based on the action URL's search parameters.
  * If an input element with the same name already exists, its value is updated.
+ *
+ * Example : https://example-booking.com/?dateIn={checkin}&ridcode={hotelCode}&roomCount={rooms-total}
+ * this will create hidden inputs for 'dateIn', 'ridcode', and 'roomCount' and assign the values from the form's existing fields 'checkin', 'hotelCode', and 'rooms-total'
  *
  * @param {HTMLFormElement} form - The form element to which the hidden inputs will be added.
  */
