@@ -76,3 +76,46 @@ export function clearHighlights(buttons, classNames = []) {
         classNames.forEach((className) => button.classList.remove(className));
     });
 }
+
+/**
+ * Creates or updates a hidden input element within a form.
+ *
+ * @param {HTMLElement} container - The HTML element (usualy a form) to which the input will be added.
+ * @param {string} name - The name attribute of the input element.
+ * @param {string} value - The value to set for the input element.
+ * @returns {HTMLInputElement} The created or updated input element.
+ */
+export function createHiddenInput(container, name, value) {
+    let input = container.querySelector(`input[name="${name}"]`);
+    if (input) {
+        input.value = value;
+    } else {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = name;
+        input.value = value;
+        container.appendChild(input);
+    }
+    return input;
+}
+
+/**
+ * Handles the external URL by creating hidden input elements for the form based on the URL's search parameters.
+ * If an input element with the same name already exists, its value is updated.
+ *
+ * @param {HTMLFormElement} form - The form element to which the hidden inputs will be added.
+ */
+export function handleExternalUrl(form) {
+    // if there is a pattern in the external service url, create inputs for the form
+    let formData = new FormData(form);
+    const url = new URL(form.action);
+    const searchParams = url.searchParams;
+
+    searchParams.forEach((value, key) => {
+        // remove the {} from the placeholder
+        const existingValue = value.replace(/[{}]/g, "");
+        value = formData.get(existingValue);
+        // Create or update the hidden input element
+        createHiddenInput(form, key, value);
+    });
+}
