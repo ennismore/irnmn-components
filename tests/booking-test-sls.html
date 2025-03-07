@@ -15,6 +15,7 @@
     <script src="../select/index.js" type="module"></script>
     <script src="../guests-summary/index.js" type="module"></script>
     <script src="../booking-aic/index.js" type="module"></script>
+    <script src="../booking-marriot/index.js" type="module"></script>
 </head>
 
 <body>
@@ -22,9 +23,11 @@
         action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking BAR - SLS</h2>
 
-        <irnmn-booking-aic form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout"
-            hotel-codes='["C383"]'>
+        <irnmn-booking-aic form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout" hotel-codes='["C383"]'>
         </irnmn-booking-aic>
+
+        <irnmn-booking-marriot form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout" hotel-codes='["laxls"]'>
+        </irnmn-booking-marriot>
 
         <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Check in / out"
             placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
@@ -39,7 +42,7 @@
             locations-endpoint="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v2/locations">
         </irnmn-location>
 
-        <irnmn-guests-summary storage-key="irnmn-rooms" sum-guests="true" labels='{"adults":"guests"}' enable-children="1">
+        <irnmn-guests-summary storage-key="irnmn-rooms" sum-guests="true" labels='{"adults":"guests"}' enable-children="0">
         </irnmn-guests-summary>
 
         <button type="submit">Check availability</button>
@@ -54,6 +57,10 @@
         <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
             hotel-codes='["C383"]'>
         </irnmn-booking-aic>
+
+        <irnmn-booking-marriot form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
+            hotel-codes='["laxls"]'>
+        </irnmn-booking-marriot>
 
         <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
             placeholder="Select location" error-message="Please select a location" show-error="false" default=""
@@ -71,7 +78,7 @@
         <irnmn-rooms-selector
             labels='{"room":"Room","rooms":"Rooms","guests":"Guests","adults":"Adults","children":"Children","childAge":"Child age","selectRoom":"","remove":"remove","ariaLabelMoreAdults":"Add more adults","ariaLabelLessAdults":"Remove an adult","ariaLabelMoreChildren":"Add more children","ariaLabelLessChildren":"Remove a child"}'
             rooms-number="7" min-rooms="1" max-total-guests="4" adults-number="4" children-number="3"
-            enable-children="1" enable-children-ages="1">
+            enable-children="0" enable-children-ages="0">
         </irnmn-rooms-selector>
 
         <button type="submit">Check availability</button>

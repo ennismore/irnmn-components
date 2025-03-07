@@ -44,7 +44,7 @@ class IRNMNBookingMarriot extends HTMLElement {
      * passed to the www.marriott.com/reservation/ booking engine when the form is submitted.
      *
      */
-    handleMarriotBookingEngine() {
+    handleMarriotBookingEngine(event) {
 
         let formData = new FormData(this.form);
         const hotelCode = formData.get('hotelCode');
@@ -53,8 +53,8 @@ class IRNMNBookingMarriot extends HTMLElement {
         if (!this.hotelCodes.includes(hotelCode)) return;
 
         // Change date format
-        const checkinDate = new Date(formData.get(this.startDateName));
-        const checkoutDate = new Date(formData.get(this.endDateName));
+        const checkinDate = formData.get(this.startDateName);
+        const checkoutDate = formData.get(this.endDateName);
         const checkinDateFormated = this.formatDate(checkinDate);
         const checkoutDateFormated = this.formatDate(checkoutDate);
 
