@@ -7,6 +7,27 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.0 [2025-03-07]
+### Added - irnmn-booking-aic
+- component to handle AIC booking engine parameters
+### Added - irnmn-booking-marriot
+- component to handle Marriot booking engine parameters
+### UPDATE - irnmn-booking-all-com
+- Move createInput() func to utils
+### UPDATE - utils/components
+- added createHiddenInput() func
+- added handleExternalUrl() func
+### UPDATE - guest summary
+### Fixed - guest summary
+- Added rooms-total hidden field
+- Added enable-children attribute to correctly count or not childs in total
+- Move createInput() func to utils
+### UPDATE - rooms-selector
+- Sync on attribute change observation (for guest summary)
+### Fixed - location
+- Dispatch custom event on sync to correctly update other components
+
+------
 ## v1.1.6
 ### UPDATE - calendar
 - Merged branches with various fixes to main branch and deploying a new Release
