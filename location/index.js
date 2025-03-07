@@ -90,6 +90,13 @@ class IRNMNLocation extends HTMLElement {
                 if (hiddenInput) {
                     hiddenInput.value = newState.selectedValue;
                 }
+                // Dispatch the custom event to update other components
+                const event = new CustomEvent('optionSelected', {
+                    detail: {
+                        value: newState.selectedValue,
+                    },
+                });
+                irnmnSelect.dispatchEvent(event);
             },
         );
     }

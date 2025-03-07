@@ -62,6 +62,9 @@ class IRNMNRoomsSelector extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
             this.renderRoomsSelector();
+            Promise.resolve().then(() => {
+                this.syncState(); // Sync state after re-rendering
+            });
         }
     }
 

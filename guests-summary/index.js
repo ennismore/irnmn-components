@@ -29,6 +29,20 @@ class IRNMNGuestsSummary extends HTMLElement {
     }
 
     /**
+     * Returns a boolean indicating whether to enable children in the summary.
+     * @returns {boolean}
+     */
+    get enableChildren() {
+        const enableChildrenAttr = this.getAttribute('enable-children');
+        return (
+            enableChildrenAttr === 'true' ||
+            (enableChildrenAttr !== 'false' &&
+                enableChildrenAttr !== 'null' &&
+                enableChildrenAttr)
+        );
+    }
+
+    /**
      *
      * Parses the labels attribute as JSON and returns an object with default values as fallbacks.
      * @returns {Object} The labels object for rooms, adults, and children.
@@ -110,7 +124,7 @@ class IRNMNGuestsSummary extends HTMLElement {
         this.summary = {
             rooms: data.length,
             adults: data.reduce((total, room) => total + room.adults, 0),
-            children: data.reduce((total, room) => total + room.children, 0),
+            children: this.enableChildren ? data.reduce((total, room) => total + room.children, 0) : 0, // Only include children if enabled
         };
     }
 

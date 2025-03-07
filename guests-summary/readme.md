@@ -7,10 +7,11 @@ The `IRNMNGuestsSummary` web component displays a dynamic summary of rooms, adul
 ## Attributes
 The following attribute can be added to the `IRNMNGuestsSummary` element to customize its labels for rooms, adults, and children:
 
-| Attribute | Description                                                            | Default Values                                                 |
-|-----------|------------------------------------------------------------------------|----------------------------------------------------------------|
-| `labels`  | A JSON string containing the labels for rooms, adults, and children.   | `{ "room": "room", "rooms": "rooms", "adult": "adult", "adults": "adults", "child": "child", "children": "children" }` |
-| `storage-key` | The key in session storage where the room data is stored.               | `'irnmn-rooms'`                                                                                   |
+| Attribute         | Description                                                             | Default Values                                                 |
+|-------------------|-------------------------------------------------------------------------|----------------------------------------------------------------|
+| `labels`          | A JSON string containing the labels for rooms, adults, and children.    | `{ "room": "room", "rooms": "rooms", "adult": "adult", "adults": "adults", "child": "child", "children": "children" }` |
+| `storage-key`     | The key in session storage where the room data is stored.               | `'irnmn-rooms'`                                                |
+| `enable-children` | Boolean - to specify if children need to be counted in the total or not | `'irnmn-rooms'`                                                |
 
 ### Labels JSON Structure
 The `labels` attribute should be provided as a JSON string with the following possible keys:
@@ -50,7 +51,7 @@ The component listens for the `'irnmn-rooms-updated'` event, which is dispatched
 Here’s an example of how to use the `IRNMNGuestsSummary` component in your HTML with custom labels:
 
 ```html
-<irnmn-guests-summary 
+<irnmn-guests-summary
     storage-key="custom-storage-key"
     labels='{
         "room": "suite",
