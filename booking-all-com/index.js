@@ -1,3 +1,4 @@
+import { createHiddenInput } from "../utils/components.js";
 class IRNMNBookingAllCom extends HTMLElement {
     constructor() {
         super();
@@ -63,27 +64,27 @@ class IRNMNBookingAllCom extends HTMLElement {
         const monthIn = checkinDate.getMonth() + 1; // Months are zero-based
         const yearIn = checkinDate.getFullYear();
 
-        this.createInput(this.form, 'destination', hotelCode);
-        this.createInput(this.form, 'dayIn', dayIn);
-        this.createInput(this.form, 'monthIn', monthIn);
-        this.createInput(this.form, 'yearIn', yearIn);
-        this.createInput(this.form, 'nightNb', nights);
+        createHiddenInput(this.form, 'destination', hotelCode);
+        createHiddenInput(this.form, 'dayIn', dayIn);
+        createHiddenInput(this.form, 'monthIn', monthIn);
+        createHiddenInput(this.form, 'yearIn', yearIn);
+        createHiddenInput(this.form, 'nightNb', nights);
 
         // Default needed for the all.com booking engine
-        this.createInput(this.form, 'goto', 'wl_intpartner_search');
+        createHiddenInput(this.form, 'goto', 'wl_intpartner_search');
 
         const locale = navigator.language || navigator.userLanguage;
         const languageCode = locale.substring(0, 2);
-        this.createInput(this.form, 'code_langue', languageCode);
+        createHiddenInput(this.form, 'code_langue', languageCode);
 
         // currently only one room is supported. This will need to be updated if multiple rooms are supported
-        this.createInput(this.form, 'roomNumber', 1);
-        this.createInput(
+        createHiddenInput(this.form, 'roomNumber', 1);
+        createHiddenInput(
             this.form,
             'room[0].adultNumber',
             formData.get('adults'),
         );
-        this.createInput(
+        createHiddenInput(
             this.form,
             'room[0].childrenNumber',
             formData.get('children'),
@@ -92,7 +93,7 @@ class IRNMNBookingAllCom extends HTMLElement {
         // Currently only one room is supported. This will need to be updated if multiple rooms are supported
         if (formData.get('children')) {
             for (let i = 0; i < formData.get('children'); i++) {
-                this.createInput(
+                createHiddenInput(
                     this.form,
                     `room[0].childrenAge[${i}]`,
                     this.childAge,
@@ -106,25 +107,7 @@ class IRNMNBookingAllCom extends HTMLElement {
         if (!promoCode) {
             promoCode = thisData.get('rateCode');
         }
-        this.createInput(this.form, 'preferredCode', promoCode ?? '');
-    }
-
-    /**
-     * Create hidden input field and append it to the form. Used to pass data to
-     * the all.com booking engine when the form is submitted.
-     *
-     * @param {HTMLElement} form
-     * @param {string} name
-     * @param {string} value
-     *
-     * @returns {void}
-     */
-    createInput(form, name, value) {
-        let input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = name;
-        input.value = value;
-        form.appendChild(input);
+        createHiddenInput(this.form, 'preferredCode', promoCode ?? '');
     }
 }
 
