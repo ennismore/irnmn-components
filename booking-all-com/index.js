@@ -77,37 +77,35 @@ class IRNMNBookingAllCom extends HTMLElement {
         const languageCode = locale.substring(0, 2);
         createHiddenInput(this.form, 'code_langue', languageCode);
 
+        // Promo code on all.com is very sensitive. If you enter a wrong code
+        // it will not show any results.
+        const promoCode = formData.get('promoCode') || formData.get('rateCode') || '';
+        createHiddenInput(this.form, 'preferredCode', promoCode);
+
         // currently only one room is supported. This will need to be updated if multiple rooms are supported
         createHiddenInput(this.form, 'roomNumber', 1);
+
+        const adults = formData.get('adults') || formData.get('rooms[0].adults'); // 1st if guest dropdown, 2nd if guests-selector component
         createHiddenInput(
             this.form,
             'room[0].adultNumber',
-            formData.get('adults'),
+            adults,
         );
+
+        const children = formData.get('children') || formData.get('rooms[0].children'); // 1st if guest dropdown, 2nd if guests-selector component
         createHiddenInput(
             this.form,
             'room[0].childrenNumber',
-            formData.get('children'),
+            children,
         );
 
-        // Currently only one room is supported. This will need to be updated if multiple rooms are supported
-        if (formData.get('children')) {
-            for (let i = 0; i < formData.get('children'); i++) {
-                createHiddenInput(
-                    this.form,
-                    `room[0].childrenAge[${i}]`,
-                    this.childAge,
-                );
+        const childrenCount = formData.get('children') || formData.get('rooms[0].children'); // 1st if guest dropdown, 2nd if guests-selector component
+        if (childrenCount) {
+            for (let i = 0; i < childrenCount; i++) {
+                const childAge = formData.get(`rooms[0].childrenAges[${i}]`) || this.childAge;
+                createHiddenInput(this.form, `room[0].childrenAge[${i}]`, childAge);
             }
         }
-
-        // Promo code on all.com is very sensitive. If you enter a wrong code
-        // it will not show any results.
-        let promoCode = formData.get('promoCode');
-        if (!promoCode) {
-            promoCode = thisData.get('rateCode');
-        }
-        createHiddenInput(this.form, 'preferredCode', promoCode ?? '');
     }
 }
 
