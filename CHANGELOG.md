@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.1 [2025-03-18]
+### UPDATE - irnmn-booking-all-com
+- adapt the component to works with rooms-selector values format
+
+------
 ## v1.2.0 [2025-03-07]
 ### Added - irnmn-booking-aic
 - component to handle AIC booking engine parameters
