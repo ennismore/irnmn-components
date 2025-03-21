@@ -16,12 +16,15 @@
     <script src="../guests-summary/index.js" type="module"></script>
     <script src="../booking-aic/index.js" type="module"></script>
     <script src="../booking-marriot/index.js" type="module"></script>
+    <script src="../booking-popup/index.js" type="module"></script>
 </head>
 
 <body>
     <form method="GET" id="test-sls-bar"
         action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking BAR - SLS</h2>
+
+        <irnmn-booking-popup form-id="test-sls-bar" ></irnmn-booking-popup>
 
         <irnmn-booking-aic form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout" hotel-codes='["C383"]'>
         </irnmn-booking-aic>
@@ -53,6 +56,8 @@
     <form method="GET" id="test-sls-panel"
         action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking PANEL - SLS</h2>
+
+        <irnmn-booking-popup form-id="test-sls-panel" timer="10"></irnmn-booking-popup>
 
         <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
             hotel-codes='["C383"]'>
