@@ -41,6 +41,7 @@ class IRNMNBookingPopup extends HTMLElement {
      */
     renderBookingPopup() {
         this.setAttributes();
+        if (!this.hasPopup) return; // Do nothing if the popup is disabled
         this.render();
         this.attachEventListeners();
 
@@ -57,6 +58,7 @@ class IRNMNBookingPopup extends HTMLElement {
      * Sets the attributes for the booking popup, such as labels and timer.
      */
     setAttributes() {
+        this.hasPopup = this.getHasPopup();
         this.labels = this.getLabels();
         this.timer = this.getTimer();
         this.useCSS = this.getUseCSS();
@@ -94,8 +96,38 @@ class IRNMNBookingPopup extends HTMLElement {
         return isNaN(timer) || timer <= 0 ? false : timer;
     }
 
+    /**
+     * Retrieves the has-popup attribute from the component's attributes.
+     * @returns {boolean} The value of the has-popup attribute.
+     * @default false
+     */
+    getHasPopup() {
+        const hasPopupAttr = this.getAttribute('has-popup');
+        return (
+            hasPopupAttr === 'true' ||
+            (hasPopupAttr !== 'false' &&
+                hasPopupAttr !== 'null' &&
+                hasPopupAttr)
+        );
+    }
+
+    /**
+     * Retrieves the use-css-display attribute from the component's attributes.
+     * @returns {boolean} The value of the use-css-display attribute.
+     * @default true
+     */
     getUseCSS() {
-        return this.getAttribute('use-css-display') || true;
+        const useCSSAttr = this.getAttribute('use-css-display');
+        return (
+            useCSSAttr === 'true' ||
+            (useCSSAttr !== 'false' &&
+                useCSSAttr !== 'null' &&
+                useCSSAttr)
+        );
+    }
+
+    static get observedAttributes() {
+        return ['labels', 'timer', 'has-popup', 'use-css-display'];
     }
 
     /**
@@ -180,6 +212,8 @@ class IRNMNBookingPopup extends HTMLElement {
      * @param {Event} e - The form submission event.
      */
     handleBookingPopup(e) {
+        if (!this.hasPopup) return; // Do nothing if the popup is disabled
+
         e.preventDefault();
 
         // Get the modal element
