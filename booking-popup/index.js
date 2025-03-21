@@ -9,6 +9,7 @@ class IRNMNBookingPopup extends HTMLElement {
      */
     constructor() {
         super();
+        this.lastFocusedElement = null; // To store the last focused element before opening the modal
     }
 
     /**
@@ -159,26 +160,18 @@ class IRNMNBookingPopup extends HTMLElement {
             e.preventDefault(); // Prevent the form submission
 
             // Close the modal
-            modal.setAttribute('aria-hidden', 'true');
-            modal.setAttribute('tabindex', '-1');
-            modal.classList.remove('irnmn-booking-popup--visible');
-            if (this.useCSS) {
-                modal.style.display = 'none';
+            this.closeModal(modal);
+        });
+
+        // Add focus trapping
+        modal.addEventListener('keydown', (e) => this.trapFocus(e, modal));
+
+        // Add event listener for Escape key to close the modal
+        modal.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                this.closeModal(modal);
             }
-
-            // Update attributes for accessibility compliance
-            this.setAttribute('aria-live', 'off');
-            this.setAttribute('role', 'alert');
-
-            // Stop the timer
-            this.stopTimer();
-
-            // Dispatch an event to notify the popup has been closed
-            this.dispatchEvent(
-                new CustomEvent('irnmn-popup-closed', {
-                    detail: { element: this },
-                }),
-            );
         });
     }
 
@@ -193,6 +186,9 @@ class IRNMNBookingPopup extends HTMLElement {
         const modal = this.querySelector('.irnmn-booking-popup');
         if (!modal) return;
 
+        // Save the last focused element
+        this.lastFocusedElement = document.activeElement;
+
         // Show the modal
         modal.classList.add('irnmn-booking-popup--visible');
         modal.setAttribute('aria-hidden', 'false');
@@ -205,6 +201,14 @@ class IRNMNBookingPopup extends HTMLElement {
         this.setAttribute('aria-live', 'assertive');
         this.setAttribute('role', 'alertdialog');
 
+        // Focus the first focusable element inside the modal
+        const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusableElements.length > 0) {
+            focusableElements[0].focus();
+        }
+
         // Start the timer if it's set
         if (this.timer) {
             this.startTimer();
@@ -216,6 +220,61 @@ class IRNMNBookingPopup extends HTMLElement {
                 detail: { element: this },
             }),
         );
+    }
+
+    /**
+     * Closes the modal and restores focus to the last focused element.
+     * @param {HTMLElement} modal - The modal element to close.
+     */
+    closeModal(modal) {
+        modal.setAttribute('aria-hidden', 'true');
+        modal.setAttribute('tabindex', '-1');
+        modal.classList.remove('irnmn-booking-popup--visible');
+        if (this.useCSS) {
+            modal.style.display = 'none';
+        }
+
+        // Update attributes for accessibility compliance
+        this.setAttribute('aria-live', 'off');
+        this.setAttribute('role', 'alert');
+
+        // Stop the timer
+        this.stopTimer();
+
+        // Restore focus to the last focused element
+        if (this.lastFocusedElement) {
+            this.lastFocusedElement.focus();
+        }
+
+        // Dispatch an event to notify the popup has been closed
+        this.dispatchEvent(
+            new CustomEvent('irnmn-popup-closed', {
+                detail: { element: this },
+            }),
+        );
+    }
+
+    /**
+     * Traps focus inside the modal when it is open.
+     * @param {KeyboardEvent} e - The keyboard event.
+     * @param {HTMLElement} modal - The modal element.
+     */
+    trapFocus(e, modal) {
+        if (e.key !== 'Tab') return;
+
+        const focusableElements = modal.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        const firstElement = focusableElements[0];
+        const lastElement = focusableElements[focusableElements.length - 1];
+
+        if (e.shiftKey && document.activeElement === firstElement) {
+            e.preventDefault();
+            lastElement.focus();
+        } else if (!e.shiftKey && document.activeElement === lastElement) {
+            e.preventDefault();
+            firstElement.focus();
+        }
     }
 
     /**
