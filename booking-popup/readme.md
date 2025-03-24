@@ -12,17 +12,18 @@
 
 ## Attributes
 
-| Attribute         | Description                                                                 | Default Value                          |
-|-------------------|-----------------------------------------------------------------------------|----------------------------------------|
-| `form-id`         | ID of the form associated with the modal.                                  | `null`                                 |
-| `has-modal`       | Enables or disables the modal.                                             | `false`                                |
-| `modal-title`     | Title of the modal.                                                        | `"You will be redirected"`             |
-| `modal-text`      | Text content of the modal.                                                 | `"Click continue to proceed to the booking engine"` |
-| `modal-cta`       | Label for the CTA button.                                                  | `"Continue"`                           |
-| `modal-close`     | Label for the close button.                                                | `"Close"`                              |
-| `modal-timer`     | Countdown timer in seconds for automatic form submission.                  | `0`                                    |
-| `modal-image`     | URL of the image to display in the modal.                                  | `null`                                 |
-| `use-css-display` | Toggles the use of CSS `display` property for showing/hiding the modal.    | `true`                                 |
+| Attribute              | Description                                                                 | Default Value                          |
+|------------------------|-----------------------------------------------------------------------------|----------------------------------------|
+| `form-id`              | ID of the form associated with the modal.                                   | `null`                                 |
+| `has-modal`            | Enables or disables the modal.                                              | `false`                                |
+| `modal-title`          | Title of the modal.                                                         | `"You will be redirected"`             |
+| `modal-text`           | Text content of the modal.                                                  | `"Click continue to proceed to the booking engine"` |
+| `modal-cta`            | Label for the CTA button.                                                   | `"Continue"`                           |
+| `modal-close`          | Label for the close button.                                                 | `"Close"`                              |
+| `modal-timer`          | Countdown timer in seconds for automatic form submission.                   | `0`                                    |
+| `modal-image`          | URL of the image to display in the modal.                                   | `null`                                 |
+| `use-css-display`      | Toggles the use of CSS `display` property for showing/hiding the modal.     | `true`                                 |
+| `form-need-validation` | Indicates whether the form requires validation before submission.           | `true`                                 |
 
 ## Events
 
@@ -69,5 +70,11 @@ Add the `irnmn-booking-modal` element to your HTML and configure it using attrib
     modal-timer="10"
     modal-image="path/to/image.jpg"
     use-css-display="true"
+    form-need-validation="true"
 ></irnmn-booking-modal>
 ```
+
+### Explanation of `form-need-validation`
+
+The `form-need-validation` attribute determines whether the associated form should be validated before submission. If set to `true`, the modal will show only if the form associated to `form-id` has the attributes `valid="true"`.
+This validation is NOT handled in this component, it will only look for the `valid` attribute to know if the modal should be shown on submission.

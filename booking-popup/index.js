@@ -86,6 +86,22 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
+     * Retrieves the form-need-validation attribute from the component's attributes.
+     * @returns {boolean} The value of the form-need-validation attribute.
+     * @default true
+     */
+    get formNeedValidation() {
+        const formNeedValidationAttr = this.getAttribute('form-need-validation');
+        return (
+            formNeedValidationAttr === 'true' ||
+            formNeedValidationAttr === null ||
+            (formNeedValidationAttr !== 'false' &&
+                formNeedValidationAttr !== 'null' &&
+                formNeedValidationAttr)
+        );
+    }
+
+    /**
      * Retrieves the title for the booking modal.
      * @returns {string} The title for the modal.
      */
@@ -175,7 +191,7 @@ class IRNMNBookingModal extends HTMLElement {
         const button = showButton
             ? `<button class="irnmn-booking-modal__cta">${this.ctaLabel}</button>`
             : '';
-        const image = this.imageSrc
+        const image = this.imageSrc && this.imageSrc !== '' && this.imageSrc !== 'null' && this.imageSrc !== 'false'
             ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
             : '';
 
@@ -236,7 +252,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @param {Event} e - The form submission event.
      */
     handleBookingModal(e) {
-        if (!this.hasModal) return; // Do nothing if the modal is disabled
+        if (!this.hasModal || (this.formNeedValidation && !this.form.getAttribute('valid'))) return; // Do nothing if the modal is disabled or the form is invalid and needs validation
 
         e.preventDefault();
 
