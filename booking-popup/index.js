@@ -68,6 +68,22 @@ class IRNMNBookingModal extends HTMLElement {
         this.imageSrc = this.getImageSrc();
     }
 
+    static get observedAttributes() {
+        return ['form-id', 'has-modal', 'modal-title', 'modal-text', 'modal-cta', 'modal-close', 'modal-timer', 'modal-image'];
+    }
+
+    /**
+     * Lifecycle method called when observed attributes change.
+     * @param {string} name - The name of the changed attribute.
+     * @param {string} oldValue - The old value of the attribute.
+     * @param {string} newValue - The new value of the attribute.
+     */
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue !== newValue) {
+            this.renderBookingModal();
+        }
+    }
+
     /**
      * Retrieves the form ID from the component's attributes.
      * @returns {string|null} The form ID or null if not set.
@@ -81,7 +97,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {string} The title for the modal.
      */
     getTitleLabel() {
-        return this.getAttribute('title') || 'You will be redirected';
+        return this.getAttribute('modal-title') || 'You will be redirected';
     }
 
     /**
@@ -89,7 +105,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {string} The text for the modal.
      */
     getTextLabel() {
-        return this.getAttribute('text') || 'Click continue to proceed to the booking engine';
+        return this.getAttribute('modal-text') || 'Click continue to proceed to the booking engine';
     }
 
     /**
@@ -97,7 +113,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {string} The CTA label for the modal.
      */
     getCTALabel() {
-        return this.getAttribute('cta') || 'Continue';
+        return this.getAttribute('modal-cta') || 'Continue';
     }
 
     /**
@@ -105,7 +121,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {string} The close label for the modal.
      */
     getCloseLabel() {
-        return this.getAttribute('close') || 'Close';
+        return this.getAttribute('modal-close') || 'Close';
     }
 
     /**
@@ -153,22 +169,6 @@ class IRNMNBookingModal extends HTMLElement {
      */
     getImageSrc() {
         return this.getAttribute('modal-image') || null;
-    }
-
-    static get observedAttributes() {
-        return ['title', 'text', 'cta', 'close', 'timer', 'has-modal', 'use-css-display', 'image-src'];
-    }
-
-    /**
-     * Lifecycle method called when observed attributes change.
-     * @param {string} name - The name of the changed attribute.
-     * @param {string} oldValue - The old value of the attribute.
-     * @param {string} newValue - The new value of the attribute.
-     */
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            this.renderBookingModal();
-        }
     }
 
     /**
