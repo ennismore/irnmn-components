@@ -10,6 +10,7 @@ class IRNMNBookingModal extends HTMLElement {
     constructor() {
         super();
         this.lastFocusedElement = null; // To store the last focused element before opening the modal
+        this.timerInterval = null; // To store the timer interval reference
     }
 
     /**
@@ -22,9 +23,7 @@ class IRNMNBookingModal extends HTMLElement {
 
         if (!this.form) return;
         this.renderBookingModal();
-        this.form.addEventListener('submit', (event) =>
-            this.handleBookingModal(event),
-        );
+        this.form.addEventListener('submit', this.handleBookingModal.bind(this));
     }
 
     /**
@@ -33,7 +32,8 @@ class IRNMNBookingModal extends HTMLElement {
      */
     disconnectedCallback() {
         if (!this.form) return;
-        this.form.removeEventListener('submit', this.handleBookingModal);
+        this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
+        this.stopTimer(); // Ensure the timer is cleared when the component is removed
     }
 
     /**
@@ -69,7 +69,16 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     static get observedAttributes() {
-        return ['form-id', 'has-modal', 'modal-title', 'modal-text', 'modal-cta', 'modal-close', 'modal-timer', 'modal-image'];
+        return [
+            'form-id',
+            'has-modal',
+            'modal-title',
+            'modal-text',
+            'modal-cta',
+            'modal-close',
+            'modal-timer',
+            'modal-image',
+        ];
     }
 
     /**
@@ -140,12 +149,7 @@ class IRNMNBookingModal extends HTMLElement {
      */
     getHasModal() {
         const hasModalAttr = this.getAttribute('has-modal');
-        return (
-            hasModalAttr === 'true' ||
-            (hasModalAttr !== 'false' &&
-                hasModalAttr !== 'null' &&
-                hasModalAttr)
-        );
+        return hasModalAttr === 'true' || hasModalAttr === '' || hasModalAttr === null;
     }
 
     /**
@@ -155,12 +159,7 @@ class IRNMNBookingModal extends HTMLElement {
      */
     getUseCSS() {
         const useCSSAttr = this.getAttribute('use-css-display');
-        return (
-            useCSSAttr === 'true' ||
-            (useCSSAttr !== 'false' &&
-                useCSSAttr !== 'null' &&
-                useCSSAttr)
-        );
+        return useCSSAttr === 'true' || useCSSAttr === '' || useCSSAttr === null;
     }
 
     /**
@@ -209,33 +208,31 @@ class IRNMNBookingModal extends HTMLElement {
         // Add event listener to the continue button if the timer is not set
         if (this.timer === false) {
             const button = modal.querySelector('.irnmn-booking-modal__cta');
-            if (!button) return;
-            button.addEventListener('click', (e) => {
-                e.preventDefault();
-                // Submit the form without showing the modal
-                this.form.submit();
-            });
+            if (button) {
+                button.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    // Submit the form without showing the modal
+                    this.form.submit();
+                });
+            }
         }
 
         // Add event listener to the close button
         const closeButton = modal.querySelector('.irnmn-booking-modal__close');
-        if (!closeButton) return;
+        if (closeButton) {
+            closeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.closeModal(modal);
+            });
+        }
 
-        closeButton.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent the form submission
-
-            // Close the modal
-            this.closeModal(modal);
-        });
-
-        // Add focus trapping
-        modal.addEventListener('keydown', (e) => this.trapFocus(e, modal));
-
-        // Add event listener for Escape key to close the modal
+        // Add focus trapping and Escape key handling
         modal.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 e.preventDefault();
                 this.closeModal(modal);
+            } else if (e.key === 'Tab') {
+                this.trapFocus(e, modal);
             }
         });
     }
@@ -363,17 +360,8 @@ class IRNMNBookingModal extends HTMLElement {
             timerValue.textContent = timeLeft;
 
             if (timeLeft <= 0) {
-                clearInterval(this.timerInterval);
-
-                // Hide the modal immediately
-                modal.setAttribute('aria-hidden', 'true');
-                modal.setAttribute('tabindex', '-1');
-                modal.classList.remove('irnmn-booking-modal--visible');
-                if (this.useCSS) {
-                    modal.style.display = 'none';
-                }
-
-                // Submit the form
+                this.stopTimer();
+                this.closeModal(modal);
                 this.form.submit();
             }
         }, 1000);
@@ -383,9 +371,11 @@ class IRNMNBookingModal extends HTMLElement {
      * Stops the timer for the booking modal.
      */
     stopTimer() {
-        clearInterval(this.timerInterval);
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
 
-        // Reset the timer value
         const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
