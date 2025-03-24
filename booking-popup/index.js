@@ -40,7 +40,6 @@ class IRNMNBookingModal extends HTMLElement {
      * Renders the booking modal and sets up its attributes and event listeners.
      */
     renderBookingModal() {
-        this.setAttributes();
         if (!this.hasModal) return; // Do nothing if the modal is disabled
         this.render();
         this.attachEventListeners();
@@ -54,23 +53,8 @@ class IRNMNBookingModal extends HTMLElement {
         });
     }
 
-    /**
-     * Sets the attributes for the booking modal, such as labels and timer.
-     */
-    setAttributes() {
-        this.hasModal = this.getHasModal();
-        this.titleLabel = this.getTitleLabel();
-        this.textLabel = this.getTextLabel();
-        this.ctaLabel = this.getCTALabel();
-        this.closeLabel = this.getCloseLabel();
-        this.timer = this.getTimer();
-        this.useCSS = this.getUseCSS();
-        this.imageSrc = this.getImageSrc();
-    }
-
     static get observedAttributes() {
         return [
-            'form-id',
             'has-modal',
             'modal-title',
             'modal-text',
@@ -105,7 +89,7 @@ class IRNMNBookingModal extends HTMLElement {
      * Retrieves the title for the booking modal.
      * @returns {string} The title for the modal.
      */
-    getTitleLabel() {
+    get titleLabel() {
         return this.getAttribute('modal-title') || 'You will be redirected';
     }
 
@@ -113,7 +97,7 @@ class IRNMNBookingModal extends HTMLElement {
      * Retrieves the text for the booking modal.
      * @returns {string} The text for the modal.
      */
-    getTextLabel() {
+    get textLabel() {
         return this.getAttribute('modal-text') || 'Click continue to proceed to the booking engine';
     }
 
@@ -121,7 +105,7 @@ class IRNMNBookingModal extends HTMLElement {
      * Retrieves the CTA label for the booking modal.
      * @returns {string} The CTA label for the modal.
      */
-    getCTALabel() {
+    get ctaLabel() {
         return this.getAttribute('modal-cta') || 'Continue';
     }
 
@@ -129,7 +113,7 @@ class IRNMNBookingModal extends HTMLElement {
      * Retrieves the close label for the booking modal.
      * @returns {string} The close label for the modal.
      */
-    getCloseLabel() {
+    get closeLabel() {
         return this.getAttribute('modal-close') || 'Close';
     }
 
@@ -137,7 +121,7 @@ class IRNMNBookingModal extends HTMLElement {
      * Retrieves and validates the timer value from the component's attributes.
      * @returns {number|false} The timer value as a positive integer or false if invalid.
      */
-    getTimer() {
+    get timer() {
         const timer = parseInt(this.getAttribute('modal-timer'), 10);
         return isNaN(timer) || timer <= 0 ? false : timer;
     }
@@ -147,9 +131,14 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {boolean} The value of the has-modal attribute.
      * @default false
      */
-    getHasModal() {
+    get hasModal() {
         const hasModalAttr = this.getAttribute('has-modal');
-        return hasModalAttr === 'true' || hasModalAttr === '' || hasModalAttr === null;
+        return (
+            hasModalAttr === 'true' ||
+            (hasModalAttr !== 'false' &&
+                hasModalAttr !== 'null' &&
+                hasModalAttr)
+        );
     }
 
     /**
@@ -157,16 +146,21 @@ class IRNMNBookingModal extends HTMLElement {
      * @returns {boolean} The value of the use-css-display attribute.
      * @default true
      */
-    getUseCSS() {
+    get useCSS() {
         const useCSSAttr = this.getAttribute('use-css-display');
-        return useCSSAttr === 'true' || useCSSAttr === '' || useCSSAttr === null;
+        return (
+            useCSSAttr === 'true' ||
+            (useCSSAttr !== 'false' &&
+                useCSSAttr !== 'null' &&
+                useCSSAttr)
+        );
     }
 
     /**
      * Retrieves the image-src attribute from the component's attributes.
      * @returns {string|null} The value of the image-src attribute or null if not set.
      */
-    getImageSrc() {
+    get imageSrc() {
         return this.getAttribute('modal-image') || null;
     }
 
