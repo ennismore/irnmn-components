@@ -337,7 +337,10 @@ class IRNMNLocation extends HTMLElement {
                     .replace(/([A-Z])/g, '-$1')
                     .toLowerCase();
 
-                this.parentForm
+                const bookingSystem = this.parentForm.closest('.irmnn-booking-system'); // Get the booking system component if it exists
+                const parent = bookingSystem || this.parentForm; // fallback to the parent form
+
+                parent
                     .querySelectorAll(`[${formattedAttrName}]`)
                     .forEach((element) => {
                         if (this != element && !this.contains(element)) {
