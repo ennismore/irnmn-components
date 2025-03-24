@@ -1,11 +1,11 @@
 /**
- * Custom Web Component representing a booking popup.
- * @class IRNMNBookingPopup
+ * Custom Web Component representing a booking modal.
+ * @class IRNMNBookingModal
  * @extends {HTMLElement}
  */
-class IRNMNBookingPopup extends HTMLElement {
+class IRNMNBookingModal extends HTMLElement {
     /**
-     * Constructor for the IRNMNBookingPopup component.
+     * Constructor for the IRNMNBookingModal component.
      */
     constructor() {
         super();
@@ -14,16 +14,16 @@ class IRNMNBookingPopup extends HTMLElement {
 
     /**
      * Lifecycle method called when the element is added to the DOM.
-     * Initializes the form and sets up the booking popup.
+     * Initializes the form and sets up the booking modal.
      */
     connectedCallback() {
         if (!this.formId) return;
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
-        this.renderBookingPopup();
+        this.renderBookingModal();
         this.form.addEventListener('submit', (event) =>
-            this.handleBookingPopup(event),
+            this.handleBookingModal(event),
         );
     }
 
@@ -33,21 +33,21 @@ class IRNMNBookingPopup extends HTMLElement {
      */
     disconnectedCallback() {
         if (!this.form) return;
-        this.form.removeEventListener('submit', this.handleBookingPopup);
+        this.form.removeEventListener('submit', this.handleBookingModal);
     }
 
     /**
-     * Renders the booking popup and sets up its attributes and event listeners.
+     * Renders the booking modal and sets up its attributes and event listeners.
      */
-    renderBookingPopup() {
+    renderBookingModal() {
         this.setAttributes();
-        if (!this.hasPopup) return; // Do nothing if the popup is disabled
+        if (!this.hasModal) return; // Do nothing if the modal is disabled
         this.render();
         this.attachEventListeners();
 
         Promise.resolve().then(() => {
             this.dispatchEvent(
-                new CustomEvent('irnmn-popup-loaded', {
+                new CustomEvent('irnmn-modal-loaded', {
                     detail: { element: this },
                 }),
             );
@@ -55,13 +55,17 @@ class IRNMNBookingPopup extends HTMLElement {
     }
 
     /**
-     * Sets the attributes for the booking popup, such as labels and timer.
+     * Sets the attributes for the booking modal, such as labels and timer.
      */
     setAttributes() {
-        this.hasPopup = this.getHasPopup();
-        this.labels = this.getLabels();
+        this.hasModal = this.getHasModal();
+        this.titleLabel = this.getTitleLabel();
+        this.textLabel = this.getTextLabel();
+        this.ctaLabel = this.getCTALabel();
+        this.closeLabel = this.getCloseLabel();
         this.timer = this.getTimer();
         this.useCSS = this.getUseCSS();
+        this.imageSrc = this.getImageSrc();
     }
 
     /**
@@ -73,18 +77,35 @@ class IRNMNBookingPopup extends HTMLElement {
     }
 
     /**
-     * Retrieves the labels for the booking popup, merging default and custom labels.
-     * @returns {Object} An object containing the labels for the popup.
+     * Retrieves the title for the booking modal.
+     * @returns {string} The title for the modal.
      */
-    getLabels() {
-        const defaultLabels = {
-            title: 'You will be redirected',
-            text: 'Click continue to proceed to the booking engine',
-            cta: 'Continue',
-            close: 'Close',
-        };
-        const customLabels = JSON.parse(this.getAttribute('labels')) || {};
-        return { ...defaultLabels, ...customLabels };
+    getTitleLabel() {
+        return this.getAttribute('title') || 'You will be redirected';
+    }
+
+    /**
+     * Retrieves the text for the booking modal.
+     * @returns {string} The text for the modal.
+     */
+    getTextLabel() {
+        return this.getAttribute('text') || 'Click continue to proceed to the booking engine';
+    }
+
+    /**
+     * Retrieves the CTA label for the booking modal.
+     * @returns {string} The CTA label for the modal.
+     */
+    getCTALabel() {
+        return this.getAttribute('cta') || 'Continue';
+    }
+
+    /**
+     * Retrieves the close label for the booking modal.
+     * @returns {string} The close label for the modal.
+     */
+    getCloseLabel() {
+        return this.getAttribute('close') || 'Close';
     }
 
     /**
@@ -92,22 +113,22 @@ class IRNMNBookingPopup extends HTMLElement {
      * @returns {number|false} The timer value as a positive integer or false if invalid.
      */
     getTimer() {
-        const timer = parseInt(this.getAttribute('timer'), 10);
+        const timer = parseInt(this.getAttribute('modal-timer'), 10);
         return isNaN(timer) || timer <= 0 ? false : timer;
     }
 
     /**
-     * Retrieves the has-popup attribute from the component's attributes.
-     * @returns {boolean} The value of the has-popup attribute.
+     * Retrieves the has-modal attribute from the component's attributes.
+     * @returns {boolean} The value of the has-modal attribute.
      * @default false
      */
-    getHasPopup() {
-        const hasPopupAttr = this.getAttribute('has-popup');
+    getHasModal() {
+        const hasModalAttr = this.getAttribute('has-modal');
         return (
-            hasPopupAttr === 'true' ||
-            (hasPopupAttr !== 'false' &&
-                hasPopupAttr !== 'null' &&
-                hasPopupAttr)
+            hasModalAttr === 'true' ||
+            (hasModalAttr !== 'false' &&
+                hasModalAttr !== 'null' &&
+                hasModalAttr)
         );
     }
 
@@ -126,8 +147,16 @@ class IRNMNBookingPopup extends HTMLElement {
         );
     }
 
+    /**
+     * Retrieves the image-src attribute from the component's attributes.
+     * @returns {string|null} The value of the image-src attribute or null if not set.
+     */
+    getImageSrc() {
+        return this.getAttribute('modal-image') || null;
+    }
+
     static get observedAttributes() {
-        return ['labels', 'timer', 'has-popup', 'use-css-display'];
+        return ['title', 'text', 'cta', 'close', 'timer', 'has-modal', 'use-css-display', 'image-src'];
     }
 
     /**
@@ -138,54 +167,58 @@ class IRNMNBookingPopup extends HTMLElement {
      */
     attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            this.renderBookingPopup();
+            this.renderBookingModal();
         }
     }
 
     /**
-     * Renders the HTML structure of the booking popup.
+     * Renders the HTML structure of the booking modal.
      */
     render() {
         const showButton = this.timer === false;
         const timerValue = this.timer
-            ? `<div class="irnmn-booking-popup__timer"><span>${this.timer}</span>sec</div>`
+            ? `<div class="irnmn-booking-modal__timer"><span>${this.timer}</span>sec</div>`
             : '';
         const button = showButton
-            ? `<button class="irnmn-booking-popup__cta">${this.labels.cta}</button>`
+            ? `<button class="irnmn-booking-modal__cta">${this.ctaLabel}</button>`
+            : '';
+        const image = this.imageSrc
+            ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
             : '';
 
         this.innerHTML = `
-            <dialog class="irnmn-booking-popup" role="dialog" aria-modal="true" aria-hidden="true" style="${this.useCSS ? 'display: none;' : ''}" tabindex="-1">
-                <div class="irnmn-booking-popup__container">
-                    <button class="irnmn-booking-popup__close" aria-label="${this.labels.close}">${this.labels.close}</button>
-                    <h2 class="irnmn-booking-popup__title">${this.labels.title}</h2>
-                    ${this.labels.text ? `<p class="irnmn-booking-popup__text">${this.labels.text}</p>` : ''}
+            <dialog class="irnmn-booking-modal" role="dialog" aria-modal="true" aria-hidden="true" style="${this.useCSS ? 'display: none;' : ''}" tabindex="-1">
+                <div class="irnmn-booking-modal__container">
+                    <button class="irnmn-booking-modal__close" aria-label="${this.closeLabel}">${this.closeLabel}</button>
+                    <h2 class="irnmn-booking-modal__title">${this.titleLabel}</h2>
+                    ${this.textLabel ? `<p class="irnmn-booking-modal__text">${this.textLabel}</p>` : ''}
                     ${showButton ? button : timerValue}
+                    ${image}
                 </div>
             </dialog>
         `;
     }
 
     /**
-     * Attaches event listeners to the booking popup, such as the close button.
+     * Attaches event listeners to the booking modal, such as the close button.
      */
     attachEventListeners() {
-        const modal = this.querySelector('.irnmn-booking-popup');
+        const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
         // Add event listener to the continue button if the timer is not set
         if (this.timer === false) {
-            const button = modal.querySelector('.irnmn-booking-popup__cta');
+            const button = modal.querySelector('.irnmn-booking-modal__cta');
             if (!button) return;
             button.addEventListener('click', (e) => {
                 e.preventDefault();
-                // Submit the form without showing the popup
+                // Submit the form without showing the modal
                 this.form.submit();
             });
         }
 
         // Add event listener to the close button
-        const closeButton = modal.querySelector('.irnmn-booking-popup__close');
+        const closeButton = modal.querySelector('.irnmn-booking-modal__close');
         if (!closeButton) return;
 
         closeButton.addEventListener('click', (e) => {
@@ -208,23 +241,23 @@ class IRNMNBookingPopup extends HTMLElement {
     }
 
     /**
-     * Handles the form submission event to display the booking popup.
+     * Handles the form submission event to display the booking modal.
      * @param {Event} e - The form submission event.
      */
-    handleBookingPopup(e) {
-        if (!this.hasPopup) return; // Do nothing if the popup is disabled
+    handleBookingModal(e) {
+        if (!this.hasModal) return; // Do nothing if the modal is disabled
 
         e.preventDefault();
 
         // Get the modal element
-        const modal = this.querySelector('.irnmn-booking-popup');
+        const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
         // Save the last focused element
         this.lastFocusedElement = document.activeElement;
 
         // Show the modal
-        modal.classList.add('irnmn-booking-popup--visible');
+        modal.classList.add('irnmn-booking-modal--visible');
         modal.setAttribute('aria-hidden', 'false');
         modal.setAttribute('tabindex', '0');
         if (this.useCSS) {
@@ -248,9 +281,9 @@ class IRNMNBookingPopup extends HTMLElement {
             this.startTimer();
         }
 
-        // Dispatch an event to notify the popup has been opened
+        // Dispatch an event to notify the modal has been opened
         this.dispatchEvent(
-            new CustomEvent('irnmn-popup-opened', {
+            new CustomEvent('irnmn-modal-opened', {
                 detail: { element: this },
             }),
         );
@@ -263,7 +296,7 @@ class IRNMNBookingPopup extends HTMLElement {
     closeModal(modal) {
         modal.setAttribute('aria-hidden', 'true');
         modal.setAttribute('tabindex', '-1');
-        modal.classList.remove('irnmn-booking-popup--visible');
+        modal.classList.remove('irnmn-booking-modal--visible');
         if (this.useCSS) {
             modal.style.display = 'none';
         }
@@ -280,9 +313,9 @@ class IRNMNBookingPopup extends HTMLElement {
             this.lastFocusedElement.focus();
         }
 
-        // Dispatch an event to notify the popup has been closed
+        // Dispatch an event to notify the modal has been closed
         this.dispatchEvent(
-            new CustomEvent('irnmn-popup-closed', {
+            new CustomEvent('irnmn-modal-closed', {
                 detail: { element: this },
             }),
         );
@@ -312,14 +345,14 @@ class IRNMNBookingPopup extends HTMLElement {
     }
 
     /**
-     * Starts the timer for the booking popup.
+     * Starts the timer for the booking modal.
      * Displays a countdown in the span and submits the form when it reaches zero.
      */
     startTimer() {
-        const modal = this.querySelector('.irnmn-booking-popup');
+        const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
-        const timer = modal.querySelector('.irnmn-booking-popup__timer');
+        const timer = modal.querySelector('.irnmn-booking-modal__timer');
         if (!timer) return;
 
         let timeLeft = this.timer;
@@ -332,10 +365,10 @@ class IRNMNBookingPopup extends HTMLElement {
             if (timeLeft <= 0) {
                 clearInterval(this.timerInterval);
 
-                // Hide the popup immediately
+                // Hide the modal immediately
                 modal.setAttribute('aria-hidden', 'true');
                 modal.setAttribute('tabindex', '-1');
-                modal.classList.remove('irnmn-booking-popup--visible');
+                modal.classList.remove('irnmn-booking-modal--visible');
                 if (this.useCSS) {
                     modal.style.display = 'none';
                 }
@@ -347,19 +380,19 @@ class IRNMNBookingPopup extends HTMLElement {
     }
 
     /**
-     * Stops the timer for the booking popup.
+     * Stops the timer for the booking modal.
      */
     stopTimer() {
         clearInterval(this.timerInterval);
 
         // Reset the timer value
-        const modal = this.querySelector('.irnmn-booking-popup');
+        const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
-        const timer = modal.querySelector('.irnmn-booking-popup__timer span');
+        const timer = modal.querySelector('.irnmn-booking-modal__timer span');
         if (!timer) return;
         timer.textContent = this.timer;
     }
 }
 
-customElements.define('irnmn-booking-popup', IRNMNBookingPopup);
+customElements.define('irnmn-booking-modal', IRNMNBookingModal);
