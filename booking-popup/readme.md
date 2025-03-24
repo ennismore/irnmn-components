@@ -76,5 +76,5 @@ Add the `irnmn-booking-modal` element to your HTML and configure it using attrib
 
 ### Explanation of `form-need-validation`
 
-The `form-need-validation` attribute determines whether the associated form should be validated before submission. If set to `true`, the modal will show only if the form associated to `form-id` has the attributes `valid="true"`.
+The `form-need-validation` attribute determines whether the associated form should be validated before submission. The modal will show only if the form associated to `form-id` has the attribute `valid` (value doesnt matter).
 This validation is NOT handled in this component, it will only look for the `valid` attribute to know if the modal should be shown on submission.

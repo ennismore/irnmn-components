@@ -252,7 +252,7 @@ class IRNMNBookingModal extends HTMLElement {
      * @param {Event} e - The form submission event.
      */
     handleBookingModal(e) {
-        if (!this.hasModal || (this.formNeedValidation && !this.form.getAttribute('valid'))) return; // Do nothing if the modal is disabled or the form is invalid and needs validation
+        if (!this.hasModal || (this.formNeedValidation && this.form.getAttribute('valid') === null)) return; // Do nothing if the modal is disabled or the form is invalid and needs validation
 
         e.preventDefault();
 
