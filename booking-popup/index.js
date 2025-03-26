@@ -17,12 +17,12 @@ class IRNMNBookingModal extends HTMLElement {
      * Lifecycle method called when the element is added to the DOM.
      * Initializes the form and sets up the booking modal.
      */
-    connectedCallback() {
+    async connectedCallback() {
         if (!this.formId) return;
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
-        this.renderBookingModal();
+        await this.renderBookingModal();
         this.form.addEventListener('submit', this.handleBookingModal.bind(this));
     }
 
@@ -39,8 +39,9 @@ class IRNMNBookingModal extends HTMLElement {
     /**
      * Renders the booking modal and sets up its attributes and event listeners.
      */
-    renderBookingModal() {
+    async renderBookingModal() {
         if (!this.hasModal) return; // Do nothing if the modal is disabled
+        this.content = await this.getContent();
         this.render();
         this.attachEventListeners();
 
@@ -56,6 +57,7 @@ class IRNMNBookingModal extends HTMLElement {
     static get observedAttributes() {
         return [
             'has-modal',
+            'post-endpoint',
             'modal-title',
             'modal-text',
             'modal-cta',
@@ -71,18 +73,28 @@ class IRNMNBookingModal extends HTMLElement {
      * @param {string} oldValue - The old value of the attribute.
      * @param {string} newValue - The new value of the attribute.
      */
-    attributeChangedCallback(name, oldValue, newValue) {
+    async attributeChangedCallback(name, oldValue, newValue) {
         if (oldValue !== newValue) {
-            this.renderBookingModal();
+            await this.renderBookingModal();
         }
     }
 
     /**
      * Retrieves the form ID from the component's attributes.
      * @returns {string|null} The form ID or null if not set.
+     * @default null
      */
     get formId() {
         return this.getAttribute('form-id') || null;
+    }
+
+    /**
+     * Retrieves the post-endpoint attribute from the component's attributes.
+     * @returns {string|null} The value of the post-endpoint attribute or null if not set.
+     * @default null
+     */
+    get postEndpoint() {
+        return this.getAttribute('post-endpoint') || null;
     }
 
     /**
@@ -166,25 +178,57 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
+     * Retrieves the content for the booking modal from the post endpoint.
+     * If the post endpoint is not set, it generates the content from the component's attributes.
+     * @returns {string} The content for the modal.
+     */
+    async getContent() {
+        if (!this.postEndpoint) {
+            const timerValue = this.timer
+                ? `<div class="irnmn-booking-modal__timer"><span>${this.timer}</span>sec</div>`
+                : '';
+            const image = this.imageSrc && this.imageSrc !== '' && this.imageSrc !== 'null' && this.imageSrc !== 'false'
+                ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
+                : '';
+
+            return `
+                <h2 class="irnmn-booking-modal__title" id="irnmn-modal-title">${this.titleLabel}</h2>
+                ${this.textLabel ? `<p class="irnmn-booking-modal__text" id="irnmn-modal-description">${this.textLabel}</p>` : ''}
+                ${timerValue}
+                <button class="irnmn-booking-modal__cta">${this.ctaLabel}</button>
+                ${image}
+            `;
+        } else {
+            const postData = await this.fetchPostData(this.postEndpoint);
+            return postData.content.rendered || '';
+        }
+    }
+
+    /**
+     * Fetches the post content from the provided endpoint.
+     * @param {string} postEndpoint - The endpoint to fetch the post content from.
+     * @returns {Promise} The promise that resolves with the post content.
+     * @default []
+     */
+    async fetchPostData(postEndpoint) {
+        try {
+            const response = await fetch(postEndpoint);
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching post', error);
+            return [];
+        }
+    }
+
+    /**
      * Renders the HTML structure of the booking modal.
      */
     render() {
-        const timerValue = this.timer
-            ? `<div class="irnmn-booking-modal__timer"><span>${this.timer}</span>sec</div>`
-            : '';
-        const image = this.imageSrc && this.imageSrc !== '' && this.imageSrc !== 'null' && this.imageSrc !== 'false'
-            ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
-            : '';
-
         this.innerHTML = `
             <dialog class="irnmn-booking-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="irnmn-modal-title" aria-describedby="irnmn-modal-description">
                 <div class="irnmn-booking-modal__container">
                     <button class="irnmn-booking-modal__close" aria-label="${this.closeLabel}" aria-controls="irnmn-booking-modal" aria-expanded="false">${this.closeLabel}</button>
-                    <h2 class="irnmn-booking-modal__title" id="irnmn-modal-title">${this.titleLabel}</h2>
-                    ${this.textLabel ? `<p class="irnmn-booking-modal__text" id="irnmn-modal-description">${this.textLabel}</p>` : ''}
-                    ${timerValue}
-                    <button class="irnmn-booking-modal__cta" aria-label="${this.ctaLabel}" aria-controls="irnmn-booking-modal" aria-expanded="true">${this.ctaLabel}</button>
-                    ${image}
+                    ${this.content}
                 </div>
             </dialog>
         `;
@@ -197,16 +241,27 @@ class IRNMNBookingModal extends HTMLElement {
         const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
-        // Add event listener to the continue button if the timer is not set
-        if (this.timer === false) {
-            const button = modal.querySelector('.irnmn-booking-modal__cta');
-            if (button) {
-                button.addEventListener('click', (e) => {
+        // Add event listener to the continue button
+        const wpButtons = modal.querySelectorAll('.wp-block-button a'); // Get all WP buttons
+        // Get the modal native button or the last WP button
+        const button = modal.querySelector('.irnmn-booking-modal__cta') || (wpButtons.length > 0 ? wpButtons[wpButtons.length - 1] : null);
+        if (button) {
+            // Add necessary attributes for accessibility
+            button.setAttribute('aria-controls', 'irnmn-booking-modal');
+            button.setAttribute('aria-expanded', 'false');
+            button.setAttribute('role', 'button');
+            button.setAttribute('tabindex', '0');
+
+            // Add event listener to the button for click and keydown events
+            const handleButtonAction = (e) => {
+                if (e.type === 'click' || (e.type === 'keydown' && e.key === 'Enter')) {
                     e.preventDefault();
                     // Submit the form without showing the modal
                     this.form.submit();
-                });
-            }
+                }
+            };
+            button.addEventListener('click', handleButtonAction);
+            button.addEventListener('keydown', handleButtonAction);
         }
 
         // Add event listener to the close button

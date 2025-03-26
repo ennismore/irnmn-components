@@ -20,7 +20,7 @@
 </head>
 
 <body>
-    <form method="GET" id="test-sls-bar"
+    <form method="GET" id="test-sls-bar" valid
         action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking BAR - SLS</h2>
 
@@ -91,8 +91,7 @@
             <button type="submit">Check availability</button>
         </form>
 
-        <irnmn-booking-modal form-id="test-sls-panel" has-modal="false" modal-image="" modal-timer="0" modal-title=""
-                    modal-text="" modal-cta="" use-css-display="true"></irnmn-booking-modal>
+        <irnmn-booking-modal form-id="test-sls-panel" has-modal="false" modal-timer="0" post-endpoint="http://ennismore.wordpress.test/sls/wp-json/wp/v2/posts/633"></irnmn-booking-modal>
 
     </div>
 
