@@ -74,6 +74,30 @@ Add the `irnmn-booking-modal` element to your HTML and configure it using attrib
 ></irnmn-booking-modal>
 ```
 
+### Styling
+The `IRNMNBookingModal` component provides flexibility for styling through its CSS classes. Below is a list of the key classes and their purposes, along with an example of how you can customize the modal's appearance:
+
+### CSS Classes
+
+| Class Name                        | Description                                                                 |
+|-----------------------------------|-----------------------------------------------------------------------------|
+| `irnmn-booking-modal`             | The main container for the modal.                                           |
+| `irnmn-booking-modal__container`  | The inner container that holds the modal content.                          |
+| `irnmn-booking-modal__title`      | The title of the modal.                                                     |
+| `irnmn-booking-modal__text`       | The text content of the modal.                                              |
+| `irnmn-booking-modal__cta`        | The call-to-action button inside the modal.                                 |
+| `irnmn-booking-modal__close`      | The close button for the modal.                                             |
+| `irnmn-booking-modal__timer`      | The container for the countdown timer.                                      |
+| `irnmn-booking-modal__image`      | The image displayed in the modal.                                           |
+| `irnmn-booking-modal--visible`    | Applied to the modal when it is visible.                                    |
+
+### Notes
+
+- You can override these styles in your own CSS file to match your application's design.
+- The `irnmn-booking-modal--visible` class is added dynamically when the modal is displayed. You can use this class to add animations or transitions for showing and hiding the modal.
+
+By customizing these styles, you can ensure the modal aligns with your application's branding and user experience requirements.
+
 ### Explanation of `form-need-validation`
 
 The `form-need-validation` attribute determines whether the associated form should be validated before submission. The modal will show only if the form associated to `form-id` has the attribute `valid` (value doesnt matter).

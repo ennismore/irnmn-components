@@ -158,21 +158,6 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Retrieves the use-css-display attribute from the component's attributes.
-     * @returns {boolean} The value of the use-css-display attribute.
-     * @default true
-     */
-    get useCSS() {
-        const useCSSAttr = this.getAttribute('use-css-display');
-        return (
-            useCSSAttr === 'true' ||
-            (useCSSAttr !== 'false' &&
-                useCSSAttr !== 'null' &&
-                useCSSAttr)
-        );
-    }
-
-    /**
      * Retrieves the image-src attribute from the component's attributes.
      * @returns {string|null} The value of the image-src attribute or null if not set.
      */
@@ -184,24 +169,21 @@ class IRNMNBookingModal extends HTMLElement {
      * Renders the HTML structure of the booking modal.
      */
     render() {
-        const showButton = this.timer === false;
         const timerValue = this.timer
             ? `<div class="irnmn-booking-modal__timer"><span>${this.timer}</span>sec</div>`
-            : '';
-        const button = showButton
-            ? `<button class="irnmn-booking-modal__cta">${this.ctaLabel}</button>`
             : '';
         const image = this.imageSrc && this.imageSrc !== '' && this.imageSrc !== 'null' && this.imageSrc !== 'false'
             ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
             : '';
 
         this.innerHTML = `
-            <dialog class="irnmn-booking-modal" role="dialog" aria-modal="true" aria-hidden="true" style="${this.useCSS ? 'display: none;' : ''}" tabindex="-1">
+            <dialog class="irnmn-booking-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="irnmn-modal-title" aria-describedby="irnmn-modal-description">
                 <div class="irnmn-booking-modal__container">
-                    <button class="irnmn-booking-modal__close" aria-label="${this.closeLabel}">${this.closeLabel}</button>
-                    <h2 class="irnmn-booking-modal__title">${this.titleLabel}</h2>
-                    ${this.textLabel ? `<p class="irnmn-booking-modal__text">${this.textLabel}</p>` : ''}
-                    ${showButton ? button : timerValue}
+                    <button class="irnmn-booking-modal__close" aria-label="${this.closeLabel}" aria-controls="irnmn-booking-modal" aria-expanded="false">${this.closeLabel}</button>
+                    <h2 class="irnmn-booking-modal__title" id="irnmn-modal-title">${this.titleLabel}</h2>
+                    ${this.textLabel ? `<p class="irnmn-booking-modal__text" id="irnmn-modal-description">${this.textLabel}</p>` : ''}
+                    ${timerValue}
+                    <button class="irnmn-booking-modal__cta" aria-label="${this.ctaLabel}" aria-controls="irnmn-booking-modal" aria-expanded="true">${this.ctaLabel}</button>
                     ${image}
                 </div>
             </dialog>
@@ -267,9 +249,7 @@ class IRNMNBookingModal extends HTMLElement {
         modal.classList.add('irnmn-booking-modal--visible');
         modal.setAttribute('aria-hidden', 'false');
         modal.setAttribute('tabindex', '0');
-        if (this.useCSS) {
-            modal.style.display = 'block';
-        }
+        modal.showModal();
 
         // Update attributes for accessibility compliance
         this.setAttribute('aria-live', 'assertive');
@@ -304,9 +284,7 @@ class IRNMNBookingModal extends HTMLElement {
         modal.setAttribute('aria-hidden', 'true');
         modal.setAttribute('tabindex', '-1');
         modal.classList.remove('irnmn-booking-modal--visible');
-        if (this.useCSS) {
-            modal.style.display = 'none';
-        }
+        modal.close();
 
         // Update attributes for accessibility compliance
         this.setAttribute('aria-live', 'off');
