@@ -4,12 +4,11 @@
 
 ## Features
 
-- Fully customizable modal with attributes for title, text, CTA, close button, timer, and image.
+- Fully customizable modal with content fetched from a remote endpoint.
 - Supports form submission with or without a modal.
 - Timer functionality for automatic form submission.
 - Accessibility features including focus trapping and keyboard navigation.
 - Event-driven architecture with custom events for modal lifecycle (`irnmn-modal-loaded`, `irnmn-modal-opened`, `irnmn-modal-closed`).
-- Supports fetching modal content from a remote endpoint.
 
 ## Attributes
 
@@ -18,12 +17,8 @@
 | `form-id`              | ID of the form associated with the modal.                                   | `null`                                 |
 | `has-modal`            | Enables or disables the modal.                                              | `false`                                |
 | `modal-endpoint`       | URL endpoint to fetch modal content.                                        | `null`                                 |
-| `modal-title`          | Title of the modal.                                                         | `"You will be redirected"`             |
-| `modal-text`           | Text content of the modal.                                                  | `"Click continue to proceed to the booking engine"` |
-| `modal-cta`            | Label for the CTA button.                                                   | `"Continue"`                           |
 | `modal-close`          | Label for the close button.                                                 | `"Close"`                              |
 | `modal-timer`          | Countdown timer in seconds for automatic form submission.                   | `0`                                    |
-| `modal-image`          | URL of the image to display in the modal.                                   | `null`                                 |
 | `form-need-validation` | Indicates whether the form requires validation before submission.           | `true`                                 |
 
 ## Events
@@ -70,26 +65,6 @@ Add the `irnmn-booking-modal` element to your HTML and configure it using attrib
     form-need-validation="true"
 ></irnmn-booking-modal>
 ```
-OR
-
-```html
-<form id="booking-form" valid>
-    <input type="text" name="name" placeholder="Your Name" required />
-    <button type="submit">Book Now</button>
-</form>
-
-<irnmn-booking-modal
-    form-id="booking-form"
-    has-modal="true"
-    modal-title="Booking Confirmation"
-    modal-text="Please confirm your booking details before proceeding."
-    modal-cta="Confirm"
-    modal-close="Cancel"
-    modal-timer="10"
-    modal-image="https://example.com/image.jpg"
-    form-need-validation="true"
-></irnmn-booking-modal>
-```
 
 ### Styling
 The `IRNMNBookingModal` component provides flexibility for styling through its CSS classes. Below is a list of the key classes and their purposes, along with an example of how you can customize the modal's appearance:
@@ -100,12 +75,7 @@ The `IRNMNBookingModal` component provides flexibility for styling through its C
 |-----------------------------------|-----------------------------------------------------------------------------|
 | `irnmn-booking-modal`             | The main container for the modal.                                           |
 | `irnmn-booking-modal__container`  | The inner container that holds the modal content.                          |
-| `irnmn-booking-modal__title`      | The title of the modal.                                                     |
-| `irnmn-booking-modal__text`       | The text content of the modal.                                              |
-| `irnmn-booking-modal__cta`        | The call-to-action button inside the modal.                                 |
 | `irnmn-booking-modal__close`      | The close button for the modal.                                             |
-| `irnmn-booking-modal__timer`      | The container for the countdown timer.                                      |
-| `irnmn-booking-modal__image`      | The image displayed in the modal.                                           |
 | `irnmn-booking-modal--visible`    | Applied to the modal when it is visible.                                    |
 
 ### Notes
@@ -121,4 +91,22 @@ The `form-need-validation` attribute determines whether the associated form shou
 
 ### Explanation of `modal-endpoint`
 
-The `modal-endpoint` attribute allows you to fetch modal content dynamically from a remote endpoint. If this attribute is set, the modal will fetch and display the content from the specified URL. If not set, the modal will use the attributes provided to generate its content.
+The `modal-endpoint` attribute allows you to fetch modal content dynamically from a remote endpoint. If this attribute is set, the modal will fetch and display the content from the specified URL. If not set, the modal will not display any content.
+
+## Timer
+The `modal-timer` attribute specifies a countdown timer in seconds for automatic form submission after a delay in second, if set to 0, the submission will be only manual.
+If the user close the modal - the timer will be stopped.
+When the timer is active, the modal can display the remaining time, allowing users to see how much time is left before the form is submitted automatically.
+
+### Displaying the Countdown
+
+To display the countdown timer in the modal, you can use the `modal-timer` class in the post content the modal will fetch the content from.
+This class is dynamically updated with the remaining time during the countdown.
+
+Example:
+
+```html
+<div class="imy-modal-timer-countdown">
+    You will be redirected in: <span class="modal-timer">10</span> seconds unless you close this window
+</div>
+```

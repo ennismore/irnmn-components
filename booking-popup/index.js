@@ -58,12 +58,8 @@ class IRNMNBookingModal extends HTMLElement {
         return [
             'has-modal',
             'modal-endpoint',
-            'modal-title',
-            'modal-text',
-            'modal-cta',
             'modal-close',
             'modal-timer',
-            'modal-image',
         ];
     }
 
@@ -114,30 +110,6 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Retrieves the title for the booking modal.
-     * @returns {string} The title for the modal.
-     */
-    get titleLabel() {
-        return this.getAttribute('modal-title') || 'You will be redirected';
-    }
-
-    /**
-     * Retrieves the text for the booking modal.
-     * @returns {string} The text for the modal.
-     */
-    get textLabel() {
-        return this.getAttribute('modal-text') || 'Click continue to proceed to the booking engine';
-    }
-
-    /**
-     * Retrieves the CTA label for the booking modal.
-     * @returns {string} The CTA label for the modal.
-     */
-    get ctaLabel() {
-        return this.getAttribute('modal-cta') || 'Continue';
-    }
-
-    /**
      * Retrieves the close label for the booking modal.
      * @returns {string} The close label for the modal.
      */
@@ -170,38 +142,14 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Retrieves the image-src attribute from the component's attributes.
-     * @returns {string|null} The value of the image-src attribute or null if not set.
-     */
-    get imageSrc() {
-        return this.getAttribute('modal-image') || null;
-    }
-
-    /**
      * Retrieves the content for the booking modal from the post endpoint.
-     * If the post endpoint is not set, it generates the content from the component's attributes.
      * @returns {string} The content for the modal.
      */
     async getContent() {
-        if (!this.postEndpoint) {
-            const timerValue = this.timer
-                ? `<div class="irnmn-booking-modal__timer"><span>${this.timer}</span>sec</div>`
-                : '';
-            const image = this.imageSrc && this.imageSrc !== '' && this.imageSrc !== 'null' && this.imageSrc !== 'false'
-                ? `<img src="${this.imageSrc}" role="presentation" aria-hidden="true" class="irnmn-booking-modal__image">`
-                : '';
+        if (!this.postEndpoint) return '';
 
-            return `
-                <h2 class="irnmn-booking-modal__title" id="irnmn-modal-title">${this.titleLabel}</h2>
-                ${this.textLabel ? `<p class="irnmn-booking-modal__text" id="irnmn-modal-description">${this.textLabel}</p>` : ''}
-                ${timerValue}
-                <button class="irnmn-booking-modal__cta">${this.ctaLabel}</button>
-                ${image}
-            `;
-        } else {
-            const postData = await this.fetchPostData(this.postEndpoint);
-            return postData.content.rendered || '';
-        }
+        const postData = await this.fetchPostData(this.postEndpoint);
+        return postData.content.rendered || '';
     }
 
     /**
@@ -243,8 +191,8 @@ class IRNMNBookingModal extends HTMLElement {
 
         // Add event listener to the continue button
         const wpButtons = modal.querySelectorAll('.wp-block-button a'); // Get all WP buttons
-        // Get the modal native button or the last WP button
-        const button = modal.querySelector('.irnmn-booking-modal__cta') || (wpButtons.length > 0 ? wpButtons[wpButtons.length - 1] : null);
+        // Use the last WP button as continue if it exists
+        const button = wpButtons.length > 0 ? wpButtons[wpButtons.length - 1] : null;
         if (button) {
             // Add necessary attributes for accessibility
             button.setAttribute('aria-controls', 'irnmn-booking-modal');
@@ -392,15 +340,15 @@ class IRNMNBookingModal extends HTMLElement {
         const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
-        const timer = modal.querySelector('.irnmn-booking-modal__timer');
-        if (!timer) return;
+        const timerValue = modal.querySelector('.modal-timer');
 
         let timeLeft = this.timer;
-        const timerValue = timer.querySelector('span');
 
         this.timerInterval = setInterval(() => {
             timeLeft -= 1;
-            timerValue.textContent = timeLeft;
+            if (timerValue) {
+                timerValue.textContent = timeLeft;
+            }
 
             if (timeLeft <= 0) {
                 this.stopTimer();
@@ -422,9 +370,9 @@ class IRNMNBookingModal extends HTMLElement {
         const modal = this.querySelector('.irnmn-booking-modal');
         if (!modal) return;
 
-        const timer = modal.querySelector('.irnmn-booking-modal__timer span');
-        if (!timer) return;
-        timer.textContent = this.timer;
+        const timerValue = modal.querySelector('.modal-timer');
+        if (!timerValue) return;
+        timerValue.textContent = this.timer;
     }
 }
 
