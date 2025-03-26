@@ -352,7 +352,6 @@ class IRNMNBookingModal extends HTMLElement {
 
             if (timeLeft <= 0) {
                 this.stopTimer();
-                this.closeModal(modal);
                 requestAnimationFrame(() => this.form.submit());
             }
         }, 1000);
