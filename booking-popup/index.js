@@ -19,9 +19,11 @@ class IRNMNBookingModal extends HTMLElement {
      */
     async connectedCallback() {
         if (!this.formId) return;
+
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
+
         await this.renderBookingModal();
         this.form.addEventListener('submit', this.handleBookingModal.bind(this));
     }
@@ -31,8 +33,9 @@ class IRNMNBookingModal extends HTMLElement {
      * Cleans up event listeners.
      */
     disconnectedCallback() {
-        if (!this.form) return;
-        this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
+        if (this.form) {
+            this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
+        }
         this.stopTimer(); // Ensure the timer is cleared when the component is removed
     }
 
@@ -41,26 +44,21 @@ class IRNMNBookingModal extends HTMLElement {
      */
     async renderBookingModal() {
         if (!this.hasModal) return; // Do nothing if the modal is disabled
+
         this.content = await this.getContent();
         this.render();
         this.attachEventListeners();
 
-        Promise.resolve().then(() => {
-            this.dispatchEvent(
-                new CustomEvent('irnmn-modal-loaded', {
-                    detail: { element: this },
-                }),
-            );
-        });
+        // Dispatch a custom event after rendering the modal
+        this.dispatchEvent(
+            new CustomEvent('irnmn-modal-loaded', {
+                detail: { element: this },
+            }),
+        );
     }
 
     static get observedAttributes() {
-        return [
-            'has-modal',
-            'modal-endpoint',
-            'modal-close',
-            'modal-timer',
-        ];
+        return ['has-modal', 'modal-endpoint', 'modal-close', 'modal-timer'];
     }
 
     /**
@@ -149,7 +147,7 @@ class IRNMNBookingModal extends HTMLElement {
         if (!this.postEndpoint) return '';
 
         const postData = await this.fetchPostData(this.postEndpoint);
-        return postData.content.rendered || '';
+        return postData.content?.rendered || '';
     }
 
     /**
@@ -161,6 +159,9 @@ class IRNMNBookingModal extends HTMLElement {
     async fetchPostData(postEndpoint) {
         try {
             const response = await fetch(postEndpoint);
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
             return await response.json();
         } catch (error) {
             console.error('Error fetching post', error);
@@ -191,8 +192,7 @@ class IRNMNBookingModal extends HTMLElement {
 
         // Add event listener to the continue button
         const wpButtons = modal.querySelectorAll('.wp-block-button a'); // Get all WP buttons
-        // Use the last WP button as continue if it exists
-        const button = wpButtons.length > 0 ? wpButtons[wpButtons.length - 1] : null;
+        const button = wpButtons[wpButtons.length - 1] || null; // Use the last WP button as continue if it exists
         if (button) {
             // Add necessary attributes for accessibility
             button.setAttribute('aria-controls', 'irnmn-booking-modal');
@@ -205,7 +205,7 @@ class IRNMNBookingModal extends HTMLElement {
                 if (e.type === 'click' || (e.type === 'keydown' && e.key === 'Enter')) {
                     e.preventDefault();
                     // Submit the form without showing the modal
-                    this.form.submit();
+                    requestAnimationFrame(() => this.form.submit());
                 }
             };
             button.addEventListener('click', handleButtonAction);
@@ -353,7 +353,7 @@ class IRNMNBookingModal extends HTMLElement {
             if (timeLeft <= 0) {
                 this.stopTimer();
                 this.closeModal(modal);
-                this.form.submit();
+                requestAnimationFrame(() => this.form.submit());
             }
         }, 1000);
     }
@@ -371,8 +371,9 @@ class IRNMNBookingModal extends HTMLElement {
         if (!modal) return;
 
         const timerValue = modal.querySelector('.modal-timer');
-        if (!timerValue) return;
-        timerValue.textContent = this.timer;
+        if (timerValue) {
+            timerValue.textContent = this.timer;
+        }
     }
 }
 
