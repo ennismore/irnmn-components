@@ -57,7 +57,7 @@ class IRNMNBookingModal extends HTMLElement {
     static get observedAttributes() {
         return [
             'has-modal',
-            'post-endpoint',
+            'modal-endpoint',
             'modal-title',
             'modal-text',
             'modal-cta',
@@ -89,12 +89,12 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Retrieves the post-endpoint attribute from the component's attributes.
-     * @returns {string|null} The value of the post-endpoint attribute or null if not set.
+     * Retrieves the modal-endpoint attribute from the component's attributes.
+     * @returns {string|null} The value of the modal-endpoint attribute or null if not set.
      * @default null
      */
     get postEndpoint() {
-        return this.getAttribute('post-endpoint') || null;
+        return this.getAttribute('modal-endpoint') || null;
     }
 
     /**

@@ -9,6 +9,7 @@
 - Timer functionality for automatic form submission.
 - Accessibility features including focus trapping and keyboard navigation.
 - Event-driven architecture with custom events for modal lifecycle (`irnmn-modal-loaded`, `irnmn-modal-opened`, `irnmn-modal-closed`).
+- Supports fetching modal content from a remote endpoint.
 
 ## Attributes
 
@@ -16,13 +17,13 @@
 |------------------------|-----------------------------------------------------------------------------|----------------------------------------|
 | `form-id`              | ID of the form associated with the modal.                                   | `null`                                 |
 | `has-modal`            | Enables or disables the modal.                                              | `false`                                |
+| `modal-endpoint`       | URL endpoint to fetch modal content.                                        | `null`                                 |
 | `modal-title`          | Title of the modal.                                                         | `"You will be redirected"`             |
 | `modal-text`           | Text content of the modal.                                                  | `"Click continue to proceed to the booking engine"` |
 | `modal-cta`            | Label for the CTA button.                                                   | `"Continue"`                           |
 | `modal-close`          | Label for the close button.                                                 | `"Close"`                              |
 | `modal-timer`          | Countdown timer in seconds for automatic form submission.                   | `0`                                    |
 | `modal-image`          | URL of the image to display in the modal.                                   | `null`                                 |
-| `use-css-display`      | Toggles the use of CSS `display` property for showing/hiding the modal.     | `true`                                 |
 | `form-need-validation` | Indicates whether the form requires validation before submission.           | `true`                                 |
 
 ## Events
@@ -55,7 +56,24 @@ Stops the countdown timer.
 Add the `irnmn-booking-modal` element to your HTML and configure it using attributes:
 
 ```html
-<form id="booking-form">
+<form id="booking-form" valid>
+    <input type="text" name="name" placeholder="Your Name" required />
+    <button type="submit">Book Now</button>
+</form>
+
+<irnmn-booking-modal
+    form-id="booking-form"
+    has-modal="true"
+    modal-close="Cancel"
+    modal-timer="10"
+    modal-endpoint="https://example.com/modal-content"
+    form-need-validation="true"
+></irnmn-booking-modal>
+```
+OR
+
+```html
+<form id="booking-form" valid>
     <input type="text" name="name" placeholder="Your Name" required />
     <button type="submit">Book Now</button>
 </form>
@@ -64,12 +82,11 @@ Add the `irnmn-booking-modal` element to your HTML and configure it using attrib
     form-id="booking-form"
     has-modal="true"
     modal-title="Booking Confirmation"
-    modal-text="Please confirm your booking details."
+    modal-text="Please confirm your booking details before proceeding."
     modal-cta="Confirm"
     modal-close="Cancel"
     modal-timer="10"
-    modal-image="path/to/image.jpg"
-    use-css-display="true"
+    modal-image="https://example.com/image.jpg"
     form-need-validation="true"
 ></irnmn-booking-modal>
 ```
@@ -100,5 +117,8 @@ By customizing these styles, you can ensure the modal aligns with your applicati
 
 ### Explanation of `form-need-validation`
 
-The `form-need-validation` attribute determines whether the associated form should be validated before submission. The modal will show only if the form associated to `form-id` has the attribute `valid` (value doesnt matter).
-This validation is NOT handled in this component, it will only look for the `valid` attribute to know if the modal should be shown on submission.
+The `form-need-validation` attribute determines whether the associated form should be validated before submission. The modal will show only if the form associated to `form-id` has the attribute `valid` (value doesn't matter). This validation is NOT handled in this component; it will only look for the `valid` attribute to know if the modal should be shown on submission.
+
+### Explanation of `modal-endpoint`
+
+The `modal-endpoint` attribute allows you to fetch modal content dynamically from a remote endpoint. If this attribute is set, the modal will fetch and display the content from the specified URL. If not set, the modal will use the attributes provided to generate its content.
