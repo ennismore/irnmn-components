@@ -146,8 +146,31 @@ class IRNMNBookingModal extends HTMLElement {
     async getContent() {
         if (!this.postEndpoint) return '';
 
-        const postData = await this.fetchPostData(this.postEndpoint);
-        return postData.content?.rendered || '';
+        const data = await this.fetchPostData(this.postEndpoint);
+
+        const html = data.content?.rendered || '';
+        const { styles, scripts } = data.blockAssets;
+
+        // Load styles assets
+        if (styles && styles.length) {
+            styles.forEach((href) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = href;
+                document.head.appendChild(link);
+            });
+        }
+
+        // Load scripts assets
+        if (scripts && scripts.length) {
+            scripts.forEach((src) => {
+                const script = document.createElement('script');
+                script.src = src;
+                document.body.appendChild(script);
+            });
+        }
+
+        return html;
     }
 
     /**
