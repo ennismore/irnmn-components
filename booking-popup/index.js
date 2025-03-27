@@ -49,6 +49,9 @@ class IRNMNBookingModal extends HTMLElement {
         this.render();
         this.attachEventListeners();
 
+        // Load assets after the HTML is injected into the DOM
+        await this.loadAssets();
+
         // Dispatch a custom event after rendering the modal
         this.dispatchEvent(
             new CustomEvent('irnmn-modal-loaded', {
@@ -149,26 +152,8 @@ class IRNMNBookingModal extends HTMLElement {
         const data = await this.fetchPostData(this.postEndpoint);
 
         const html = data.content?.rendered || '';
-        const { styles, scripts } = data.blockAssets;
-
-        // Load styles assets
-        if (styles && styles.length) {
-            styles.forEach((href) => {
-                const link = document.createElement('link');
-                link.rel = 'stylesheet';
-                link.href = href;
-                document.head.appendChild(link);
-            });
-        }
-
-        // Load scripts assets
-        if (scripts && scripts.length) {
-            scripts.forEach((src) => {
-                const script = document.createElement('script');
-                script.src = src;
-                document.body.appendChild(script);
-            });
-        }
+        this.styles = data.blockAssets?.styles || [];
+        this.scripts = data.blockAssets?.scripts || [];
 
         return html;
     }
@@ -204,6 +189,35 @@ class IRNMNBookingModal extends HTMLElement {
                 </div>
             </dialog>
         `;
+    }
+
+    /**
+     * Loads styles and scripts assets after the HTML is injected into the DOM.
+     */
+    async loadAssets() {
+        // Load styles assets
+        if (this.styles && this.styles.length) {
+            this.styles.forEach((href) => {
+                if (!document.querySelector(`link[href="${href}"]`)) { // Check if the stylesheet is already loaded
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = href;
+                    document.head.appendChild(link);
+                }
+            });
+        }
+
+        // Load scripts assets (always load scripts even if they are already loaded)
+        if (this.scripts && this.scripts.length) {
+            for (const src of this.scripts) {
+                await new Promise((resolve) => {
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    document.body.appendChild(script);
+                });
+            }
+        }
     }
 
     /**
