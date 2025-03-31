@@ -153,7 +153,6 @@ class IRNMNBookingModal extends HTMLElement {
 
         const html = data.content?.rendered || '';
         this.styles = data.blockAssets?.styles || [];
-        this.scripts = data.blockAssets?.scripts || [];
 
         return html;
     }
@@ -192,7 +191,7 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Loads styles and scripts assets after the HTML is injected into the DOM.
+     * Loads styles assets after the HTML is injected into the DOM.
      */
     async loadAssets() {
         // Load styles assets
@@ -206,43 +205,6 @@ class IRNMNBookingModal extends HTMLElement {
                 }
             });
         }
-
-        // Load scripts assets (always load scripts even if they are already loaded)
-        if (this.scripts && this.scripts.length) {
-            for (const src of this.scripts) {
-                await new Promise((resolve) => {
-                    this.injectWithFakeDomContentLoaded(src);
-                    resolve();
-                });
-            }
-        }
-    }
-
-    /**
-     * Injects a script into the DOM with a fake DOMContentLoaded event.
-     * @param {string} src - The source URL of the script to inject.
-     * @default []
-     */
-    async injectWithFakeDomContentLoaded(src) {
-        const blob = new Blob([`
-            (function() {
-                const originalAddEventListener = document.addEventListener;
-                document.addEventListener = function(type, callback, options) {
-                    if (type === 'DOMContentLoaded') {
-                        callback(); // manually trigger it immediately
-                    } else {
-                        originalAddEventListener.call(document, type, callback, options);
-                    }
-                };
-            })();
-            var s = document.createElement('script');
-            s.src = '${src}';
-            document.body.appendChild(s);
-        `], { type: 'application/javascript' });
-
-        const wrapperScript = document.createElement('script');
-        wrapperScript.src = URL.createObjectURL(blob);
-        document.body.appendChild(wrapperScript);
     }
 
     /**
