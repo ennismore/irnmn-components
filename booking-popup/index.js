@@ -1,121 +1,29 @@
 /**
- * Custom Web Component representing a booking modal.
+ * Booking Popup Component
+ * Wrapper around PopupComponent, adding booking-specific functionality.
+ * Includes timer functionality, form validation, has-modal handling, and handling of form submission.
  * @class IRNMNBookingModal
- * @extends {HTMLElement}
+ * @extends {IRNMNPopup}
  */
-class IRNMNBookingModal extends HTMLElement {
+
+import { IRNMNPopup } from '../popup/index.js';
+
+class IRNMNBookingModal extends IRNMNPopup {
     /**
-     * Constructor for the IRNMNBookingModal component.
+     * Constructor for IRNMNBookingModal
+     * Extends PopupComponent to provide booking-specific functionalities.
      */
     constructor() {
         super();
-        this.lastFocusedElement = null; // To store the last focused element before opening the modal
-        this.timerInterval = null; // To store the timer interval reference
-    }
-
-    /**
-     * Lifecycle method called when the element is added to the DOM.
-     * Initializes the form and sets up the booking modal.
-     */
-    async connectedCallback() {
-        if (!this.formId) return;
-
-        this.form = document.getElementById(this.formId);
-
-        if (!this.form) return;
-
-        await this.renderBookingModal();
-        this.form.addEventListener('submit', this.handleBookingModal.bind(this));
-    }
-
-    /**
-     * Lifecycle method called when the element is removed from the DOM.
-     * Cleans up event listeners.
-     */
-    disconnectedCallback() {
-        if (this.form) {
-            this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
-        }
-        this.stopTimer(); // Ensure the timer is cleared when the component is removed
-    }
-
-    /**
-     * Renders the booking modal and sets up its attributes and event listeners.
-     */
-    async renderBookingModal() {
-        if (!this.hasModal) return; // Do nothing if the modal is disabled
-
-        this.content = await this.getContent();
-        this.render();
-        this.attachEventListeners();
-
-        // Load assets after the HTML is injected into the DOM
-        await this.loadAssets();
-
-        // Dispatch a custom event after rendering the modal
-        this.dispatchEvent(
-            new CustomEvent('irnmn-modal-loaded', {
-                detail: { element: this },
-            }),
-        );
-    }
-
-    static get observedAttributes() {
-        return ['has-modal', 'modal-endpoint', 'modal-close', 'modal-timer'];
-    }
-
-    /**
-     * Lifecycle method called when observed attributes change.
-     * @param {string} name - The name of the changed attribute.
-     * @param {string} oldValue - The old value of the attribute.
-     * @param {string} newValue - The new value of the attribute.
-     */
-    async attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue !== newValue) {
-            await this.renderBookingModal();
-        }
+        this.timerInterval = null; // Stores the reference to the timer interval for clearing it later
     }
 
     /**
      * Retrieves the form ID from the component's attributes.
      * @returns {string|null} The form ID or null if not set.
-     * @default null
      */
     get formId() {
         return this.getAttribute('form-id') || null;
-    }
-
-    /**
-     * Retrieves the modal-endpoint attribute from the component's attributes.
-     * @returns {string|null} The value of the modal-endpoint attribute or null if not set.
-     * @default null
-     */
-    get postEndpoint() {
-        return this.getAttribute('modal-endpoint') || null;
-    }
-
-    /**
-     * Retrieves the form-need-validation attribute from the component's attributes.
-     * @returns {boolean} The value of the form-need-validation attribute.
-     * @default true
-     */
-    get formNeedValidation() {
-        const formNeedValidationAttr = this.getAttribute('form-need-validation');
-        return (
-            formNeedValidationAttr === 'true' ||
-            formNeedValidationAttr === null ||
-            (formNeedValidationAttr !== 'false' &&
-                formNeedValidationAttr !== 'null' &&
-                formNeedValidationAttr)
-        );
-    }
-
-    /**
-     * Retrieves the close label for the booking modal.
-     * @returns {string} The close label for the modal.
-     */
-    get closeLabel() {
-        return this.getAttribute('modal-close') || 'Close';
     }
 
     /**
@@ -128,275 +36,142 @@ class IRNMNBookingModal extends HTMLElement {
     }
 
     /**
-     * Retrieves the has-modal attribute from the component's attributes.
-     * @returns {boolean} The value of the has-modal attribute.
-     * @default false
+     * Retrieves whether the modal should be shown based on the 'has-modal' attribute.
+     * @returns {boolean} True if the modal is enabled, false otherwise.
      */
     get hasModal() {
         const hasModalAttr = this.getAttribute('has-modal');
         return (
             hasModalAttr === 'true' ||
-            (hasModalAttr !== 'false' &&
-                hasModalAttr !== 'null' &&
-                hasModalAttr)
+            (hasModalAttr !== 'false' && hasModalAttr !== 'null' && hasModalAttr)
         );
     }
 
     /**
-     * Retrieves the content for the booking modal from the post endpoint.
-     * @returns {string} The content for the modal.
+     * Retrieves whether the form requires validation before showing the modal.
+     * @returns {boolean} True if validation is required, false otherwise.
      */
-    async getContent() {
-        if (!this.postEndpoint) return '';
-
-        const data = await this.fetchPostData(this.postEndpoint);
-
-        const html = data.content?.rendered || '';
-        this.styles = data.blockAssets?.styles || [];
-
-        return html;
+    get formNeedValidation() {
+        const formNeedValidationAttr = this.getAttribute('form-need-validation');
+        return (
+            formNeedValidationAttr === 'true' ||
+            formNeedValidationAttr === null ||
+            (formNeedValidationAttr !== 'false' && formNeedValidationAttr !== 'null' && formNeedValidationAttr)
+        );
     }
 
     /**
-     * Fetches the post content from the provided endpoint.
-     * @param {string} postEndpoint - The endpoint to fetch the post content from.
-     * @returns {Promise} The promise that resolves with the post content.
-     * @default []
+     * Called when the element is added to the DOM.
+     * Binds the booking form submission event and triggers the modal display when necessary.
      */
-    async fetchPostData(postEndpoint) {
-        try {
-            const response = await fetch(postEndpoint);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return await response.json();
-        } catch (error) {
-            console.error('Error fetching post', error);
-            return [];
+    async connectedCallback() {
+        await super.connectedCallback();
+
+        this.form = document.getElementById(this.formId);
+
+        if (this.form) {
+            this.form.addEventListener('submit', this.handleBookingModal.bind(this));
         }
     }
 
     /**
-     * Renders the HTML structure of the booking modal.
+     * Called when the element is removed from the DOM.
+     * Ensures event listeners and timers are properly cleared.
      */
-    render() {
-        this.innerHTML = `
-            <dialog class="irnmn-booking-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="irnmn-modal-title" aria-describedby="irnmn-modal-description">
-                <div class="irnmn-booking-modal__container">
-                    <button class="irnmn-booking-modal__close" aria-label="${this.closeLabel}" aria-controls="irnmn-booking-modal" aria-expanded="false">${this.closeLabel}</button>
-                    ${this.content}
-                </div>
-            </dialog>
-        `;
-    }
-
-    /**
-     * Loads styles assets after the HTML is injected into the DOM.
-     */
-    async loadAssets() {
-        // Load styles assets
-        if (this.styles && this.styles.length) {
-            this.styles.forEach((href) => {
-                if (!document.querySelector(`link[href="${href}"]`)) { // Check if the stylesheet is already loaded
-                    const link = document.createElement('link');
-                    link.rel = 'stylesheet';
-                    link.href = href;
-                    document.head.appendChild(link);
-                }
-            });
+    disconnectedCallback() {
+        if (this.form) {
+            this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
         }
+        this.stopTimer();
+        super.disconnectedCallback();
+    }
+
+    static get observedAttributes() {
+        // Combine parent class's observed attributes with new ones
+        return [...(super.observedAttributes || []), 'has-modal', 'modal-timer', 'form-id', 'form-need-validation'];
+    }
+
+    async renderPopup() {
+        if (!this.hasModal) return;
+
+        await super.renderPopup();
+
+        // Additional logic specific to IRNMNBookingModal
+        this.attachContinueButtonListener();
     }
 
     /**
-     * Attaches event listeners to the booking modal, such as the close button.
+     * Attaches event listeners to the continue button within the modal.
+     * This allows the button to trigger form submission when clicked or activated via keyboard.
      */
-    attachEventListeners() {
-        const modal = this.querySelector('.irnmn-booking-modal');
+    attachContinueButtonListener() {
+        const modal = this.querySelector('.irnmn-modal');
         if (!modal) return;
 
-        // Add event listener to the continue button
-        const wpButtons = modal.querySelectorAll('.wp-block-button a'); // Get all WP buttons
-        const button = wpButtons[wpButtons.length - 1] || null; // Use the last WP button as continue if it exists
-        if (button) {
-            // Add necessary attributes for accessibility
-            button.setAttribute('aria-controls', 'irnmn-booking-modal');
-            button.setAttribute('aria-expanded', 'false');
-            button.setAttribute('role', 'button');
-            button.setAttribute('tabindex', '0');
+        const wpButtons = modal.querySelectorAll('.wp-block-button a');
+        const continueButton = wpButtons[wpButtons.length - 1] || null;
 
-            // Add event listener to the button for click and keydown events
+        if (continueButton) {
+            continueButton.setAttribute('role', 'button');
+            continueButton.setAttribute('tabindex', '0');
+
             const handleButtonAction = (e) => {
                 if (e.type === 'click' || (e.type === 'keydown' && e.key === 'Enter')) {
                     e.preventDefault();
-                    // Submit the form without showing the modal
                     requestAnimationFrame(() => this.form.submit());
                 }
             };
-            button.addEventListener('click', handleButtonAction);
-            button.addEventListener('keydown', handleButtonAction);
-        }
 
-        // Add event listener to the close button
-        const closeButton = modal.querySelector('.irnmn-booking-modal__close');
-        if (closeButton) {
-            closeButton.addEventListener('click', (e) => {
-                e.preventDefault();
-                this.closeModal(modal);
-            });
+            continueButton.addEventListener('click', handleButtonAction);
+            continueButton.addEventListener('keydown', handleButtonAction);
         }
-
-        // Add focus trapping and Escape key handling
-        modal.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                e.preventDefault();
-                this.closeModal(modal);
-            } else if (e.key === 'Tab') {
-                this.trapFocus(e, modal);
-            }
-        });
     }
 
     /**
-     * Handles the form submission event to display the booking modal.
+     * Handles the form submission, preventing the default action and displaying the modal if conditions are met.
      * @param {Event} e - The form submission event.
      */
     handleBookingModal(e) {
-        if (!this.hasModal || (this.formNeedValidation && this.form.getAttribute('valid') === null)) return; // Do nothing if the modal is disabled or the form is invalid and needs validation
+        if (!this.hasModal || (this.formNeedValidation && this.form.getAttribute('valid') === null)) return; // Respect the 'has-modal' attribute and validate form if necessary
 
         e.preventDefault();
+        const modal = this.querySelector('.irnmn-modal');
+        if (modal) this.showModal(modal);
 
-        // Get the modal element
-        const modal = this.querySelector('.irnmn-booking-modal');
-        if (!modal) return;
-
-        // Save the last focused element
-        this.lastFocusedElement = document.activeElement;
-
-        // Show the modal
-        modal.classList.add('irnmn-booking-modal--visible');
-        modal.setAttribute('aria-hidden', 'false');
-        modal.setAttribute('tabindex', '0');
-        modal.showModal();
-
-        // Update attributes for accessibility compliance
-        this.setAttribute('aria-live', 'assertive');
-        this.setAttribute('role', 'alertdialog');
-
-        // Focus the first focusable element inside the modal
-        const focusableElements = modal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        if (focusableElements.length > 0) {
-            focusableElements[0].focus();
-        }
-
-        // Start the timer if it's set
-        if (this.timer) {
-            this.startTimer();
-        }
-
-        // Dispatch an event to notify the modal has been opened
-        this.dispatchEvent(
-            new CustomEvent('irnmn-modal-opened', {
-                detail: { element: this },
-            }),
-        );
+        if (this.timer) this.startTimer();
     }
 
     /**
-     * Closes the modal and restores focus to the last focused element.
-     * @param {HTMLElement} modal - The modal element to close.
-     */
-    closeModal(modal) {
-        modal.setAttribute('aria-hidden', 'true');
-        modal.setAttribute('tabindex', '-1');
-        modal.classList.remove('irnmn-booking-modal--visible');
-        modal.close();
-
-        // Update attributes for accessibility compliance
-        this.setAttribute('aria-live', 'off');
-        this.setAttribute('role', 'alert');
-
-        // Stop the timer
-        this.stopTimer();
-
-        // Restore focus to the last focused element
-        if (this.lastFocusedElement) {
-            this.lastFocusedElement.focus();
-        }
-
-        // Dispatch an event to notify the modal has been closed
-        this.dispatchEvent(
-            new CustomEvent('irnmn-modal-closed', {
-                detail: { element: this },
-            }),
-        );
-    }
-
-    /**
-     * Traps focus inside the modal when it is open.
-     * @param {KeyboardEvent} e - The keyboard event.
-     * @param {HTMLElement} modal - The modal element.
-     */
-    trapFocus(e, modal) {
-        if (e.key !== 'Tab') return;
-
-        const focusableElements = modal.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-        );
-        const firstElement = focusableElements[0];
-        const lastElement = focusableElements[focusableElements.length - 1];
-
-        if (e.shiftKey && document.activeElement === firstElement) {
-            e.preventDefault();
-            lastElement.focus();
-        } else if (!e.shiftKey && document.activeElement === lastElement) {
-            e.preventDefault();
-            firstElement.focus();
-        }
-    }
-
-    /**
-     * Starts the timer for the booking modal.
-     * Displays a countdown in the span and submits the form when it reaches zero.
+     * Starts a countdown timer which triggers form submission upon completion.
      */
     startTimer() {
-        const modal = this.querySelector('.irnmn-booking-modal');
-        if (!modal) return;
-
-        const timerValue = modal.querySelector('.modal-timer');
+        const timerElement = this.querySelector('.modal-timer');
 
         let timeLeft = this.timer;
-
         this.timerInterval = setInterval(() => {
             timeLeft -= 1;
-            if (timerValue) {
-                timerValue.textContent = timeLeft;
-            }
+            if (timerElement) timerElement.textContent = timeLeft;
 
             if (timeLeft <= 0) {
                 this.stopTimer();
-                requestAnimationFrame(() => this.form.submit());
+                this.form.submit();
             }
         }, 1000);
     }
 
     /**
-     * Stops the timer for the booking modal.
+     * Stops the countdown timer and clears the interval reference.
      */
     stopTimer() {
         if (this.timerInterval) {
             clearInterval(this.timerInterval);
             this.timerInterval = null;
         }
+    }
 
-        const modal = this.querySelector('.irnmn-booking-modal');
-        if (!modal) return;
-
-        const timerValue = modal.querySelector('.modal-timer');
-        if (timerValue) {
-            timerValue.textContent = this.timer;
-        }
+    closeModal() {
+        super.closeModal();
+        this.stopTimer();
     }
 }
 
