@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.3 [2025-04-01]
+### update - irnmn-popup
+- add a class toggle on open / close
+
+------
 ## v1.2.2 [2025-04-01]
 ### ADD - irnmn-popup
 - new component for popup
