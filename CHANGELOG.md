@@ -7,6 +7,15 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.2 [2025-04-01]
+### ADD - irnmn-popup
+- new component for popup
+### ADD - irnmn-booking-popup
+- new component for booking redirect popup
+### UPDATE - irnmn-location
+- change default container to target for updating other components
+
+------
 ## v1.2.1 [2025-03-18]
 ### UPDATE - irnmn-booking-all-com
 - adapt the component to works with rooms-selector values format
