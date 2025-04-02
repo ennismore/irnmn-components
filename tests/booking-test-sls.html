@@ -16,12 +16,16 @@
     <script src="../guests-summary/index.js" type="module"></script>
     <script src="../booking-aic/index.js" type="module"></script>
     <script src="../booking-marriot/index.js" type="module"></script>
+    <script src="../booking-popup/index.js" type="module"></script>
 </head>
 
 <body>
-    <form method="GET" id="test-sls-bar"
+    <form method="GET" id="test-sls-bar" valid
         action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
         <h2>Booking BAR - SLS</h2>
+
+        <irnmn-booking-modal form-id="test-sls-bar" has-modal="false" modal-image="" modal-timer="0" modal-title="" modal-text="" modal-cta="" use-css-display="true"></irnmn-booking-modal>
+
 
         <irnmn-booking-aic form-id="test-sls-bar" start-date-name="checkin" end-date-name="checkout" hotel-codes='["C383"]'>
         </irnmn-booking-aic>
@@ -39,7 +43,7 @@
 
         <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
             placeholder="Select location" error-message="Please select a location" show-error="false" default=""
-            locations-endpoint="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v2/locations">
+            locations-endpoint="http://ennismore.wordpress.test/sls/wp-json/booking-system/v2/locations">
         </irnmn-location>
 
         <irnmn-guests-summary storage-key="irnmn-rooms" sum-guests="true" labels='{"adults":"guests"}' enable-children="0">
@@ -50,39 +54,47 @@
 
     <hr>
 
-    <form method="GET" id="test-sls-panel"
-        action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
-        <h2>Booking PANEL - SLS</h2>
+        <div class="irmnn-booking-system">
 
-        <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
-            hotel-codes='["C383"]'>
-        </irnmn-booking-aic>
+        <form method="GET" id="test-sls-panel" valid
+            action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
+            <h2>Booking PANEL - SLS</h2>
 
-        <irnmn-booking-marriot form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
-            hotel-codes='["laxls"]'>
-        </irnmn-booking-marriot>
 
-        <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
-            placeholder="Select location" error-message="Please select a location" show-error="false" default=""
-            locations-endpoint="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v2/locations">
-        </irnmn-location>
+            <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
+                hotel-codes='["C383"]'>
+            </irnmn-booking-aic>
 
-        <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Check in / out"
-            placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
-            open-date-message="You can't select a date before the opening date"
-            error-message="Please select a check in / check out date" show-error="false" input-name="date-selection"
-            checkin-date-name="checkin" checkout-date-name="checkout" name="checkInOutDates" weekdays="M,T,W,T,F,S,S"
-            date-locale="false">
-        </irnmn-calendar>
+            <irnmn-booking-marriot form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
+                hotel-codes='["laxls"]'>
+            </irnmn-booking-marriot>
 
-        <irnmn-rooms-selector
-            labels='{"room":"Room","rooms":"Rooms","guests":"Guests","adults":"Adults","children":"Children","childAge":"Child age","selectRoom":"","remove":"remove","ariaLabelMoreAdults":"Add more adults","ariaLabelLessAdults":"Remove an adult","ariaLabelMoreChildren":"Add more children","ariaLabelLessChildren":"Remove a child"}'
-            rooms-number="7" min-rooms="1" max-total-guests="4" adults-number="4" children-number="3"
-            enable-children="0" enable-children-ages="0">
-        </irnmn-rooms-selector>
+            <irnmn-location label="Location" id="irnmn-booking-location-select" name="hotelCode"
+                placeholder="Select location" error-message="Please select a location" show-error="false" default=""
+                locations-endpoint="http://ennismore.wordpress.test/sls/wp-json/booking-system/v2/locations">
+            </irnmn-location>
 
-        <button type="submit">Check availability</button>
-    </form>
+            <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Check in / out"
+                placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
+                open-date-message="You can't select a date before the opening date"
+                error-message="Please select a check in / check out date" show-error="false" input-name="date-selection"
+                checkin-date-name="checkin" checkout-date-name="checkout" name="checkInOutDates" weekdays="M,T,W,T,F,S,S"
+                date-locale="false">
+            </irnmn-calendar>
+
+            <irnmn-rooms-selector
+                labels='{"room":"Room","rooms":"Rooms","guests":"Guests","adults":"Adults","children":"Children","childAge":"Child age","selectRoom":"","remove":"remove","ariaLabelMoreAdults":"Add more adults","ariaLabelLessAdults":"Remove an adult","ariaLabelMoreChildren":"Add more children","ariaLabelLessChildren":"Remove a child"}'
+                rooms-number="7" min-rooms="1" max-total-guests="4" adults-number="4" children-number="3"
+                enable-children="0" enable-children-ages="0">
+            </irnmn-rooms-selector>
+
+            <button type="submit">Check availability</button>
+        </form>
+
+        <irnmn-booking-modal form-id="test-sls-panel" has-modal="false" modal-timer="5" modal-endpoint=""></irnmn-booking-modal>
+
+    </div>
+
 
 </body>
 
