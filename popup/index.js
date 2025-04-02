@@ -153,7 +153,10 @@ class IRNMNPopup extends HTMLElement {
         const closeButton = this.querySelector('.irnmn-modal__close');
 
         if (closeButton) {
-            closeButton.addEventListener('click', () => this.closeModal());
+            closeButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.closeModal();
+            });
         }
 
         // Add focus trapping and Escape key handling
