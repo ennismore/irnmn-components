@@ -248,6 +248,7 @@ class IRNMNLocation extends HTMLElement {
      */
     attachEventListeners() {
         const irnmnSelect = this.querySelector('irnmn-select');
+        if (!irnmnSelect) return;
 
         // Listen to the custom "optionSelected" event from irnmn-select
         irnmnSelect.addEventListener('optionSelected', (event) =>
