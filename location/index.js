@@ -1,5 +1,4 @@
 import { CLASS_NAMES } from './utils/constants.js';
-import '../select/index.js';
 
 import {
     dispatchSyncEvent,
