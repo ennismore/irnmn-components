@@ -1,4 +1,5 @@
 import { CLASS_NAMES } from './utils/constants.js';
+import '../select/index.js';
 
 import {
     dispatchSyncEvent,
@@ -337,7 +338,9 @@ class IRNMNLocation extends HTMLElement {
                     .replace(/([A-Z])/g, '-$1')
                     .toLowerCase();
 
-                const bookingSystem = this.parentForm.closest('.irmnn-booking-system'); // Get the booking system component if it exists
+                const bookingSystem = this.parentForm.closest(
+                    '.irmnn-booking-system',
+                ); // Get the booking system component if it exists
                 const parent = bookingSystem || this.parentForm; // fallback to the parent form
 
                 parent
