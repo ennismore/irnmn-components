@@ -34,6 +34,11 @@ class IrnmnSelect extends HTMLElement {
         return this.getAttribute('preselected');
     }
 
+    get anchorLinks() {
+        const value = this.getAttribute('anchor-links');
+        return (value === 'true' || value === true) ? true : false;
+    }
+
     setPreselectedOption() {
         if (this.preselected) {
             const preselectedIndex = this.options.findIndex(
@@ -64,13 +69,16 @@ class IrnmnSelect extends HTMLElement {
                     ${this.options
                         .map(
                             (option, index) => `
-                        <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemSelectable}" 
-                            role="option" 
+                        <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemSelectable}"
+                            role="${this.anchorLinks ? '' : 'option'}"
                             tabindex="-1"
                             aria-selected="${this.selectedOption === index ? 'true' : 'false'}"
                             data-index="${index}"
-                            data-value="${option.value}">
+                            data-value="${option.value}"
+                        >
+                        ${this.anchorLinks ? `<a href="${option.value}">` : ''}
                             ${option.name}
+                        ${this.anchorLinks ? '</a>' : ''}
                         </li>
                     `,
                         )
@@ -135,6 +143,12 @@ class IrnmnSelect extends HTMLElement {
         }
 
         if (!item) return;
+
+        // if anchor links are enabled, do not prevent default behavior for keyboard navigation
+        if(item && this.anchorLinks) {
+            return;
+        }
+
 
         const currentIndex = parseInt(item.dataset.index, 10);
         let newIndex;
