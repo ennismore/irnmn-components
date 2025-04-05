@@ -36,7 +36,7 @@ class IrnmnSelect extends HTMLElement {
 
     get anchorLinks() {
         const value = this.getAttribute('anchor-links');
-        return (value === 'true' || value === true) ? true : false;
+        return value === 'true' || value === true ? true : false;
     }
 
     setPreselectedOption() {
@@ -145,10 +145,9 @@ class IrnmnSelect extends HTMLElement {
         if (!item) return;
 
         // if anchor links are enabled, do not prevent default behavior for keyboard navigation
-        if(item && this.anchorLinks) {
+        if (item && this.anchorLinks) {
             return;
         }
-
 
         const currentIndex = parseInt(item.dataset.index, 10);
         let newIndex;
