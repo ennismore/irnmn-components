@@ -70,7 +70,7 @@ class IrnmnSelect extends HTMLElement {
                         .map(
                             (option, index) => `
                         <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemSelectable}"
-                            role="${this.anchorLinks ? '' : 'option'}"
+                            ${this.anchorLinks ? '' : 'role="option"'}
                             tabindex="-1"
                             aria-selected="${this.selectedOption === index ? 'true' : 'false'}"
                             data-index="${index}"

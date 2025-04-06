@@ -14,6 +14,7 @@ The following attributes can be added to the `irnmn-select` element to customize
 | `preselected`   | Sets the initially selected option from the available options.   | `null`              |
 | `label-id`      | Value of the aria-labelledby                                     | `null`              |
 | `options`       | A JSON array of options with `name` and `value` properties.      | `[]`                |
+| `anchor-links`  | Boolean. Pass "true" as a text string to have a tags output      | `""`                |
 
 ## Methods
 The component exposes the following methods for internal logic and user interaction:
@@ -41,20 +42,22 @@ The `<irnmn-select>` component offers the following behavior:
 Here's an example of how to use the `irnmn-select` component in your HTML:
 
 ```html
-<irnmn-select 
+<irnmn-select
     class="location-select"
-    heading-text="Please select" 
-    placeholder="Go to" 
+    heading-text="Please select"
+    placeholder="Go to"
     preselected="Bentonville"
     label-id="select-label"
     options='[
-        {"name":"Bentonville, Arkansas", "value":"Bentonville"}, 
-        {"name":"Chicago, Illinois", "value":"Chicago"}, 
-        {"name":"Cincinnati, Ohio", "value":"Cincinnati"}, 
-        {"name":"Durham, North Carolina", "value":"Durham"}, 
-        {"name":"Kansas City, Missouri", "value":"Kansas City"}, 
-        {"name":"Lexington, Kentucky", "value":"Lexington"}, 
-        {"name":"Louisville, Kentucky", "value":"Louisville"}, 
+        {"name":"Bentonville, Arkansas", "value":"Bentonville"},
+        {"name":"Chicago, Illinois", "value":"Chicago"},
+        {"name":"Cincinnati, Ohio", "value":"Cincinnati"},
+        {"name":"Durham, North Carolina", "value":"Durham"},
+        {"name":"Kansas City, Missouri", "value":"Kansas City"},
+        {"name":"Lexington, Kentucky", "value":"Lexington"},
+        {"name":"Louisville, Kentucky", "value":"Louisville"},
         {"name":"St. Louis, Missouri", "value":"St. Louis"}
-    ]'>
+    ]'
+    anchor-links=""
+>
 </irnmn-select>
