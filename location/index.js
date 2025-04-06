@@ -248,6 +248,7 @@ class IRNMNLocation extends HTMLElement {
      */
     attachEventListeners() {
         const irnmnSelect = this.querySelector('irnmn-select');
+        if (!irnmnSelect) return;
 
         // Listen to the custom "optionSelected" event from irnmn-select
         irnmnSelect.addEventListener('optionSelected', (event) =>
@@ -337,7 +338,9 @@ class IRNMNLocation extends HTMLElement {
                     .replace(/([A-Z])/g, '-$1')
                     .toLowerCase();
 
-                const bookingSystem = this.parentForm.closest('.irmnn-booking-system'); // Get the booking system component if it exists
+                const bookingSystem = this.parentForm.closest(
+                    '.irmnn-booking-system',
+                ); // Get the booking system component if it exists
                 const parent = bookingSystem || this.parentForm; // fallback to the parent form
 
                 parent
