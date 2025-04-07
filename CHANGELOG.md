@@ -6,10 +6,15 @@ All new releases are documented in this file. The semantic versioning should fol
 ### [Added/Changed/Fixed/Removed] - [component]
 - Description of the changes
 
+------
+## v1.2.5 [2025-04-07]
+### update - irnmn-popup
+- close on click outside
+
+------
 ## v1.2.4 [2025-04-06]
 ### update - irnmn-select
 - add option to output anchor links inside of the list dropdown
-------
 
 ------
 ## v1.2.3 [2025-04-01]
