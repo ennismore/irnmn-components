@@ -37,12 +37,23 @@ class IRNMNText extends HTMLElement {
      * Render the custom text input with a label and input field.
      */
     render() {
+        // Generate a unique ID if not already set
+        if (!this.inputId) {
+            this.inputId = `input-${Math.random().toString(36).substr(2, 9)}`;
+        }
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
-                <label class="${CLASS_NAMES.label}">${this.label}</label>
-                <input class="${CLASS_NAMES.input}" name="${this.name}" type="text" placeholder="${this.placeholder}" value="${this.value}" />
+                <label class="${CLASS_NAMES.label}" for="${this.inputId}">${this.label}</label>
+                <input
+                    class="${CLASS_NAMES.input}"
+                    id="${this.inputId}"
+                    name="${this.name}"
+                    type="text"
+                    placeholder="${this.placeholder}"
+                    value="${this.value}" />
             </div>
         `;
+
         this.inputElement = this.querySelector(`.${CLASS_NAMES.input}`);
         this.inputElement.addEventListener('input', (e) => this.handleInput(e));
     }
