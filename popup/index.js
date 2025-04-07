@@ -168,6 +168,13 @@ class IRNMNPopup extends HTMLElement {
                 this.trapFocus(e, modal);
             }
         });
+
+        // Close modal on click outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                this.closeModal();
+            }
+        });
     }
 
     /**
