@@ -10,11 +10,15 @@ class IRNMNText extends HTMLElement {
     constructor() {
         super();
         this.label = this.getAttribute('label') || 'Text';
-        this.inputId = this.getAttribute('id') || ``;
         this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
         this.name = this.getAttribute('name');
         this.value = ''; // Holds the input value
         this.storageKey = `${this.name}-text`; // Key for session storage
+    }
+
+    // Getter for inputId (from the id attribute)
+    get inputId() {
+        return this.getAttribute('id') || '';
     }
 
     connectedCallback() {
@@ -38,11 +42,9 @@ class IRNMNText extends HTMLElement {
      * Render the custom text input with a label and input field.
      */
     render() {
-        // Make the label and input id optional
-        // If the input id is not provided, we will not add the for attribute to the label
-        // and the id attribute to the input
-        const labelAttrs = this.inputId ? `for="${this.inputId}"` : '';
-        const inputAttrs = this.inputId ? `id="${this.inputId}"` : '';
+        const { inputId } = this;
+        const labelAttrs = inputId ? `for="${inputId}"` : '';
+        const inputAttrs = inputId ? `id="${inputId}"` : '';
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
                 <label class="${CLASS_NAMES.label}" ${labelAttrs}>${this.label}</label>
