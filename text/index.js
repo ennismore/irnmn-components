@@ -10,6 +10,7 @@ class IRNMNText extends HTMLElement {
     constructor() {
         super();
         this.label = this.getAttribute('label') || 'Text';
+        this.inputId = this.getAttribute('id') || ``;
         this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
         this.name = this.getAttribute('name');
         this.value = ''; // Holds the input value
@@ -33,14 +34,21 @@ class IRNMNText extends HTMLElement {
         );
     }
 
+    // Lets make the label and input id optional
+    // If the input id is not provided, we will not add the for attribute to the label
+    // and the id attribute to the input
+    const labelAttrs = this.inputId ? `for="${this.inputId}"` : '';
+    const inputAttrs = this.inputId ? `id="${this.inputId}"` : '';
+
+
     /**
      * Render the custom text input with a label and input field.
      */
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
-                <label class="${CLASS_NAMES.label}">${this.label}</label>
-                <input class="${CLASS_NAMES.input}" name="${this.name}" type="text" placeholder="${this.placeholder}" value="${this.value}" />
+                <label class="${CLASS_NAMES.label}" ${labelAttrs}>${this.label}</label>
+                <input class="${CLASS_NAMES.input}" ${inputAttrs} name="${this.name}" type="text" placeholder="${this.placeholder}" value="${this.value}" />
             </div>
         `;
         this.inputElement = this.querySelector(`.${CLASS_NAMES.input}`);
