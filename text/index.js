@@ -34,17 +34,15 @@ class IRNMNText extends HTMLElement {
         );
     }
 
-    // Lets make the label and input id optional
-    // If the input id is not provided, we will not add the for attribute to the label
-    // and the id attribute to the input
-    const labelAttrs = this.inputId ? `for="${this.inputId}"` : '';
-    const inputAttrs = this.inputId ? `id="${this.inputId}"` : '';
-
-
     /**
      * Render the custom text input with a label and input field.
      */
     render() {
+        // Make the label and input id optional
+        // If the input id is not provided, we will not add the for attribute to the label
+        // and the id attribute to the input
+        const labelAttrs = this.inputId ? `for="${this.inputId}"` : '';
+        const inputAttrs = this.inputId ? `id="${this.inputId}"` : '';
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
                 <label class="${CLASS_NAMES.label}" ${labelAttrs}>${this.label}</label>
