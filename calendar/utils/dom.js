@@ -43,6 +43,7 @@ export function createMonthElement(month, weekDays, dateLocale = 'en-gb') {
             const disabledButton = document.createElement('button');
             disabledButton.type = 'button';
             disabledButton.disabled = true;
+            disabledButton.ariaHidden = true;
             disabledButton.classList.add(CLASS_NAMES.emptyDay);
             daysContainer.appendChild(disabledButton);
         } else {
