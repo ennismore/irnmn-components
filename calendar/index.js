@@ -79,7 +79,7 @@ class IRNMNCalendar extends HTMLElement {
     }
 
     get inputId() {
-        return this.getAttribute('input-id') || '';
+        return this.getAttribute('id') || '';
     }
 
     /**
@@ -269,7 +269,9 @@ class IRNMNCalendar extends HTMLElement {
         const inputGroup = this.createElementWithClasses('div', [
             CLASS_NAMES.inputGroup,
         ]);
-        const inputId = this.inputId;
+
+        const inputId = this.inputId ? `${this.inputId}-field` : '';
+
         const labelElement = this.createElementWithText('label', this.label);
         if (inputId) {
             labelElement.setAttribute('for', inputId);
