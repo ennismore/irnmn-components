@@ -270,19 +270,19 @@ class IRNMNCalendar extends HTMLElement {
             CLASS_NAMES.inputGroup,
         ]);
 
-        const id = this.id ? `${this.id}-field` : '';
+        const inputId = this.id ? `${this.id}-field` : '';
 
         const labelElement = this.createElementWithText('label', this.label);
-        if (id) {
-            labelElement.setAttribute('for', id);
+        if (inputId) {
+            labelElement.setAttribute('for', inputId);
         }
         const input = this.createElementWithAttributes('input', {
             type: 'text',
             placeholder: this.placeholder,
             readOnly: true,
         });
-        if (id) {
-            input.setAttribute('id', id);
+        if (inputId) {
+            input.setAttribute('id', inputId);
         }
 
         this.inputElement = input; // Store input for future use
