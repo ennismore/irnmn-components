@@ -78,6 +78,10 @@ class IRNMNCalendar extends HTMLElement {
         return this.getAttribute('month-format') || 'short';
     }
 
+    get id() {
+        return this.getAttribute('id') || '';
+    }
+
     /**
      * Get the current date
      */
@@ -265,12 +269,21 @@ class IRNMNCalendar extends HTMLElement {
         const inputGroup = this.createElementWithClasses('div', [
             CLASS_NAMES.inputGroup,
         ]);
+
+        const inputId = this.id ? `${this.id}-field` : '';
+
         const labelElement = this.createElementWithText('label', this.label);
+        if (inputId) {
+            labelElement.setAttribute('for', inputId);
+        }
         const input = this.createElementWithAttributes('input', {
             type: 'text',
             placeholder: this.placeholder,
             readOnly: true,
         });
+        if (inputId) {
+            input.setAttribute('id', inputId);
+        }
 
         this.inputElement = input; // Store input for future use
         inputGroup.append(labelElement, input);
