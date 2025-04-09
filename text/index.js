@@ -18,7 +18,7 @@ class IRNMNText extends HTMLElement {
 
     // Getter for inputId (from the id attribute)
     get inputId() {
-        return this.getAttribute('id') || '';
+        return this.getAttribute('input-id') || '';
     }
 
     connectedCallback() {
