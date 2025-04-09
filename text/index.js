@@ -18,7 +18,7 @@ class IRNMNText extends HTMLElement {
 
     // Getter for inputId (from the id attribute)
     get inputId() {
-        return this.getAttribute('input-id') || '';
+        return this.getAttribute('id') || '';
     }
 
     connectedCallback() {
@@ -43,8 +43,8 @@ class IRNMNText extends HTMLElement {
      */
     render() {
         const { inputId } = this;
-        const labelAttrs = inputId ? `for="${inputId}"` : '';
-        const inputAttrs = inputId ? `id="${inputId}"` : '';
+        const labelAttrs = inputId ? `for="${inputId}-field"` : '';
+        const inputAttrs = inputId ? `id="${inputId}-field"` : '';
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
                 <label class="${CLASS_NAMES.label}" ${labelAttrs}>${this.label}</label>
