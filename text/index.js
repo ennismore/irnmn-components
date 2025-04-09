@@ -16,8 +16,8 @@ class IRNMNText extends HTMLElement {
         this.storageKey = `${this.name}-text`; // Key for session storage
     }
 
-    // Getter for inputId (from the id attribute)
-    get inputId() {
+    // Getter for id (from the id attribute)
+    get id() {
         return this.getAttribute('id') || '';
     }
 
@@ -42,9 +42,9 @@ class IRNMNText extends HTMLElement {
      * Render the custom text input with a label and input field.
      */
     render() {
-        const { inputId } = this;
-        const labelAttrs = inputId ? `for="${inputId}-field"` : '';
-        const inputAttrs = inputId ? `id="${inputId}-field"` : '';
+        const { id } = this;
+        const labelAttrs = id ? `for="${id}-field"` : '';
+        const inputAttrs = id ? `id="${id}-field"` : '';
         this.innerHTML = `
             <div class="${CLASS_NAMES.textWrapper}">
                 <label class="${CLASS_NAMES.label}" ${labelAttrs}>${this.label}</label>
