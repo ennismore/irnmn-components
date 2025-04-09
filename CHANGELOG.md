@@ -7,6 +7,14 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.6 [2025-04-09]
+### update - irnmn-text
+- Added accessibility fields to input and label
+### update - irnmn-calendar
+- Added accessibility fields to input and label
+- Set aria-hidden on buttons that are purely decorative
+
+------
 ## v1.2.5 [2025-04-07]
 ### update - irnmn-popup
 - close on click outside
