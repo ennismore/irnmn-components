@@ -39,22 +39,20 @@ Include the component in your project by adding the custom element definition:
 
 ### Showing the Popup
 
-To programmatically show the popup, call the `showModal` method on the `irnmn-modal` element:
+To programmatically show the popup, call the `open()` method on the `irnmn-modal` element:
 
 ```javascript
-const modal = document.querySelector('irnmn-modal');
-modal.showModal();
+document.querySelector('irnmn-modal').open();
 ```
 
 This will display the modal, set the appropriate accessibility attributes, and dispatch the `irnmn-modal-opened` event.
 
 ### Closing the Popup
 
-To programmatically close the popup, call the `closeModal` method on the `irnmn-modal` element:
+To programmatically close the popup, call the `close()` method on the `irnmn-modal` element:
 
 ```javascript
-const modal = document.querySelector('irnmn-modal');
-modal.closeModal();
+document.querySelector('irnmn-modal').close();
 ```
 
 This will hide the modal, restore focus to the previously focused element, and dispatch the `irnmn-modal-closed` event.
