@@ -215,10 +215,6 @@ class IRNMNPopup extends HTMLElement {
         modal.setAttribute('aria-hidden', 'false');
         modal.focus();
 
-        if (this.sessionKey) {
-            sessionStorage.setItem(this.sessionKey, 'shown');
-        }
-
         // Dispatch the `irnmn-modal-opened` event
         this.dispatchEvent(
             new CustomEvent('irnmn-modal-opened', {
@@ -238,6 +234,12 @@ class IRNMNPopup extends HTMLElement {
         modal.classList.remove('irnmn-modal--visible');
         modal.setAttribute('aria-hidden', 'true');
 
+        if (this.sessionKey) {
+            // Store the session key in sessionStorage to prevent showing the modal again
+            sessionStorage.setItem(this.sessionKey, 'shown');
+        }
+
+        // Restore focus to the last focused element before the modal was opened
         if (this.lastFocusedElement) {
             this.lastFocusedElement.focus();
         }
