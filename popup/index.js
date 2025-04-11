@@ -42,23 +42,28 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
+     * Getter for the modal endpoint attribute.
+     * @returns {string} - The API endpoint for fetching modal content.
+     */
+    get modalEndpoint() {
+        return this.getAttribute('modal-endpoint');
+    }
+
+    /**
      * Called when the element is added to the DOM.
      * Fetches content, renders the modal, and attaches event listeners.
      */
     async connectedCallback() {
-        // Prevents rendering if the modal should only be shown once per session
-        if (this.sessionKey && sessionStorage.getItem(this.sessionKey)) return;
+        if (!this.modalEndpoint) {
+            console.warn('Modal endpoint is not set. Please provide a valid endpoint.');
+            return;
+        }
 
         await this.renderPopup();
-
-        // Automatically show the modal if init-show is true
-        if (this.initShow) {
-            this.showModal();
-        }
     }
 
     static get observedAttributes() {
-        return ['modal-endpoint', 'modal-close'];
+        return ['modal-endpoint'];
     }
 
     /**
@@ -78,6 +83,9 @@ class IRNMNPopup extends HTMLElement {
      * Renders the booking modal and sets up its attributes and event listeners.
      */
     async renderPopup() {
+        // Prevents rendering if the modal should only be shown once per session
+        if (this.sessionKey && sessionStorage.getItem(this.sessionKey)) return;
+
         this.content = await this.getContent();
         this.render();
         this.attachEventListeners();
@@ -91,6 +99,15 @@ class IRNMNPopup extends HTMLElement {
                 detail: { element: this },
             }),
         );
+
+        // Automatically show the modal if init-show is true
+        if (this.initShow) {
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => this.showModal());
+            } else {
+                await this.showModal();
+            }
+        }
     }
 
     /**
@@ -98,11 +115,8 @@ class IRNMNPopup extends HTMLElement {
      * @returns {string} - Rendered HTML content fetched from the API
      */
     async getContent() {
-        const endpoint = this.getAttribute('modal-endpoint');
-        if (!endpoint) return '';
-
         try {
-            const response = await fetch(endpoint);
+            const response = await fetch(this.modalEndpoint);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
             const data = await response.json();
@@ -175,15 +189,26 @@ class IRNMNPopup extends HTMLElement {
                 this.closeModal();
             }
         });
+
+        // Close modal on any element with data-close attribute
+        // Commonly used for buttons or links
+        // that should close any modal when clicked
+        this.querySelectorAll('[data-close]').forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.closeModal();
+            });
+        });
     }
 
     /**
      * Displays the modal and sets accessibility attributes.
-     * @param {HTMLElement} modal - The modal element to display.
+     * Ensures that the content is fully loaded before showing the modal.
      */
-    showModal() {
+    async showModal() {
         const modal = this.querySelector('.irnmn-modal');
         if (!modal) return;
+
         this.lastFocusedElement = document.activeElement;
         modal.showModal();
         modal.classList.add('irnmn-modal--visible');
@@ -236,6 +261,8 @@ class IRNMNPopup extends HTMLElement {
         const focusableElements = modal.querySelectorAll(
             'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
         );
+        if (focusableElements.length === 0) return; // No focusable elements in the modal
+
         const firstElement = focusableElements[0];
         const lastElement = focusableElements[focusableElements.length - 1];
 
@@ -246,6 +273,21 @@ class IRNMNPopup extends HTMLElement {
             e.preventDefault();
             firstElement.focus();
         }
+    }
+
+    /**
+     * Exposes the open methods for external use.
+     * This is useful for opening the modal from outside the component.
+     */
+    open() {
+        return this.showModal();
+    }
+    /**
+     * Exposes the close methods for external use.
+     * This is useful for closing the modal from outside the component.
+     */
+    close() {
+        return this.closeModal();
     }
 }
 
