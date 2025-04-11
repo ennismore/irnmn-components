@@ -40,6 +40,30 @@ class IRNMNBookingAllCom extends HTMLElement {
         return this.getAttribute('child-age') || '6';
     }
 
+    /**
+     * Returns the number of adults selected in the form
+     *
+     * @param {FormData} formData
+     * @param {int} index
+     * @returns
+     */
+    getAdults(formData, index) {
+        // 1st if guest dropdown, 2nd if guests-selector component
+        return formData.get('adults') || formData.get(`rooms[${index}].adults`);
+    }
+
+    /**
+     * Returns the number of children selected in the form
+     *
+     * @param {FormData} formData
+     * @param {int} index
+     * @returns
+     */
+    getChildren(formData, index) {
+        // 1st if guest dropdown, 2nd if guests-selector component
+        return formData.get('children') || formData.get(`rooms[${index}].children`);
+    }
+
 
      /**
      * Removes Hidden Input Element if it exists
@@ -105,7 +129,7 @@ class IRNMNBookingAllCom extends HTMLElement {
         for(let i = 0; i < roomsTotal; i++) {
 
             // Creating hidden input for number of adults
-            const adults = formData.get('adults') || formData.get(`rooms[${i}].adults`); // 1st if guest dropdown, 2nd if guests-selector component
+            const adults = this.getAdults(formData, i);
             createHiddenInput(
                 this.form,
                 `room[${i}].adultNumber`,
@@ -113,7 +137,7 @@ class IRNMNBookingAllCom extends HTMLElement {
             );
 
             // Creating hidden inputs for number of children
-            const children = formData.get('children') || formData.get(`rooms[${i}].children`); // 1st if guest dropdown, 2nd if guests-selector component
+            const children = this.getChildren(formData, i); // 1st if guest dropdown, 2nd if guests-selector component
             createHiddenInput(
                 this.form,
                 `room[${i}].childrenNumber`,
@@ -121,9 +145,9 @@ class IRNMNBookingAllCom extends HTMLElement {
             );
 
             // Creating hidden inputs for children ages
-            const childrenCount = formData.get('children') || formData.get(`rooms[${i}].children`); // 1st if guest dropdown, 2nd if guests-selector component
-            if (childrenCount) {
-                for (let j = 0; j < childrenCount; j++) {
+           // const childrenCount = formData.get('children') || formData.get(`rooms[${i}].children`); // 1st if guest dropdown, 2nd if guests-selector component
+            if (children) {
+                for (let j = 0; j < children; j++) {
                     const childAge = formData.get(`rooms[${i}].childrenAges[${j}]`) || this.childAge;
                     createHiddenInput(this.form, `room[${i}].childrenAge[${j}]`, childAge);
                 }
