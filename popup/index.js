@@ -101,13 +101,14 @@ class IRNMNPopup extends HTMLElement {
         );
 
         // Automatically show the modal if init-show is true
-        if (this.initShow) {
-            if (document.readyState === 'loading') {
-                document.addEventListener('DOMContentLoaded', () => this.showModal());
-            } else {
-                await this.showModal();
-            }
+        if (!this.initShow) return;
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.showModal());
+            return;
         }
+
+        await this.showModal();
     }
 
     /**
