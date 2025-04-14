@@ -7,6 +7,15 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.8 [2025-04-14]
+### update - irnmn-popup
+- Improve session key logic
+- Removed modal-close from observedAttributes
+- Added support for "data-close"
+- Exposed .open() and .close()
+- Improved init-show handling
+
+------
 ## v1.2.6 [2025-04-09]
 ### update - irnmn-text
 - Added accessibility fields to input and label
