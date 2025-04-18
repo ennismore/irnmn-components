@@ -17,6 +17,7 @@
     <script src="../booking-aic/index.js" type="module"></script>
     <script src="../booking-marriot/index.js" type="module"></script>
     <script src="../booking-popup/index.js" type="module"></script>
+    <script src="../tracking/index.js" type="module"></script>
 </head>
 
 <body>
@@ -54,12 +55,22 @@
 
     <hr>
 
-        <div class="irmnn-booking-system">
+    <div class="irmnn-booking-system">
 
-        <form method="GET" id="test-sls-panel" valid
+        <form method="GET" id="test-sls-panel" target="_blank" valid
             action="https://ennismore-develop.go-vip.net/sls/wp-json/booking-system/v1/retrieve-form-data">
             <h2>Booking PANEL - SLS</h2>
 
+            <irnmn-tracking
+                form-id="test-sls-panel"
+                hotel-code-name="hotelCode"
+                start-date-name="checkin"
+                end-date-name="checkout"
+                promo-code-name="promoCode"
+                placement="homepage"
+                need-validation="true"
+                debug="true">
+            </irnmn-tracking>
 
             <irnmn-booking-aic form-id="test-sls-panel" start-date-name="checkin" end-date-name="checkout"
                 hotel-codes='["C383"]'>

@@ -368,6 +368,25 @@ class IRNMNLocation extends HTMLElement {
             this.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
         }
     }
+
+
+    /**
+     * Returns the location object ( name & value ) of the selected location.
+     *
+     * @return {Object|null} The selected location object or null if not found.
+     */
+    getActiveLocation() {
+        // Get the selected value from the hidden input
+        const hiddenInput = this.querySelector(
+            `input[name="${this.inputName}"]`,
+        );
+        const selectedValue = hiddenInput?.value || '';
+        // Find the location object that matches the selected value
+        const selectedLocation = this.locations.find(
+            (location) => location.hotelCode === selectedValue,
+        );
+        return selectedLocation || null;
+    }
 }
 
 customElements.define('irnmn-location', IRNMNLocation);

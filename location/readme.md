@@ -23,6 +23,22 @@ The following methods are exposed by the component for internal logic and can be
 - `attachEventListeners()`: Attaches change event listeners to the location dropdown to handle selection changes.
 - `handleLocationChange(event)`: Handles the change event for the location select, displaying an error message if no valid location is selected, and updating other form elements based on the selected location’s attributes.
 - `updateOtherComponents(selectedLocation)`: Updates form components based on the selected location’s attributes using custom `data-*` attributes.
+- `getActiveLocation()`: Returns the currently selected location object, including its `name` and `value`.
+
+### `getActiveLocation()`
+This method retrieves the currently selected location object from the dropdown.
+
+#### Returns
+- An object containing the `name` and `value` of the selected location.
+- `null` if no location is selected.
+
+#### Example
+```javascript
+const locationComponent = document.querySelector('irnmn-location');
+const activeLocation = locationComponent.getActiveLocation();
+console.log(activeLocation);
+// Output: { hotelCode: "H001", hotelName: "Hotel One", roomsNumber: 5 }
+```
 
 ## Event Handling
 The component listens for changes in the dropdown and updates other form components based on the selected location's properties, ensuring that the correct data is propagated across the form.
@@ -32,7 +48,7 @@ The component listens for changes in the dropdown and updates other form compone
 Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 
 ```html
-<irnmn-location 
+<irnmn-location
     locations='[{"hotelCode": "H001", "hotelName": "Hotel One", "roomsNumber": 5}, {"hotelCode": "H002", "hotelName": "Hotel Two", "roomsNumber": 10}]'
     label="Choose a Hotel"
     id="hotel-select"
@@ -44,11 +60,11 @@ Here’s an example of how to use the `IRNMNLocation` component in your HTML:
 
 In this example, the `locations` attribute contains a JSON string that defines multiple locations, each with attributes such as `hotelCode`, `name`, and `roomsNumber`. The dropdown is rendered dynamically based on this data.
 
-It's also possible to include the location object using an external api endpoint.
-In the parent-theme, by default, the following endpoint will retrieve the JSON object in the expected format.
+It's also possible to include the location object using an external API endpoint.
+In the parent theme, by default, the following endpoint will retrieve the JSON object in the expected format.
 
 ```html
-<irnmn-location 
+<irnmn-location
     locations-endpoint="/wp-json/booking-system/v2/locations">
 </irnmn-location>
 ```
