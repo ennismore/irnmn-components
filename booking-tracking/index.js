@@ -49,7 +49,7 @@ class IRNMNBookingTracking extends HTMLElement {
 
 
     /**
-     * Handle form submission for the All Inclusive booking engine only.
+     * Handle tracking event for the booking form submission
      *
      * This function will add additional hidden fields that will then be
      * passed to the https://allinclusive-collection.com/ booking engine when the form is submitted.
