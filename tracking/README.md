@@ -1,6 +1,6 @@
-# IRNMNTracking Web Component
+# IRNMNBookingTracking Web Component
 
-The `IRNMNTracking` class is a custom web component that extends `HTMLElement`. It is designed to handle form submissions and track booking-related events.
+The `IRNMNBookingTracking` class is a custom web component that extends `HTMLElement`. It is designed to handle form submissions and track booking-related events.
 
 ## Features
 
@@ -10,12 +10,12 @@ The `IRNMNTracking` class is a custom web component that extends `HTMLElement`. 
 
 ## Usage
 
-To use the `IRNMNTracking` component, include it in your HTML and configure its attributes as needed.
+To use the `IRNMNBookingTracking` component, include it in your HTML and configure its attributes as needed.
 
 ### Example
 
 ```html
-<irnmn-tracking
+<irnmn-booking-tracking
     form-id="booking-form"
     start-date-name="startDate"
     end-date-name="endDate"
@@ -23,7 +23,7 @@ To use the `IRNMNTracking` component, include it in your HTML and configure its 
     placement="booking bar"
     need-validation="true"
     debug="true">
-</irnmn-tracking>
+</irnmn-booking-tracking>
 ```
 
 ### Attributes

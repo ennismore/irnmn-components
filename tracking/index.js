@@ -1,4 +1,4 @@
-class IRNMNTracking extends HTMLElement {
+class IRNMNBookingTracking extends HTMLElement {
     constructor() {
         super();
     }
@@ -96,4 +96,4 @@ class IRNMNTracking extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-tracking', IRNMNTracking);
+customElements.define('irnmn-booking-tracking', IRNMNBookingTracking);
