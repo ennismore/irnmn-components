@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.9 [2025-04-22]
+### add - irnmn-booking-tracking
+- new component for analytics tracking
+
+------
 ## v1.2.8 [2025-04-14]
 ### update - irnmn-popup
 - Improve session key logic
