@@ -21,6 +21,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Improved init-show handling
 
 ------
+## v1.2.7 [2025-04-??]
+### update - irnmn-booking-all-com
+- allow multi-room for all.com booking engine
+
+------
 ## v1.2.6 [2025-04-09]
 ### update - irnmn-text
 - Added accessibility fields to input and label
