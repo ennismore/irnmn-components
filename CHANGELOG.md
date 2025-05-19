@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.10 [2025-05-19]
+### update - irnmn-text
+- allow to pass value via attribute
+
+------
 ## v1.2.9 [2025-04-22]
 ### add - irnmn-booking-tracking
 - new component for analytics tracking
