@@ -12,7 +12,7 @@ class IRNMNText extends HTMLElement {
         this.label = this.getAttribute('label') || 'Text';
         this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
         this.name = this.getAttribute('name');
-        this.value = ''; // Holds the input value
+        this.value = this.getAttribute('value') || ''; // Holds the input value
         this.storageKey = `${this.name}-text`; // Key for session storage
     }
 
