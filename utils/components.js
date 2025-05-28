@@ -124,18 +124,15 @@ export function handleExternalUrl(form) {
     const searchParams = url.searchParams;
 
     searchParams.forEach((value, key) => {
-        let inputValue;
         const match = value.match(/^{(.+)}$/);
 
-        if (match) {
-            // If value is in curly braces, get the corresponding form field value
-            inputValue = formData.get(match[1]) ?? '';
-        } else {
-            // Otherwise, use the literal value from the URL
-            inputValue = value;
-        }
+        // If the value is a placeholder (e.g., {checkin}), find the corresponding form data
+        const inputValue = match ? formData.get(match[1]) ?? '' : value;
 
-        // Sanitize and trim the value before creating/updating the input
-        createHiddenInput(form, key, sanitize(String(inputValue).trim()));
+        // Sanitize the input value to prevent injection attacks
+        const sanitizedValue = sanitize(String(rawValue).trim());
+
+        // Creating/updating the input
+        createHiddenInput(form, key, sanitizedValue);
     });
 }
