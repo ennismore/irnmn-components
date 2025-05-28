@@ -127,7 +127,7 @@ export function handleExternalUrl(form) {
         const match = value.match(/^{(.+)}$/);
 
         // If the value is a placeholder (e.g., {checkin}), find the corresponding form data
-        const inputValue = match ? formData.get(match[1]) ?? '' : value;
+        const inputValue = match ? (formData.get(match[1]) ?? '') : value;
 
         // Sanitize the input value to prevent injection attacks
         const sanitizedValue = sanitize(String(rawValue).trim());
