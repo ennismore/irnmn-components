@@ -47,7 +47,6 @@ class IRNMNBookingTracking extends HTMLElement {
         return this.getAttribute('debug') || false;
     }
 
-
     /**
      * Handle tracking event for the booking form submission
      *
@@ -56,15 +55,17 @@ class IRNMNBookingTracking extends HTMLElement {
      *
      */
     handleTracking() {
-
         // Early return if the form is not valid and validation is required
         if (this.needValidation && !this.form.hasAttribute('valid')) {
             return;
         }
 
         const formData = new FormData(this.form);
-        const roomsTotal = formData.get('rooms-total') || formData.get('rooms') || 1;
-        const activeLocation = this.form.querySelector('irnmn-location').getActiveLocation() || null;
+        const roomsTotal =
+            formData.get('rooms-total') || formData.get('rooms') || 1;
+        const activeLocation =
+            this.form.querySelector('irnmn-location').getActiveLocation() ||
+            null;
 
         let adult_total = 0;
         let children_total = 0;
@@ -72,7 +73,8 @@ class IRNMNBookingTracking extends HTMLElement {
         // Calculate total number of adults and children
         for (let i = 0; i < roomsTotal; i++) {
             adult_total += parseInt(formData.get(`rooms[${i}].adults`)) || 0;
-            children_total += parseInt(formData.get(`rooms[${i}].children`)) || 0;
+            children_total +=
+                parseInt(formData.get(`rooms[${i}].children`)) || 0;
         }
 
         // build the tracking event
@@ -92,7 +94,6 @@ class IRNMNBookingTracking extends HTMLElement {
         }
         // Push the event to the dataLayer
         window.dataLayer?.push(tracking_event);
-
     }
 }
 

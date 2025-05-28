@@ -30,7 +30,10 @@ class IRNMNPopup extends HTMLElement {
      * @returns {boolean} - Whether the modal should be initially displayed.
      */
     get initShow() {
-        return this.hasAttribute('init-show') && this.getAttribute('init-show') === 'true';
+        return (
+            this.hasAttribute('init-show') &&
+            this.getAttribute('init-show') === 'true'
+        );
     }
 
     /**
@@ -55,7 +58,9 @@ class IRNMNPopup extends HTMLElement {
      */
     async connectedCallback() {
         if (!this.modalEndpoint) {
-            console.warn('Modal endpoint is not set. Please provide a valid endpoint.');
+            console.warn(
+                'Modal endpoint is not set. Please provide a valid endpoint.',
+            );
             return;
         }
 
@@ -104,7 +109,9 @@ class IRNMNPopup extends HTMLElement {
         if (!this.initShow) return;
 
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.showModal());
+            document.addEventListener('DOMContentLoaded', () =>
+                this.showModal(),
+            );
             return;
         }
 
@@ -118,7 +125,8 @@ class IRNMNPopup extends HTMLElement {
     async getContent() {
         try {
             const response = await fetch(this.modalEndpoint);
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
 
             const data = await response.json();
             this.styles = data.blockAssets?.styles || [];
@@ -194,7 +202,7 @@ class IRNMNPopup extends HTMLElement {
         // Close modal on any element with data-close attribute
         // Commonly used for buttons or links
         // that should close any modal when clicked
-        this.querySelectorAll('[data-close]').forEach(el => {
+        this.querySelectorAll('[data-close]').forEach((el) => {
             el.addEventListener('click', (e) => {
                 e.preventDefault();
                 this.closeModal();

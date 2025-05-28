@@ -43,7 +43,9 @@ class IRNMNBookingModal extends IRNMNPopup {
         const hasModalAttr = this.getAttribute('has-modal');
         return (
             hasModalAttr === 'true' ||
-            (hasModalAttr !== 'false' && hasModalAttr !== 'null' && hasModalAttr)
+            (hasModalAttr !== 'false' &&
+                hasModalAttr !== 'null' &&
+                hasModalAttr)
         );
     }
 
@@ -52,11 +54,15 @@ class IRNMNBookingModal extends IRNMNPopup {
      * @returns {boolean} True if validation is required, false otherwise.
      */
     get formNeedValidation() {
-        const formNeedValidationAttr = this.getAttribute('form-need-validation');
+        const formNeedValidationAttr = this.getAttribute(
+            'form-need-validation',
+        );
         return (
             formNeedValidationAttr === 'true' ||
             formNeedValidationAttr === null ||
-            (formNeedValidationAttr !== 'false' && formNeedValidationAttr !== 'null' && formNeedValidationAttr)
+            (formNeedValidationAttr !== 'false' &&
+                formNeedValidationAttr !== 'null' &&
+                formNeedValidationAttr)
         );
     }
 
@@ -70,7 +76,10 @@ class IRNMNBookingModal extends IRNMNPopup {
         this.form = document.getElementById(this.formId);
 
         if (this.form) {
-            this.form.addEventListener('submit', this.handleBookingModal.bind(this));
+            this.form.addEventListener(
+                'submit',
+                this.handleBookingModal.bind(this),
+            );
         }
     }
 
@@ -80,7 +89,10 @@ class IRNMNBookingModal extends IRNMNPopup {
      */
     disconnectedCallback() {
         if (this.form) {
-            this.form.removeEventListener('submit', this.handleBookingModal.bind(this));
+            this.form.removeEventListener(
+                'submit',
+                this.handleBookingModal.bind(this),
+            );
         }
         this.stopTimer();
         super.disconnectedCallback();
@@ -88,7 +100,13 @@ class IRNMNBookingModal extends IRNMNPopup {
 
     static get observedAttributes() {
         // Combine parent class's observed attributes with new ones
-        return [...(super.observedAttributes || []), 'has-modal', 'modal-timer', 'form-id', 'form-need-validation'];
+        return [
+            ...(super.observedAttributes || []),
+            'has-modal',
+            'modal-timer',
+            'form-id',
+            'form-need-validation',
+        ];
     }
 
     async renderPopup() {
@@ -116,7 +134,10 @@ class IRNMNBookingModal extends IRNMNPopup {
             continueButton.setAttribute('tabindex', '0');
 
             const handleButtonAction = (e) => {
-                if (e.type === 'click' || (e.type === 'keydown' && e.key === 'Enter')) {
+                if (
+                    e.type === 'click' ||
+                    (e.type === 'keydown' && e.key === 'Enter')
+                ) {
                     e.preventDefault();
                     requestAnimationFrame(() => this.form.submit());
                 }
@@ -132,7 +153,12 @@ class IRNMNBookingModal extends IRNMNPopup {
      * @param {Event} e - The form submission event.
      */
     handleBookingModal(e) {
-        if (!this.hasModal || (this.formNeedValidation && this.form.getAttribute('valid') === null)) return; // Respect the 'has-modal' attribute and validate form if necessary
+        if (
+            !this.hasModal ||
+            (this.formNeedValidation &&
+                this.form.getAttribute('valid') === null)
+        )
+            return; // Respect the 'has-modal' attribute and validate form if necessary
 
         e.preventDefault();
         const modal = this.querySelector('.irnmn-modal');

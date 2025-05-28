@@ -369,7 +369,6 @@ class IRNMNLocation extends HTMLElement {
         }
     }
 
-
     /**
      * Returns the location object ( name & value ) of the selected location.
      *

@@ -45,7 +45,6 @@ class IRNMNBookingMarriot extends HTMLElement {
      *
      */
     handleMarriotBookingEngine(event) {
-
         let formData = new FormData(this.form);
         const hotelCode = formData.get('hotelCode');
 
@@ -68,8 +67,8 @@ class IRNMNBookingMarriot extends HTMLElement {
     }
 
     formatDate(date) {
-        const dateArray = date.split("-");
-        return `${dateArray[1]}/${dateArray[2]}/${dateArray[0]}`
+        const dateArray = date.split('-');
+        return `${dateArray[1]}/${dateArray[2]}/${dateArray[0]}`;
     }
 }
 

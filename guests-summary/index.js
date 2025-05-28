@@ -1,4 +1,8 @@
-import { getFromSessionStorage, handleSyncEvent, createHiddenInput } from '../utils/components.js';
+import {
+    getFromSessionStorage,
+    handleSyncEvent,
+    createHiddenInput,
+} from '../utils/components.js';
 
 /**
  * IRNMNGuestsSummary is a component that displays a summary of rooms, adults, and children.
@@ -124,7 +128,9 @@ class IRNMNGuestsSummary extends HTMLElement {
         this.summary = {
             rooms: data.length,
             adults: data.reduce((total, room) => total + room.adults, 0),
-            children: this.enableChildren ? data.reduce((total, room) => total + room.children, 0) : 0, // Only include children if enabled
+            children: this.enableChildren
+                ? data.reduce((total, room) => total + room.children, 0)
+                : 0, // Only include children if enabled
         };
     }
 
@@ -204,18 +210,10 @@ class IRNMNGuestsSummary extends HTMLElement {
             input.remove(),
         );
 
-        createHiddenInput(
-            this,
-            'rooms-total',
-            newState.length,
-        );
+        createHiddenInput(this, 'rooms-total', newState.length);
 
         newState.forEach((room, index) => {
-            createHiddenInput(
-                this,
-                `rooms[${index}].adults`,
-                room.adults,
-            );
+            createHiddenInput(this, `rooms[${index}].adults`, room.adults);
 
             if (room.children > 0) {
                 createHiddenInput(
