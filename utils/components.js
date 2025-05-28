@@ -130,7 +130,7 @@ export function handleExternalUrl(form) {
         const inputValue = match ? (formData.get(match[1]) ?? '') : value;
 
         // Sanitize the input value to prevent injection attacks
-        const sanitizedValue = sanitize(String(rawValue).trim());
+        const sanitizedValue = sanitize(String(inputValue).trim());
 
         // Creating/updating the input
         createHiddenInput(form, key, sanitizedValue);
