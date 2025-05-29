@@ -22,6 +22,14 @@ The only build script currently is just to run some linting and formatting. You 
 
 To test a component locally, you need to run a local dev server. A simple approach to this can be just run `npx http-server /path/to/project -o -p 9999` which creates a simple node server you can access the components.
 
+If the above method fails because of http VS https you can use `npm link` to link the irnmn-components repo on your local with the child theme you are working on.
+
+1. Go to your local directory of `irnmn-components` and run `npm link`
+2. Now go to your local child theme directory and run `npm link`
+3. Now your child theme should be linked with your local irnmn-components folder
+
+Do not forget to run `npm unlink` for future dev work to prevent package.json to read the local directory of `irnmn-components`
+
 ## Deployment
 For now, there is no current deployment process. Each component should be pulled into the build process of the site it is being used in. This may change in future.
 
