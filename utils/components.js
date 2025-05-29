@@ -126,12 +126,12 @@ export function handleExternalUrl(form) {
     searchParams.forEach((value, key) => {
         const match = value.match(/^{(.+)}$/);
 
-        // If the value is a placeholder (e.g., {checkin}), find the corresponding form data
+        // If the value is a placeholder (e.g., {checkin}), find the corresponding form data else return the value as is
         const inputValue = match ? (formData.get(match[1]) ?? '') : value;
 
         // Sanitize the input value to prevent injection attacks
         const sanitizedValue = sanitize(String(inputValue).trim());
-
+        
         // Creating/updating the input
         createHiddenInput(form, key, sanitizedValue);
     });
