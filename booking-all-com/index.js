@@ -1,4 +1,4 @@
-import { createHiddenInput } from "../utils/components.js";
+import { createHiddenInput } from '../utils/components.js';
 class IRNMNBookingAllCom extends HTMLElement {
     constructor() {
         super();
@@ -61,19 +61,20 @@ class IRNMNBookingAllCom extends HTMLElement {
      */
     getChildren(formData, index) {
         // 1st if guest dropdown, 2nd if guests-selector component
-        return formData.get('children') || formData.get(`rooms[${index}].children`);
+        return (
+            formData.get('children') || formData.get(`rooms[${index}].children`)
+        );
     }
 
-
-     /**
+    /**
      * Removes Hidden Input Element if it exists
      *
      * @param {HTMLElement} container
      * @param {string} name
      */
-     removeHiddenInput(container, name) {
+    removeHiddenInput(container, name) {
         let input = container.querySelector(`input[name="${name}"]`);
-        if(input) {
+        if (input) {
             input.remove();
         }
     }
@@ -117,50 +118,50 @@ class IRNMNBookingAllCom extends HTMLElement {
 
         // Promo code on all.com is very sensitive. If you enter a wrong code
         // it will not show any results.
-        const promoCode = formData.get('promoCode') || formData.get('rateCode') || '';
+        const promoCode =
+            formData.get('promoCode') || formData.get('rateCode') || '';
         createHiddenInput(this.form, 'preferredCode', promoCode);
-
 
         // Retrieving the total number of rooms selected
         const roomsTotal = formData.get('rooms-total');
         createHiddenInput(this.form, 'roomNumber', roomsTotal);
 
         // For each room we create hidden inputs that represent the current state of booking selections regarding guests
-        for(let i = 0; i < roomsTotal; i++) {
-
+        for (let i = 0; i < roomsTotal; i++) {
             // Creating hidden input for number of adults
             const adults = this.getAdults(formData, i);
-            createHiddenInput(
-                this.form,
-                `room[${i}].adultNumber`,
-                adults,
-            );
+            createHiddenInput(this.form, `room[${i}].adultNumber`, adults);
 
             // Creating hidden inputs for number of children
             const children = this.getChildren(formData, i); // 1st if guest dropdown, 2nd if guests-selector component
-            createHiddenInput(
-                this.form,
-                `room[${i}].childrenNumber`,
-                children,
-            );
+            createHiddenInput(this.form, `room[${i}].childrenNumber`, children);
 
             // Creating hidden inputs for children ages
-           // const childrenCount = formData.get('children') || formData.get(`rooms[${i}].children`); // 1st if guest dropdown, 2nd if guests-selector component
+            // const childrenCount = formData.get('children') || formData.get(`rooms[${i}].children`); // 1st if guest dropdown, 2nd if guests-selector component
             if (children) {
                 for (let j = 0; j < children; j++) {
-                    const childAge = formData.get(`rooms[${i}].childrenAges[${j}]`) || this.childAge;
-                    createHiddenInput(this.form, `room[${i}].childrenAge[${j}]`, childAge);
+                    const childAge =
+                        formData.get(`rooms[${i}].childrenAges[${j}]`) ||
+                        this.childAge;
+                    createHiddenInput(
+                        this.form,
+                        `room[${i}].childrenAge[${j}]`,
+                        childAge,
+                    );
                 }
             }
         }
 
         // Removing unused hidden inputs
         // Running up to 32, just to make sure it removes all other possible rooms. There's probably a better way to do this
-        for(let i = roomsTotal; i < 32; i++) {
+        for (let i = roomsTotal; i < 32; i++) {
             this.removeHiddenInput(this.form, `room[${i}].adultNumber`);
 
             for (let j = 0; j < 32; j++) {
-                this.removeHiddenInput(this.form, `room[${i}].childrenAge[${j}]`);
+                this.removeHiddenInput(
+                    this.form,
+                    `room[${i}].childrenAge[${j}]`,
+                );
             }
             this.removeHiddenInput(this.form, `room[${i}].childrenNumber`);
         }

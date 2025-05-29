@@ -45,7 +45,6 @@ class IRNMNBookingAIC extends HTMLElement {
      *
      */
     handleAICBookingEngine() {
-
         let formData = new FormData(this.form);
         const hotelCode = formData.get('hotelCode');
 
@@ -62,7 +61,7 @@ class IRNMNBookingAIC extends HTMLElement {
         // Each comma is a separate room. 1st room: 4 adults, one child 3 years old, second child 5 years old.
         // 2nd room: 2 adults and two 11years' old kids
         let remainingGuests = [];
-        let roomCount = formData.get("rooms-total");
+        let roomCount = formData.get('rooms-total');
 
         for (let i = 0; i < roomCount; i++) {
             const adults =
@@ -77,7 +76,7 @@ class IRNMNBookingAIC extends HTMLElement {
             }
 
             // Combine adults and child ages in the required format
-            remainingGuests.push([adults, ...childAges].join("-"));
+            remainingGuests.push([adults, ...childAges].join('-'));
         }
 
         // Parse form action URL and create hidden fields based on the URL's search parameters
@@ -113,7 +112,7 @@ class IRNMNBookingAIC extends HTMLElement {
     getCurrentLanguage() {
         const langAttr = document.documentElement.lang;
         if (!langAttr) return null;
-        return langAttr.split("-")[0]; //Split at the dash and return the first part
+        return langAttr.split('-')[0]; //Split at the dash and return the first part
     }
 }
 

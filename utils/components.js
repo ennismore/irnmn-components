@@ -100,6 +100,15 @@ export function createHiddenInput(container, name, value) {
 }
 
 /**
+ * Sanitizes a string to prevent injection attacks.
+ * @param {string} str
+ * @returns {string}
+ */
+function sanitize(str) {
+    return String(str).replace(/[<>"'`;(){}]/g, '');
+}
+
+/**
  * Handles the external URL by creating hidden input elements for the form based on the action URL's search parameters.
  * If an input element with the same name already exists, its value is updated.
  *
@@ -115,10 +124,15 @@ export function handleExternalUrl(form) {
     const searchParams = url.searchParams;
 
     searchParams.forEach((value, key) => {
-        // remove the {} from the placeholder
-        const existingValue = value.replace(/[{}]/g, "");
-        value = formData.get(existingValue);
-        // Create or update the hidden input element
-        createHiddenInput(form, key, value);
+        const match = value.match(/^{(.+)}$/);
+
+        // If the value is a placeholder (e.g., {checkin}), find the corresponding form data else return the value as is
+        const inputValue = match ? (formData.get(match[1]) ?? '') : value;
+
+        // Sanitize the input value to prevent injection attacks
+        const sanitizedValue = sanitize(String(inputValue).trim());
+
+        // Creating/updating the input
+        createHiddenInput(form, key, sanitizedValue);
     });
 }
