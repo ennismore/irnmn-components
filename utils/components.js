@@ -126,8 +126,6 @@ export function handleExternalUrl(form) {
     searchParams.forEach((value, key) => {
         const match = value.match(/^{(.+)}$/);
 
-        console.log('handleExternalUrl:', key, value, match);
-
         // If the value is a placeholder (e.g., {checkin}), find the corresponding form data else return the value as is
         const inputValue = match ? (formData.get(match[1]) ?? '') : value;
 
