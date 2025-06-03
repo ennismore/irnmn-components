@@ -103,7 +103,7 @@ class IrnmnRoomPricing extends HTMLElement {
             ${this.loading
                 ? `
                     <div class="irnmn-room-pricing__loading">
-                        <irnmn-spinner></irnmn-spinner>
+                        <span class="irnmn-spinner"></span>
                         <span>${labels.loading || 'Loading...'}</span>
                     </div>
                 `
