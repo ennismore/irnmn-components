@@ -51,6 +51,7 @@ class IRNMNCalendar extends HTMLElement {
         this.dayButtons = [];
 
         this.label = this.getLabel();
+        this.headingLabel = this.getHeadingLabel();
         this.placeholder = this.getPlaceholder();
         this.name = this.getName();
         this.today = this.getToday();
@@ -93,18 +94,35 @@ class IRNMNCalendar extends HTMLElement {
 
     /**
      * Get the label for the calendar input.
+     * If the attribute value is "false", return an empty string.
      * @return {String} Label or default value 'Check-in'.
      */
     getLabel() {
-        return this.getAttribute('label') || 'Check-in';
+        const label = this.getAttribute('label');
+        if (label === 'false') return '';
+        return label || 'Check-in';
+    }
+
+    /**
+     * Get the heading label for the calendar panel.
+     * If the attribute value is "false", return an empty string.
+     * @return {String} Heading label or default value 'Select your dates'.
+     */
+    getHeadingLabel() {
+        const headingLabel = this.getAttribute('heading-label');
+        if (headingLabel === 'false') return '';
+        return headingLabel || 'Select your dates';
     }
 
     /**
      * Get the placeholder for the calendar input.
+     * If the attribute value is "false", return an empty string.
      * @return {String} Placeholder or default value 'Select a date'.
      */
     getPlaceholder() {
-        return this.getAttribute('placeholder') || 'Select a date';
+        const placeholder = this.getAttribute('placeholder');
+        if (placeholder === 'false') return '';
+        return placeholder || 'Select a date';
     }
 
     /**
@@ -293,6 +311,14 @@ class IRNMNCalendar extends HTMLElement {
 
     renderCalendarPanel() {
         this.panel = this.createElementWithClasses('div', [CLASS_NAMES.panel]);
+        if (this.headingLabel && this.headingLabel !== '') {
+            this.heading = this.createElementWithText(
+                'h3',
+                this.headingLabel,
+                [CLASS_NAMES.calendarHeading],
+            );
+            this.panel.appendChild(this.heading);
+        }
         this.monthsWrapper = this.createElementWithClasses('div', [
             CLASS_NAMES.monthsWrapper,
         ]);

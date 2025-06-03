@@ -9,8 +9,9 @@ The following attributes can be added to the `IRNMNCalendar` element to customiz
 
 | Attribute                | Description                                                       | Default Value        |
 |--------------------------|-------------------------------------------------------------------|----------------------|
-| `label`                  | The label displayed above the input field.                        | `Check-in`           |
-| `placeholder`            | Placeholder text for the input field.                             | `Select a date`      |
+| `label`                  | The label displayed above the input field. ("false" for empty)    | `Check-in`           |
+| `heading-label`          | Displayed above the months buttons in panel. ("false" for empty)  | `Select your dates`  |
+| `placeholder`            | Placeholder text for the input field. ("false" for empty)         | `Select a date`      |
 | `name`                   | Unique name identifier for the calendar component.                | `irnmn-calendar`     |
 | `opening-date`           | The starting date for the calendar (initial view).                | `Date.now()`         |
 | `checkin-date-name`      | Name for the hidden check-in date input field.                    | `startDate`          |
@@ -57,7 +58,7 @@ document.addEventListener('checkin-selected-irnmn-calendar', (event) => {
 Here's an example of how to use the `IRNMNCalendar` component in your HTML:
 
 ```html
-<irnmn-calendar 
+<irnmn-calendar
     label="Select Your Dates"
     placeholder="Choose a date"
     name="booking-calendar"

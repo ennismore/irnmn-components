@@ -2,6 +2,7 @@ const prefix = 'irnmn-calendar';
 
 export const CLASS_NAMES = {
     panel: `${prefix}__panel`,
+    calendarHeading: `${prefix}__heading`,
     monthsWrapper: `${prefix}__months-wrapper`,
     inputGroup: `${prefix}__input-group`,
     month: `${prefix}__month`,
