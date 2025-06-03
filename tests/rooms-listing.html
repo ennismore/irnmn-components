@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Test Web components Rooms</title>
+        <script src="../calendar/index.js" type="module"></script>
+        <script src="../rooms-listing/index.js" type="module"></script>
+        <script src="../room-pricing/index.js" type="module"></script>
+        <script src="../price-syncing/index.js" type="module"></script>
+    </head>
+
+    <body>
+
+        <h1>TEST ROOM CARD PRICES COMPONENT</h1>
+
+        <irnmn-calendar id="irnmn-booking-calendar" class="irnmn-booking-system--panel__calendar" label="Booking bar Calendar"
+            placeholder="Check in / out" format-date-values="YYYY-MM-DD" opening-date="false"
+            open-date-message="You can't select a date before the opening date"
+            error-message="Please select a check in / check out date" show-error="false" input-name="date-selection"
+            checkin-date-name="testStart" checkout-date-name="testEnd" name="blablabla" weekdays="M,T,W,T,F,S,S"
+            date-locale="false">
+        </irnmn-calendar>
+
+        <irnmn-price-syncing
+            hotel-ref-id="25hours.bikiniberlin-berlin"
+            api-endpoint="https://api.live.env.ennismore.com/booking_api.v1.BookingApiService/GetAvailability"
+            checkin-date-name="testStart"
+            checkout-date-name="testEnd"
+            date-name="blablabla"
+            locale="fr"
+            >
+        </irnmn-price-syncing>
+
+        <div style="padding: 50px; border: solid 1px #000; margin: 100px; background-color: #F2F2F2;">
+            <irnmn-room-pricing
+                room-code="DBC"
+                checkin-date-name="testStart"
+                checkout-date-name="testEnd"
+                date-name="blablabla"
+                date-locale="fr"
+                price="false"
+                loading="false"
+                labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+            ></irnmn-room-pricing>
+        </div>
+
+        <div style="padding: 50px; border: solid 1px #000; margin: 100px; background-color: #F2F2F2;">
+            <irnmn-room-pricing
+                room-code="D2A"
+                checkin-date-name="testStart"
+                checkout-date-name="testEnd"
+                date-name="blablabla"
+                date-locale="fr"
+                price="false"
+                loading="false"
+                labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+            ></irnmn-room-pricing>
+        </div>
+
+
+
+    </body>
+
+</html>
