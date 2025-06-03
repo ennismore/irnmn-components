@@ -1,37 +1,50 @@
+/**
+ * <irnmn-price-syncing> custom element for syncing room prices.
+ */
 class IrnmnPriceSyncing extends HTMLElement {
+    /** @type {NodeListOf<HTMLElement>} */
+    #roomPricings = null;
+
     constructor() {
         super();
-        this.roomPricings = this.parentElement.querySelectorAll('irnmn-room-pricing');
-        console.log('Room pricings found in parent element:', this.roomPricings);
-
     }
 
+    /** @returns {string} */
     get hotelRefId() {
         return this.getAttribute('hotel-ref-id') || '';
     }
 
-    get APIendpoint() {
+    /** @returns {string} */
+    get apiEndpoint() {
         return this.getAttribute('api-endpoint') || '';
     }
 
+    /** @returns {string} */
     get checkinDateName() {
         return this.getAttribute('checkin-date-name') || '';
     }
 
+    /** @returns {string} */
     get checkoutDateName() {
         return this.getAttribute('checkout-date-name') || '';
     }
 
+    /** @returns {string} */
     get dateName() {
         return this.getAttribute('date-name') || 'date-selection';
     }
 
+    /** @returns {string} */
     get locale() {
         return this.getAttribute('locale') || '';
     }
 
+    /**
+     * Called when the element is inserted into the DOM.
+     */
     async connectedCallback() {
-        if (!this.roomPricings || this.roomPricings.length === 0) {
+        this.#roomPricings = this.parentElement?.querySelectorAll('irnmn-room-pricing') || [];
+        if (!this.#roomPricings.length) {
             console.error('No room pricings found in parent element');
             return;
         }
@@ -39,66 +52,87 @@ class IrnmnPriceSyncing extends HTMLElement {
         this.addListeners();
     }
 
+    /**
+     * Adds event listeners for date changes.
+     */
     addListeners() {
         document.addEventListener(`checkout-selected-${this.dateName}`, async (event) => {
             console.log('Checkout date changed:', event.detail);
-            this.roomPricings.forEach((roomPricingElement) => {
+            this.#roomPricings.forEach(roomPricingElement => {
                 roomPricingElement.setAttribute('loading', 'true');
             });
             await this.syncPrices();
         });
     }
 
-
+    /**
+     * Fetches and syncs prices for all room pricing elements.
+     */
     async syncPrices() {
-        const rates = await this.fetchAvaibilities();
-        console.log('Rates fetched:', rates);
-        if (!rates) {
+        const rates = await this.fetchAvailabilities();
+        if (!rates?.length) {
             console.error('No rates available to sync');
             return;
         }
-        this.roomPricings.forEach((roomPricingElement) => {
+        this.#roomPricings.forEach(roomPricingElement => {
             this.syncRoomPrice(roomPricingElement, rates);
         });
         console.log('Price syncing completed');
     }
 
+    /**
+     * Syncs price for a single room pricing element.
+     * @param {HTMLElement} roomPricingElement
+     * @param {Array} rates
+     */
     syncRoomPrice(roomPricingElement, rates) {
         const roomCode = roomPricingElement.getAttribute('room-code');
         const roomObj = this.findRoomByCode(rates, roomCode);
-        if (roomObj && Array.isArray(roomObj.rates) && roomObj.rates.length > 0) {
+        if (roomObj?.rates?.length) {
             const lowestRate = this.findLowestRate(roomObj.rates);
-            const formatedPrice = this.formatPrice(lowestRate?.averageNightlyAmountAfterTax);
-            roomPricingElement.setAttribute('price', formatedPrice.toString());
-            console.log(`Price for room ${roomCode} set to: ${formatedPrice}`);
+            const formattedPrice = this.formatPrice(lowestRate?.averageNightlyAmountAfterTax);
+            roomPricingElement.setAttribute('price', formattedPrice.toString());
+            console.log(`Price for room ${roomCode} set to: ${formattedPrice}`);
         } else {
-            roomPricingElement.setAttribute('price', 0);
+            roomPricingElement.setAttribute('price', '0');
             console.warn(`No rates found for room code: ${roomCode}`);
         }
         roomPricingElement.setAttribute('loading', 'false');
     }
 
+    /**
+     * Finds a room by its code.
+     * @param {Array} rates
+     * @param {string} roomCode
+     * @returns {object|null}
+     */
     findRoomByCode(rates, roomCode) {
-        return rates.find((r) => r.room && r.room.code === roomCode);
+        return rates.find(r => r.room?.code === roomCode) || null;
     }
 
+    /**
+     * Finds the lowest rate in an array of rates.
+     * @param {Array} rates
+     * @returns {object|null}
+     */
     findLowestRate(rates) {
         return rates.reduce((min, rate) => {
-            const minValue = min?.averageNightlyAmountAfterTax?.value ?? Infinity;
-            const rateValue = rate?.averageNightlyAmountAfterTax?.value ?? Infinity;
+            const minValue = min?.averageNightlyAmountAfterTax?.value || Infinity;
+            const rateValue = rate?.averageNightlyAmountAfterTax?.value || Infinity;
             return rateValue < minValue ? rate : min;
         }, null);
     }
 
+    /**
+     * Formats a price object to a string.
+     * @param {object} rate
+     * @returns {string}
+     */
     formatPrice(rate) {
-        console.log('Formatting price for rate:', rate);
         if (!rate || typeof rate.value !== 'number' || typeof rate.decimal !== 'number' || !rate.currencyCode) {
             return '';
         }
         const amount = (rate.value / Math.pow(10, rate.decimal)).toLocaleString(undefined, { minimumFractionDigits: rate.decimal });
-        const currencyCode = rate.currencyCode;
-
-        // Currency symbol mapping and placement (true = before, false = after)
         const currencyFormats = {
             EUR: { symbol: '€', before: false },
             USD: { symbol: '$', before: true },
@@ -108,18 +142,19 @@ class IrnmnPriceSyncing extends HTMLElement {
             DKK: { symbol: 'kr', before: false },
             JPY: { symbol: '¥', before: true }
         };
-        const format = currencyFormats[currencyCode] || { symbol: currencyCode, before: true };
-        const formattedPrice = format.before ? `${format.symbol}${amount}` : `${amount} ${format.symbol}`;
-        return formattedPrice;
+        const format = currencyFormats[rate.currencyCode] || { symbol: rate.currencyCode, before: true };
+        return format.before ? `${format.symbol}${amount}` : `${amount} ${format.symbol}`;
     }
 
-
-    async fetchAvaibilities() {
-        if (!this.APIendpoint || !this.hotelRefId) {
-            console.error('API endpoint is not provided');
+    /**
+     * Fetches room availabilities from the API.
+     * @returns {Promise<Array>}
+     */
+    async fetchAvailabilities() {
+        if (!this.apiEndpoint || !this.hotelRefId) {
+            console.error('API endpoint or hotelRefId is not provided');
             return [];
         }
-        // Retrieve check-in and check-out dates from sessionStorage, fallback to empty string if not found
         const checkinDateKey = `irnmn-${this.checkinDateName}-${this.dateName}`;
         const checkoutDateKey = `irnmn-${this.checkoutDateName}-${this.dateName}`;
         const checkinDate = window.sessionStorage.getItem(checkinDateKey) || '';
@@ -136,13 +171,13 @@ class IrnmnPriceSyncing extends HTMLElement {
             checkOutDate: checkoutDate,
             numberOfRooms: 1,
             guests: {
-                "adults": 1,
-                "children": 0,
-                "childrenAges": [],
-                "accessible": false
+                adults: 1,
+                children: 0,
+                childrenAges: [],
+                accessible: false
             },
             locale: {
-                language: this.locale || "en",
+                language: this.locale || 'en'
             },
             availabilityOptions: {
                 withCostBreakdown: true
@@ -150,16 +185,16 @@ class IrnmnPriceSyncing extends HTMLElement {
         };
 
         try {
-            const response = await fetch(this.APIendpoint, {
+            const response = await fetch(this.apiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': 'opYAfmo0DAyog7t6rPLX'
+                    'x-api-key': 'opYAfmo0DAyog7t6rPLX' // TODO : Find a better way to handle API keys
                 },
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
-            return data && data.rooms ? data.rooms : [];
+            return data?.rooms || [];
         } catch (error) {
             console.error('Error fetching prices', error);
             return [];
