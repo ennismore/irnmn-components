@@ -57,7 +57,6 @@ class IrnmnPriceSyncing extends HTMLElement {
      */
     addListeners() {
         document.addEventListener(`checkout-selected-${this.dateName}`, async (event) => {
-            console.log('Checkout date changed:', event.detail);
             this.#roomPricings.forEach(roomPricingElement => {
                 roomPricingElement.setAttribute('loading', 'true');
             });
@@ -70,14 +69,13 @@ class IrnmnPriceSyncing extends HTMLElement {
      */
     async syncPrices() {
         const rates = await this.fetchAvailabilities();
-        if (!rates?.length) {
+        if (!rates) {
             console.error('No rates available to sync');
             return;
         }
         this.#roomPricings.forEach(roomPricingElement => {
             this.syncRoomPrice(roomPricingElement, rates);
         });
-        console.log('Price syncing completed');
     }
 
     /**
@@ -92,7 +90,6 @@ class IrnmnPriceSyncing extends HTMLElement {
             const lowestRate = this.findLowestRate(roomObj.rates);
             const formattedPrice = this.formatPrice(lowestRate?.averageNightlyAmountAfterTax);
             roomPricingElement.setAttribute('price', formattedPrice.toString());
-            console.log(`Price for room ${roomCode} set to: ${formattedPrice}`);
         } else {
             roomPricingElement.setAttribute('price', '0');
             console.warn(`No rates found for room code: ${roomCode}`);
