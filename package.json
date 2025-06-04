@@ -4,32 +4,32 @@
     "description": "Irnmn Web Components",
     "main": "index.js",
     "author": {
-		"name": "Ennismore",
-		"email": "dev@ennismore.com",
-		"url": "https://ennismore.com",
-		"role": "developer"
-	},
+        "name": "Ennismore",
+        "email": "dev@ennismore.com",
+        "url": "https://ennismore.com",
+        "role": "developer"
+    },
     "license": "ISC",
-	"devDependencies": {
-		"eslint": "^8.56.0",
-		"eslint-config-prettier": "^6.13.0",
-		"eslint-plugin-prettier": "^3.1.4",
-		"husky": "^8.0.3",
-		"lint-staged": "^15.2.0",
-		"prettier": "^3.1.1",
-		"stylelint": "^14.16.1"
-	},
-	"scripts": {
-		"lint": "npm run lint:css && npm run lint:js",
-		"lint:fix": "eslint --fix ./**/*.js ./**/*.jsx",
-		"lint:css": "npm run stylelint",
-		"lint:js": "npm run eslint",
-		"eslint": "eslint ./**/*.js",
-		"prepare": "husky install",
-		"pre-push": "npm run lint-staged",
-		"prettier": "npm run prettier:css && npm run prettier:js",
-		"prettier:css": "prettier --write ./**/*.scss",
-		"prettier:js": "prettier --write ./**/*.js",
-		"stylelint": "stylelint *.css --fix"
-	}
-  }
+    "devDependencies": {
+        "eslint": "^8.56.0",
+        "eslint-config-prettier": "^6.13.0",
+        "eslint-plugin-prettier": "^3.1.4",
+        "husky": "^8.0.3",
+        "lint-staged": "^15.2.0",
+        "prettier": "^3.1.1",
+        "stylelint": "^14.16.1"
+    },
+    "scripts": {
+        "lint": "npm run lint:css && npm run lint:js",
+        "lint:fix": "eslint --fix ./**/*.js ./**/*.jsx",
+        "lint:css": "npm run stylelint",
+        "lint:js": "npm run eslint",
+        "eslint": "eslint ./**/*.js",
+        "prepare": "husky install",
+        "pre-push": "npm run lint-staged",
+        "prettier": "npm run prettier:css && npm run prettier:js",
+        "prettier:css": "prettier --write ./**/*.scss",
+        "prettier:js": "prettier --write ./**/*.js",
+        "stylelint": "stylelint *.css --fix"
+    }
+}

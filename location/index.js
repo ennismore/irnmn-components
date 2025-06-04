@@ -77,10 +77,17 @@ class IRNMNLocation extends HTMLElement {
                         'preselected',
                         newState.selectedValue,
                     );
+
+                    // Updating native select if it's present
+                    if(irnmnSelect.isRenderingNativeSelect() == true) {
+                        irnmnSelect.setNativeOption(newState.selectedValue);
+                    }
+
                     irnmnSelect.selectedOption = irnmnSelect.options.findIndex(
                         (option) => option.value === newState.selectedValue,
                     );
                     irnmnSelect.render();
+
                 }
 
                 // Update the hidden input value
@@ -207,6 +214,25 @@ class IRNMNLocation extends HTMLElement {
         );
     }
 
+    /**
+     * Gets whether to use native select or not.
+     *
+     * @return {boolean} Defaults to false.
+     */
+    get useNativeSelect() {
+        const nativeSelectAttribute = this.getAttribute('use-native-select');
+        return nativeSelectAttribute === 'true' || false;
+    }
+
+    /**
+     * Gets the
+     *
+     * @return {int} Returns the breakpoint in pixels
+     */
+    get nativeSelectBreakpoint() {
+        return parseInt(this.getAttribute('native-select-breakpoint')) || 768;
+    }
+
     render() {
         if (!this.locations || this.locations.length === 0) {
             console.error('No locations provided');
@@ -231,7 +257,10 @@ class IRNMNLocation extends HTMLElement {
                     heading-text="${this.label}"
                     options='${JSON.stringify(options)}'
                     placeholder="${this.placeholder}"
-                    preselected="${preselectedValue}">
+                    preselected="${preselectedValue}"
+                    use-native-select="${this.useNativeSelect}"
+                    native-select-breakpoint="${this.nativeSelectBreakpoint}"
+                >
                 </irnmn-select>
                 <!-- Hidden input to hold the selected hotelCode -->
                 <input

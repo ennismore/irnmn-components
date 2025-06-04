@@ -7,14 +7,16 @@ The `IRNMNLocation` web component provides a dynamic location selector integrate
 ## Attributes
 The following attributes can be added to the `IRNMNLocation` element to customize its behavior:
 
-| Attribute          | Description                                                   | Default Value                |
-|--------------------|---------------------------------------------------------------|------------------------------|
-| `locations`        | A JSON string representing the array of location objects.      | `[]` (empty array)            |
-| `label`            | The label displayed above the dropdown.                       | `Select Location`             |
-| `id`               | The ID for the location select element.                       | `irnmn-location-select`       |
-| `name`             | The name for the location select element.                     | `location`                    |
-| `placeholder`      | Placeholder text for the location dropdown.                   | `Select a location`           |
-| `error-message`    | The message displayed when no valid location is selected.      | `Please select a valid location` |
+| Attribute                     | Description                                                        Default Value                      |
+|-------------------------------|-------------------------------------------------------------------|-----------------------------------|
+| `locations`                   | A JSON string representing the array of location objects.         | `[]` (empty array)                |
+| `label`                       | The label displayed above the dropdown.                           | `Select Location`                 |
+| `id`                          | The ID for the location select element.                           | `irnmn-location-select`           |
+| `name`                        | The name for the location select element.                         | `location`                        |
+| `placeholder`                 | Placeholder text for the location dropdown.                       | `Select a location`               |
+| `error-message`               | The message displayed when no valid location is selected.         | `Please select a valid location`  |
+| `use-native-select`           | Optional native select display. Used on Hoxton, mobile view       | `false`                           |
+| `native-select-breakpoint`    | The breakpoint at which we display the native select.             | `768` (in pixels)                 |
 
 ## Methods
 The following methods are exposed by the component for internal logic and can be extended if needed:
