@@ -219,12 +219,11 @@ class IRNMNLocation extends HTMLElement {
      * @return {boolean} Defaults to false.
      */
     get useNativeSelect() {
-        const nativeSelectAttribute = this.getAttribute('use-native-select');
-        return nativeSelectAttribute === 'true' || false;
+        return this.getAttribute('use-native-select') === 'true';
     }
 
     /**
-     * Gets the
+     * Gets the breakpoint at which we display the native select
      *
      * @return {int} Returns the breakpoint in pixels
      */

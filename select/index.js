@@ -55,8 +55,7 @@ class IrnmnSelect extends HTMLElement {
      * @return {boolean} Defaults to false.
      */
     get useNativeSelect() {
-        const nativeSelectAttribute = this.getAttribute('use-native-select');
-        return nativeSelectAttribute === 'true' || false;
+        return this.getAttribute('use-native-select') === 'true';
     }
 
     /**
@@ -134,11 +133,12 @@ class IrnmnSelect extends HTMLElement {
                             ? `
                             <select value="${this.selectedNativeOption}">
                                 <option ${!this.selectedOption ? 'selected' : ''} disabled>${this.placeholder}</option>
-                                ${
-                                    this.options.map((option, index) =>
-                                        `<option ${this.selectedOption === index ? "selected" : ""} value="${option.value}">${option.name}</option>`
-                                    ).join('')
-                                }
+                                ${this.options
+                                    .map(
+                                        (option, index) =>
+                                            `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`,
+                                    )
+                                    .join('')}
                             </select>
                             `
                             : ``
