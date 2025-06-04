@@ -79,7 +79,7 @@ class IRNMNLocation extends HTMLElement {
                     );
 
                     // Updating native select if it's present
-                    if(irnmnSelect.isRenderingNativeSelect() == true) {
+                    if (irnmnSelect.isRenderingNativeSelect() == true) {
                         irnmnSelect.setNativeOption(newState.selectedValue);
                     }
 
@@ -87,7 +87,6 @@ class IRNMNLocation extends HTMLElement {
                         (option) => option.value === newState.selectedValue,
                     );
                     irnmnSelect.render();
-
                 }
 
                 // Update the hidden input value

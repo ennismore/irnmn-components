@@ -14,7 +14,9 @@ class IrnmnSelect extends HTMLElement {
         this.listenToWindowResize();
         this.setupEventListeners();
 
-        this.renderNativeSelect ? this.showNativeSelect() : this.hideNativeSelect();
+        this.renderNativeSelect
+            ? this.showNativeSelect()
+            : this.hideNativeSelect();
     }
 
     get headingText() {
@@ -43,8 +45,7 @@ class IrnmnSelect extends HTMLElement {
         return value === 'true' || value === true ? true : false;
     }
 
-
-    isRenderingNativeSelect () {
+    isRenderingNativeSelect() {
         return this.nativeSelectElement ? true : false;
     }
 
@@ -73,7 +74,10 @@ class IrnmnSelect extends HTMLElement {
      * @return {boolean} Returns the breakpoint in pixels
      */
     get renderNativeSelect() {
-        return this.useNativeSelect && this.nativeSelectBreakpoint >= window.innerWidth;
+        return (
+            this.useNativeSelect &&
+            this.nativeSelectBreakpoint >= window.innerWidth
+        );
     }
 
     /**
@@ -87,23 +91,22 @@ class IrnmnSelect extends HTMLElement {
     generateNativeOptions(locations) {
         let options = '';
 
-        console.log("generateNativeOptions");
+        console.log('generateNativeOptions');
 
-        locations.forEach(element => {
+        locations.forEach((element) => {
             options += `<option value="${element.value}">${element.name}</option>`;
         });
         return options;
     }
 
-
     setNativeOption(newOption) {
         const nativeSelect = this.nativeSelectElement;
-        if(!nativeSelect) return;
+        if (!nativeSelect) return;
         this.selectedNativeOption = newOption;
 
         nativeSelect.value = this.selectedNativeOption;
         // Updating the value on the HTML element so it's in sync
-        nativeSelect.setAttribute("value", this.selectedNativeOption)
+        nativeSelect.setAttribute('value', this.selectedNativeOption);
     }
 
     /**
@@ -111,18 +114,17 @@ class IrnmnSelect extends HTMLElement {
      */
     setNativePreselectOption() {
         const nativeSelect = this.nativeSelectElement;
-        if(!nativeSelect) return;
+        if (!nativeSelect) return;
 
-         // Get the hidden input value or default value
-        const preselectedValue =
-            this.preselected || this.selectedOption || '';
+        // Get the hidden input value or default value
+        const preselectedValue = this.preselected || this.selectedOption || '';
 
-        if(preselectedValue) nativeSelect.value = preselectedValue;
+        if (preselectedValue) nativeSelect.value = preselectedValue;
     }
 
-    get nativeSelectedOption () {
+    get nativeSelectedOption() {
         const nativeSelect = this.nativeSelectElement;
-        if(!nativeSelect) return;
+        if (!nativeSelect) return;
         return nativeSelect.options[this.selectedOption + 1];
     }
 
@@ -131,12 +133,10 @@ class IrnmnSelect extends HTMLElement {
      *
      * @returns {HTMLElement}
      */
-    get nativeSelectElement () {
+    get nativeSelectElement() {
         const nativeSelect = this.querySelector('select');
         return nativeSelect;
     }
-
-
 
     setPreselectedOption() {
         if (this.preselected) {
@@ -156,19 +156,15 @@ class IrnmnSelect extends HTMLElement {
                 ${`
                     ${
                         this.useNativeSelect
-                        ? `
+                            ? `
                             <select value="${this.selectedNativeOption}">
                                 <option ${!this.selectedOption ? 'selected' : ''} disabled>${this.placeholder}</option>
-                                ${
-                                    this.options.map( (option, index) => {
-                                        return `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`
-                                    })
-
-                                }
+                                ${this.options.map((option, index) => {
+                                    return `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`;
+                                })}
                             </select>
-                        `
-                        : ``
-
+                            `
+                            : ``
                     }
                     <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
                         ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
@@ -199,43 +195,45 @@ class IrnmnSelect extends HTMLElement {
                     `,
                         )
                         .join('')}
-                </ul>`
-                }
+                </ul>`}
             </div>
         `;
     }
 
     listenToWindowResize() {
         // Attaching resize event listener to the window if we plan on rendering the native select
-        if(this.useNativeSelect) {
+        if (this.useNativeSelect) {
             window.addEventListener('resize', () => {
                 // Making a check to see if we have reached the breakpoint and we are not yet rendering the native select
                 // Need to do this so we are not running the code on every single resize event
-                if(this.renderNativeSelect && this.renderingNativeSelect == false) {
+                if (
+                    this.renderNativeSelect &&
+                    this.renderingNativeSelect == false
+                ) {
                     this.renderingNativeSelect = true;
                     this.showNativeSelect();
-                } else if(!this.renderNativeSelect && this.renderingNativeSelect == true) {
+                } else if (
+                    !this.renderNativeSelect &&
+                    this.renderingNativeSelect == true
+                ) {
                     this.renderingNativeSelect = false;
                     this.hideNativeSelect();
-
                 }
-            })
+            });
         }
     }
 
     showNativeSelect() {
         const nativeSelect = this.nativeSelectElement;
-        if(nativeSelect) {
+        if (nativeSelect) {
             nativeSelect.setAttribute('aria-disabled', false);
             nativeSelect.setAttribute('aria-hidden', false);
-            nativeSelect.style.display = "flex";
         }
 
-
         const header = this.querySelector("[role='combobox']");
-        const list = this.querySelector("ul");
+        const list = this.querySelector('ul');
 
-        if(header && list) {
+        if (header && list) {
             header.setAttribute('aria-disabled', true);
             header.setAttribute('aria-hidden', true);
 
@@ -246,22 +244,21 @@ class IrnmnSelect extends HTMLElement {
 
     hideNativeSelect() {
         const nativeSelect = this.nativeSelectElement;
-        if(nativeSelect) {
+        if (nativeSelect) {
             nativeSelect.setAttribute('aria-disabled', true);
             nativeSelect.setAttribute('aria-hidden', true);
         }
 
         const header = this.querySelector("[role='combobox']");
-        const list = this.querySelector("ul");
+        const list = this.querySelector('ul');
 
-        if(header && list) {
+        if (header && list) {
             header.setAttribute('aria-disabled', false);
             header.setAttribute('aria-hidden', false);
 
             list.setAttribute('aria-disabled', false);
             list.setAttribute('aria-hidden', false);
         }
-
     }
 
     setupEventListeners() {
@@ -270,7 +267,6 @@ class IrnmnSelect extends HTMLElement {
         this.addEventListener('focusout', this.handleFocusOut);
         this.addEventListener('change', this.handleNativeChange);
     }
-
 
     removeEventListeners() {
         this.removeEventListener('click', this.handleClick);
@@ -286,7 +282,11 @@ class IrnmnSelect extends HTMLElement {
 
     handleClick = (event) => {
         // If we clicked on the native select or its options we return
-        if(event.target == this.nativeSelectElement || event.target.tagName.toLowerCase() == 'option') return;
+        if (
+            event.target == this.nativeSelectElement ||
+            event.target.tagName.toLowerCase() == 'option'
+        )
+            return;
 
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
         const item = event.target.closest(`.${CLASS_NAMES.item}`);
@@ -305,7 +305,6 @@ class IrnmnSelect extends HTMLElement {
         if (!event.target.closest(`.${CLASS_NAMES.select}`)) {
             this.closeList();
         }
-
     };
 
     handleNativeChange = (event) => {
@@ -321,7 +320,7 @@ class IrnmnSelect extends HTMLElement {
                 detail: {
                     value: value,
                     index: selectedIndex,
-                    option: option
+                    option: option,
                 },
                 bubbles: true,
             }),
@@ -333,7 +332,7 @@ class IrnmnSelect extends HTMLElement {
         this.render();
         // Updating the value on the HTML element so it's in sync
         //nativeSelect.setAttribute("value", value)
-    }
+    };
 
     handleKeydown = (event) => {
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
@@ -396,7 +395,7 @@ class IrnmnSelect extends HTMLElement {
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         const header = this.querySelector(`.${CLASS_NAMES.header}`);
 
-        if(!list) return;
+        if (!list) return;
 
         list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
         header.setAttribute('aria-expanded', this.isOpen);
@@ -465,7 +464,7 @@ class IrnmnSelect extends HTMLElement {
     closeList() {
         this.isOpen = false;
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
-        if(!list) return;
+        if (!list) return;
         list.classList.remove(CLASS_NAMES.listOpen);
         this.querySelector(`.${CLASS_NAMES.header}`).setAttribute(
             'aria-expanded',
