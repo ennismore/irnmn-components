@@ -366,8 +366,6 @@ class IrnmnSelect extends HTMLElement {
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
         const header = this.querySelector(`.${CLASS_NAMES.header}`);
 
-        if (!list) return;
-
         list.classList.toggle(CLASS_NAMES.listOpen, this.isOpen);
         header.setAttribute('aria-expanded', this.isOpen);
 
@@ -435,7 +433,7 @@ class IrnmnSelect extends HTMLElement {
     closeList() {
         this.isOpen = false;
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
-        if (!list) return;
+
         list.classList.remove(CLASS_NAMES.listOpen);
         this.querySelector(`.${CLASS_NAMES.header}`).setAttribute(
             'aria-expanded',
