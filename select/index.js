@@ -80,25 +80,6 @@ class IrnmnSelect extends HTMLElement {
         );
     }
 
-    /**
-     * Generates HTML option elements for a range of room numbers.
-     *
-     * This method creates a string of `<option>` elements, each representing a room number
-     * within the range defined by `this.minRooms` and `this.roomsNumber`.
-     *
-     * @returns {string} A string containing HTML `<option>` elements for each room number.
-     */
-    generateNativeOptions(locations) {
-        let options = '';
-
-        console.log('generateNativeOptions');
-
-        locations.forEach((element) => {
-            options += `<option value="${element.value}">${element.name}</option>`;
-        });
-        return options;
-    }
-
     setNativeOption(newOption) {
         const nativeSelect = this.nativeSelectElement;
         if (!nativeSelect) return;
@@ -120,12 +101,6 @@ class IrnmnSelect extends HTMLElement {
         const preselectedValue = this.preselected || this.selectedOption || '';
 
         if (preselectedValue) nativeSelect.value = preselectedValue;
-    }
-
-    get nativeSelectedOption() {
-        const nativeSelect = this.nativeSelectElement;
-        if (!nativeSelect) return;
-        return nativeSelect.options[this.selectedOption + 1];
     }
 
     /**
@@ -313,8 +288,6 @@ class IrnmnSelect extends HTMLElement {
         const selectedIndex = event.target.selectedIndex;
         const option = event.target.options[selectedIndex].text;
 
-        console.log('handleNativeChange', value, selectedIndex, option);
-
         this.dispatchEvent(
             new CustomEvent('optionSelected', {
                 detail: {
@@ -330,8 +303,6 @@ class IrnmnSelect extends HTMLElement {
             (option) => option.value === value,
         );
         this.render();
-        // Updating the value on the HTML element so it's in sync
-        //nativeSelect.setAttribute("value", value)
     };
 
     handleKeydown = (event) => {
