@@ -134,9 +134,11 @@ class IrnmnSelect extends HTMLElement {
                             ? `
                             <select value="${this.selectedNativeOption}">
                                 <option ${!this.selectedOption ? 'selected' : ''} disabled>${this.placeholder}</option>
-                                ${this.options.map((option, index) => {
-                                    return `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`;
-                                })}
+                                ${
+                                    this.options.map((option, index) =>
+                                        `<option ${this.selectedOption === index ? "selected" : ""} value="${option.value}">${option.name}</option>`
+                                    ).join('')
+                                }
                             </select>
                             `
                             : ``
