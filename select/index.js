@@ -5,12 +5,18 @@ class IrnmnSelect extends HTMLElement {
         super();
         this.selectedOption = null;
         this.isOpen = false;
+        this.renderingNativeSelect = false;
     }
 
     connectedCallback() {
         this.setPreselectedOption();
         this.render();
+        this.listenToWindowResize();
         this.setupEventListeners();
+
+        this.renderNativeSelect
+            ? this.showNativeSelect()
+            : this.hideNativeSelect();
     }
 
     get headingText() {
@@ -39,6 +45,73 @@ class IrnmnSelect extends HTMLElement {
         return value === 'true' || value === true ? true : false;
     }
 
+    isRenderingNativeSelect() {
+        return this.nativeSelectElement ? true : false;
+    }
+
+    /**
+     * Gets whether to use native select or not.
+     *
+     * @return {boolean} Defaults to false.
+     */
+    get useNativeSelect() {
+        return this.getAttribute('use-native-select') === 'true';
+    }
+
+    /**
+     * Gets the breakpoint at which we display the native select
+     *
+     * @return {int} Returns the breakpoint in pixels
+     */
+    get nativeSelectBreakpoint() {
+        return parseInt(this.getAttribute('native-select-breakpoint')) || 768;
+    }
+
+    /**
+     * Gets if we should render the native select
+     *
+     * @return {boolean} Returns the breakpoint in pixels
+     */
+    get renderNativeSelect() {
+        return (
+            this.useNativeSelect &&
+            this.nativeSelectBreakpoint >= window.innerWidth
+        );
+    }
+
+    setNativeOption(newOption) {
+        const nativeSelect = this.nativeSelectElement;
+        if (!nativeSelect) return;
+        this.selectedNativeOption = newOption;
+
+        nativeSelect.value = this.selectedNativeOption;
+        // Updating the value on the HTML element so it's in sync
+        nativeSelect.setAttribute('value', this.selectedNativeOption);
+    }
+
+    /**
+     * Prefills the Native Select element with the correct value
+     */
+    setNativePreselectOption() {
+        const nativeSelect = this.nativeSelectElement;
+        if (!nativeSelect) return;
+
+        // Get the hidden input value or default value
+        const preselectedValue = this.preselected || this.selectedOption || '';
+
+        if (preselectedValue) nativeSelect.value = preselectedValue;
+    }
+
+    /**
+     *  Gets the Native Select element if it's there
+     *
+     * @returns {HTMLElement}
+     */
+    get nativeSelectElement() {
+        const nativeSelect = this.querySelector('select');
+        return nativeSelect;
+    }
+
     setPreselectedOption() {
         if (this.preselected) {
             const preselectedIndex = this.options.findIndex(
@@ -53,11 +126,27 @@ class IrnmnSelect extends HTMLElement {
 
     render() {
         this.innerHTML = `
-            <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''}" >
-                <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
-                    ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
-                </div>
-                <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
+            <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''} ${this.useNativeSelect ? 'using-native-select' : ''}" >
+                ${`
+                    ${
+                        this.useNativeSelect
+                            ? `
+                            <select value="${this.selectedNativeOption}">
+                                <option ${!this.selectedOption ? 'selected' : ''} disabled>${this.placeholder}</option>
+                                ${this.options
+                                    .map(
+                                        (option, index) =>
+                                            `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`,
+                                    )
+                                    .join('')}
+                            </select>
+                            `
+                            : ``
+                    }
+                    <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
+                        ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
+                    </div>
+                    <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
                     ${
                         this.placeholder
                             ? `
@@ -83,15 +172,77 @@ class IrnmnSelect extends HTMLElement {
                     `,
                         )
                         .join('')}
-                </ul>
+                </ul>`}
             </div>
         `;
+    }
+
+    listenToWindowResize() {
+        // Attaching resize event listener to the window if we plan on rendering the native select
+        if (this.useNativeSelect) {
+            window.addEventListener('resize', () => {
+                // Making a check to see if we have reached the breakpoint and we are not yet rendering the native select
+                // Need to do this so we are not running the code on every single resize event
+                if (
+                    this.renderNativeSelect &&
+                    this.renderingNativeSelect == false
+                ) {
+                    this.renderingNativeSelect = true;
+                    this.showNativeSelect();
+                } else if (
+                    !this.renderNativeSelect &&
+                    this.renderingNativeSelect == true
+                ) {
+                    this.renderingNativeSelect = false;
+                    this.hideNativeSelect();
+                }
+            });
+        }
+    }
+
+    showNativeSelect() {
+        const nativeSelect = this.nativeSelectElement;
+        if (nativeSelect) {
+            nativeSelect.setAttribute('aria-disabled', false);
+            nativeSelect.setAttribute('aria-hidden', false);
+        }
+
+        const header = this.querySelector("[role='combobox']");
+        const list = this.querySelector('ul');
+
+        if (header && list) {
+            header.setAttribute('aria-disabled', true);
+            header.setAttribute('aria-hidden', true);
+
+            list.setAttribute('aria-disabled', true);
+            list.setAttribute('aria-hidden', true);
+        }
+    }
+
+    hideNativeSelect() {
+        const nativeSelect = this.nativeSelectElement;
+        if (nativeSelect) {
+            nativeSelect.setAttribute('aria-disabled', true);
+            nativeSelect.setAttribute('aria-hidden', true);
+        }
+
+        const header = this.querySelector("[role='combobox']");
+        const list = this.querySelector('ul');
+
+        if (header && list) {
+            header.setAttribute('aria-disabled', false);
+            header.setAttribute('aria-hidden', false);
+
+            list.setAttribute('aria-disabled', false);
+            list.setAttribute('aria-hidden', false);
+        }
     }
 
     setupEventListeners() {
         this.addEventListener('click', this.handleClick);
         this.addEventListener('keydown', this.handleKeydown);
         this.addEventListener('focusout', this.handleFocusOut);
+        this.addEventListener('change', this.handleNativeChange);
     }
 
     removeEventListeners() {
@@ -107,6 +258,13 @@ class IrnmnSelect extends HTMLElement {
     };
 
     handleClick = (event) => {
+        // If we clicked on the native select or its options we return
+        if (
+            event.target == this.nativeSelectElement ||
+            event.target.tagName.toLowerCase() == 'option'
+        )
+            return;
+
         const header = event.target.closest(`.${CLASS_NAMES.header}`);
         const item = event.target.closest(`.${CLASS_NAMES.item}`);
 
@@ -124,6 +282,29 @@ class IrnmnSelect extends HTMLElement {
         if (!event.target.closest(`.${CLASS_NAMES.select}`)) {
             this.closeList();
         }
+    };
+
+    handleNativeChange = (event) => {
+        // handling the click directly here for the native select
+        const value = event.target.value;
+        const selectedIndex = event.target.selectedIndex;
+        const option = event.target.options[selectedIndex].text;
+
+        this.dispatchEvent(
+            new CustomEvent('optionSelected', {
+                detail: {
+                    value: value,
+                    index: selectedIndex,
+                    option: option,
+                },
+                bubbles: true,
+            }),
+        );
+
+        this.selectedOption = this.options.findIndex(
+            (option) => option.value === value,
+        );
+        this.render();
     };
 
     handleKeydown = (event) => {
@@ -254,6 +435,7 @@ class IrnmnSelect extends HTMLElement {
     closeList() {
         this.isOpen = false;
         const list = this.querySelector(`.${CLASS_NAMES.list}`);
+
         list.classList.remove(CLASS_NAMES.listOpen);
         this.querySelector(`.${CLASS_NAMES.header}`).setAttribute(
             'aria-expanded',

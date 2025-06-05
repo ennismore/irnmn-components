@@ -7,14 +7,16 @@ The `<irnmn-select>` web component provides a flexible custom select interface w
 ## Attributes
 The following attributes can be added to the `irnmn-select` element to customize its behavior:
 
-| Attribute       | Description                                                      | Default Value       |
-|-----------------|------------------------------------------------------------------|---------------------|
-| `heading-text`  | Text displayed as the heading for the select dropdown.           | `Select an Option`  |
-| `placeholder`   | First item text displayed when menu list is open.                | `""`                |
-| `preselected`   | Sets the initially selected option from the available options.   | `null`              |
-| `label-id`      | Value of the aria-labelledby                                     | `null`              |
-| `options`       | A JSON array of options with `name` and `value` properties.      | `[]`                |
-| `anchor-links`  | Boolean. Pass "true" as a text string to have a tags output      | `""`                |
+| Attribute                     | Description                                                      | Default Value       |
+|-------------------------------|------------------------------------------------------------------|---------------------|
+| `heading-text`                | Text displayed as the heading for the select dropdown.           | `Select an Option`  |
+| `placeholder`                 | First item text displayed when menu list is open.                | `""`                |
+| `preselected`                 | Sets the initially selected option from the available options.   | `null`              |
+| `label-id`                    | Value of the aria-labelledby                                     | `null`              |
+| `options`                     | A JSON array of options with `name` and `value` properties.      | `[]`                |
+| `anchor-links`                | Boolean. Pass "true" as a text string to have a tags output      | `""`                |
+| `use-native-select`           | To display the native select. Used on Hoxton, mobile view        | `false`             |
+| `native-select-breakpoint`    | The breakpoint at which we display the native select.            | `768` (in pixels)   |
 
 ## Methods
 The component exposes the following methods for internal logic and user interaction:
