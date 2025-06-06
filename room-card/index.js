@@ -81,8 +81,7 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     render() {
-        this.innerHTML = this.renderStyle();
-        this.innerHTML += `
+        this.innerHTML = `
             <div class="room-card">
 
                 <irnmn-slider class="room-card__slider" selectors='{
@@ -174,15 +173,6 @@ class IrnmnRoomCard extends HTMLElement {
 
                 </div>
             </div>
-        `;
-    }
-
-    renderStyle() {
-        return `
-            <style>
-
-
-            </style>
         `;
     }
 }
