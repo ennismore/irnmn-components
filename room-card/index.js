@@ -8,28 +8,50 @@ class IrnmnRoomCard extends HTMLElement {
         return this.getAttribute('room-code') || '';
     }
 
+    get hotelRefID() {
+        return this.getAttribute('hotel-ref-id') || '';
+    }
+
     get checkinDateName() {
-        return this.getAttribute('checkin-date-name') || '';
+        return this.getAttribute('checkin-date-name') || ''; // For futur pricing component
     }
 
     get checkoutDateName() {
-        return this.getAttribute('checkout-date-name') || '';
+        return this.getAttribute('checkout-date-name') || ''; // For futur pricing component
     }
 
     get dateName() {
-        return this.getAttribute('date-name') || '';
+        return this.getAttribute('date-name') || ''; // For futur pricing component
     }
 
     get dateLocale() {
         return this.getAttribute('date-locale') || '';
     }
 
-    get title() {
-        return this.getAttribute('title') || '';
+    async getTitle() {
+        const title = this.getAttribute('title') || '';
+        if (title === 'sync') {
+            if (!this.roomData) {
+                this.roomData = await this.fetchRoomData();
+                console.log('Fetching room data:', this.roomData);
+            }
+            return this.roomData?.content?.name || '';
+        } else {
+            return title;
+        }
     }
 
-    get description() {
-        return this.getAttribute('description') || '';
+    async getDescription() {
+        const description = this.getAttribute('description') || '';
+        if (description === 'sync') {
+            if (!this.roomData) {
+                this.roomData = await this.fetchRoomData();
+                console.log('Fetching room data:', this.roomData);
+            }
+            return this.roomData?.content?.description || '';
+        } else {
+            return description;
+        }
     }
 
     get images() {
@@ -76,11 +98,38 @@ class IrnmnRoomCard extends HTMLElement {
         }
     }
 
-    connectedCallback() {
+    async connectedCallback() {
+        this.title = await this.getTitle();
+        this.description = await this.getDescription();
         this.render();
     }
 
-    render() {
+    async fetchRoomData() {
+        if (!this.roomCode || !this.hotelRefID) {
+            console.warn('Room code or hotel reference ID is not set. Please provide valid values.');
+            return;
+        }
+        const url = 'http://ennismore.wordpress.test/sls/wp-json/irnmn/v1/get-room';
+        const params = new URLSearchParams({
+            hotelReferenceId: this.hotelRefID,
+            locale: this.dateLocale || 'en',
+            roomCode: this.roomCode
+        });
+        try {
+            const response = await fetch(`${url}?${params.toString()}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            // Handle the fetched data as needed
+            console.log('Room data:', data);
+            return data;
+        } catch (error) {
+            console.error('Fetch error:', error);
+            return false;
+        }
+    }
+
+
+    async render() {
         this.innerHTML = `
             <div class="room-card">
 
