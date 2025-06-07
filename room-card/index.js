@@ -3,10 +3,19 @@ class IrnmnRoomCard extends HTMLElement {
     constructor() {
         super();
         // Placeholder data for prerendering
-        this.placeholder = '<span class="placeholder-line"></span>';
+        this.linePlaceholder = '<span class="placeholder"></span>';
+        this.listPlaceholder = '<li class="placeholder"></li>';
         this.roomData = null;
+
         this.isSyncTitle = false;
         this.isSyncDescription = false;
+        this.isSyncImages = false;
+        this.isSyncExtras = false;
+
+        this.title = '';
+        this.description = '';
+        this.syncedImages = [];
+        this.syncedExtras = [];
     }
 
     get roomCode() {
@@ -85,24 +94,54 @@ class IrnmnRoomCard extends HTMLElement {
         return this.getAttribute('description') || '';
     }
 
+    get rawImages() {
+        return this.getAttribute('images') || '';
+    }
+
+    get rawExtras() {
+        return this.getAttribute('extras') || '';
+    }
+
     async connectedCallback() {
-        // Detect if sync is needed for title/description
+        // Detect if sync is needed for title/description/images/extras
         this.isSyncTitle = this.rawTitle === 'sync';
         this.isSyncDescription = this.rawDescription === 'sync';
+        this.isSyncImages = this.rawImages === 'sync';
+        this.isSyncExtras = this.rawExtras === 'sync';
 
         // Prerender with placeholder data
-        this.title = this.isSyncTitle ? this.placeholder : this.rawTitle;
-        this.description = this.isSyncDescription ? this.placeholder + this.placeholder + this.placeholder : this.rawDescription;
+        this.title = this.isSyncTitle ? this.linePlaceholder : this.rawTitle;
+        this.description = this.isSyncDescription ? this.linePlaceholder + this.linePlaceholder + this.linePlaceholder : this.rawDescription;
+        this.syncedImages = this.isSyncImages ? [] : this.images;
+        this.syncedExtras = this.isSyncExtras ? [this.listPlaceholder, this.listPlaceholder, this.listPlaceholder] : this.extras;
         this.render();
 
         // If sync is needed, fetch and update
-        if (this.isSyncTitle || this.isSyncDescription) {
+        if (this.isSyncTitle || this.isSyncDescription || this.isSyncImages || this.isSyncExtras) {
             this.roomData = await this.fetchRoomData();
-            if (this.isSyncTitle) {
-                this.title = this.roomData?.content?.name || '';
-            }
-            if (this.isSyncDescription) {
-                this.description = this.roomData?.content?.description || '';
+            if (this.roomData && this.roomData.content) {
+                if (this.isSyncTitle) {
+                    this.title = this.roomData.content.name || '';
+                }
+                if (this.isSyncDescription) {
+                    this.description = this.roomData.content.description || '';
+                }
+                if (this.isSyncImages) {
+                    // Map to array of {src, alt}
+                    this.syncedImages = (this.roomData.content.images || []).map(img => ({
+                        src: img.source,
+                        alt: img.altText || 'Room image'
+                    }));
+                }
+                if (this.isSyncExtras) {
+                    // Map to array of formatted strings
+                    this.syncedExtras = (this.roomData.content.extras || []).map(extra => {
+                        if (extra.title && extra.text) {
+                            return `<strong class="extra-title">${extra.title}:</strong> ${extra.text}`;
+                        }
+                        return extra.text || '';
+                    });
+                }
             }
             this.render();
         }
@@ -131,6 +170,22 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     async render() {
+        // Use syncedImages if set, otherwise fallback to images attribute
+        let imagesToRender = [];
+        if (this.isSyncImages) {
+            imagesToRender = this.syncedImages;
+        } else {
+            imagesToRender = this.images.map(src => ({ src, alt: 'Room image' }));
+        }
+
+        // Use syncedExtras if set, otherwise fallback to extras attribute
+        let extrasToRender = [];
+        if (this.isSyncExtras) {
+            extrasToRender = this.syncedExtras;
+        } else {
+            extrasToRender = this.extras;
+        }
+
         this.innerHTML = `
             <div class="room-card">
 
@@ -142,7 +197,9 @@ class IrnmnRoomCard extends HTMLElement {
                     "NEXT_BUTTON": ".room-card__slider-next"
                 }'>
                     <div class="room-card__slider-container">
-                        ${this.images.map(src => `<div class="room-card__slider-slide"><figure><img src="${src}" alt="Room image"></figure></div>`).join('')}
+                        ${imagesToRender.map(img =>
+            `<div class="room-card__slider-slide"><figure><img src="${img.src}" alt="${img.alt || 'Room image'}"></figure></div>`
+        ).join('')}
                     </div>
                     <div class="room-card__slider-navigation">
                         <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || "See previous image"}">
@@ -185,7 +242,7 @@ class IrnmnRoomCard extends HTMLElement {
                     <h2 class="room-card__title">${this.title}</h2>
 
                     <ul class="room-card__extras">
-                        ${this.extras.map(extra => `<li>${extra}</li>`).join('')}
+                        ${extrasToRender.map(extra => `<li>${extra}</li>`).join('')}
                         <li><button class="btn btn-secondary expand-room-modal">${this.labels.more || "More info"}</button></li>
                     </ul>
 
