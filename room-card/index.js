@@ -2,6 +2,11 @@ class IrnmnRoomCard extends HTMLElement {
 
     constructor() {
         super();
+        // Placeholder data for prerendering
+        this.placeholder = '<span class="placeholder-line"></span>';
+        this.roomData = null;
+        this.isSyncTitle = false;
+        this.isSyncDescription = false;
     }
 
     get roomCode() {
@@ -13,45 +18,19 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     get checkinDateName() {
-        return this.getAttribute('checkin-date-name') || ''; // For futur pricing component
+        return this.getAttribute('checkin-date-name') || '';
     }
 
     get checkoutDateName() {
-        return this.getAttribute('checkout-date-name') || ''; // For futur pricing component
+        return this.getAttribute('checkout-date-name') || '';
     }
 
     get dateName() {
-        return this.getAttribute('date-name') || ''; // For futur pricing component
+        return this.getAttribute('date-name') || '';
     }
 
     get dateLocale() {
         return this.getAttribute('date-locale') || '';
-    }
-
-    async getTitle() {
-        const title = this.getAttribute('title') || '';
-        if (title === 'sync') {
-            if (!this.roomData) {
-                this.roomData = await this.fetchRoomData();
-                console.log('Fetching room data:', this.roomData);
-            }
-            return this.roomData?.content?.name || '';
-        } else {
-            return title;
-        }
-    }
-
-    async getDescription() {
-        const description = this.getAttribute('description') || '';
-        if (description === 'sync') {
-            if (!this.roomData) {
-                this.roomData = await this.fetchRoomData();
-                console.log('Fetching room data:', this.roomData);
-            }
-            return this.roomData?.content?.description || '';
-        } else {
-            return description;
-        }
     }
 
     get images() {
@@ -98,10 +77,35 @@ class IrnmnRoomCard extends HTMLElement {
         }
     }
 
+    get rawTitle() {
+        return this.getAttribute('title') || '';
+    }
+
+    get rawDescription() {
+        return this.getAttribute('description') || '';
+    }
+
     async connectedCallback() {
-        this.title = await this.getTitle();
-        this.description = await this.getDescription();
+        // Detect if sync is needed for title/description
+        this.isSyncTitle = this.rawTitle === 'sync';
+        this.isSyncDescription = this.rawDescription === 'sync';
+
+        // Prerender with placeholder data
+        this.title = this.isSyncTitle ? this.placeholder : this.rawTitle;
+        this.description = this.isSyncDescription ? this.placeholder + this.placeholder + this.placeholder : this.rawDescription;
         this.render();
+
+        // If sync is needed, fetch and update
+        if (this.isSyncTitle || this.isSyncDescription) {
+            this.roomData = await this.fetchRoomData();
+            if (this.isSyncTitle) {
+                this.title = this.roomData?.content?.name || '';
+            }
+            if (this.isSyncDescription) {
+                this.description = this.roomData?.content?.description || '';
+            }
+            this.render();
+        }
     }
 
     async fetchRoomData() {
@@ -119,15 +123,12 @@ class IrnmnRoomCard extends HTMLElement {
             const response = await fetch(`${url}?${params.toString()}`);
             if (!response.ok) throw new Error('Network response was not ok');
             const data = await response.json();
-            // Handle the fetched data as needed
-            console.log('Room data:', data);
             return data;
         } catch (error) {
             console.error('Fetch error:', error);
             return false;
         }
     }
-
 
     async render() {
         this.innerHTML = `
@@ -188,7 +189,6 @@ class IrnmnRoomCard extends HTMLElement {
                         <li><button class="btn btn-secondary expand-room-modal">${this.labels.more || "More info"}</button></li>
                     </ul>
 
-                    <!-- Room pricing component to be build -->
                     <room-pricing
                         room-code="${this.roomCode}"
                         checkin-date-name="${this.checkinDateName}"
