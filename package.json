@@ -17,9 +17,7 @@
         "husky": "^8.0.3",
         "lint-staged": "^15.2.0",
         "prettier": "^3.1.1",
-        "stylelint": "^14.16.1",
-        "sass": "^1.69.5",
-        "chokidar-cli": "^3.0.0"
+        "stylelint": "^14.16.1"
     },
     "scripts": {
         "lint": "npm run lint:css && npm run lint:js",
@@ -32,7 +30,6 @@
         "prettier": "npm run prettier:css && npm run prettier:js",
         "prettier:css": "prettier --write ./**/*.scss",
         "prettier:js": "prettier --write ./**/*.js",
-        "stylelint": "stylelint *.css --fix",
-        "start": "npx chokidar '**/style.scss' -c 'node scripts/watch-sass.js {path}'"
+        "stylelint": "stylelint *.css --fix"
     }
 }
