@@ -1,35 +1,54 @@
 {
-    "name": "irnmn-components",
-    "version": "1.0.0",
-    "description": "Irnmn Web Components",
-    "main": "index.js",
-    "author": {
-        "name": "Ennismore",
-        "email": "dev@ennismore.com",
-        "url": "https://ennismore.com",
-        "role": "developer"
-    },
-    "license": "ISC",
-    "devDependencies": {
-        "eslint": "^8.56.0",
-        "eslint-config-prettier": "^6.13.0",
-        "eslint-plugin-prettier": "^3.1.4",
-        "husky": "^8.0.3",
-        "lint-staged": "^15.2.0",
-        "prettier": "^3.1.1",
-        "stylelint": "^14.16.1"
-    },
-    "scripts": {
-        "lint": "npm run lint:css && npm run lint:js",
-        "lint:fix": "eslint --fix ./**/*.js ./**/*.jsx",
-        "lint:css": "npm run stylelint",
-        "lint:js": "npm run eslint",
-        "eslint": "eslint ./**/*.js",
-        "prepare": "husky install",
-        "pre-push": "npm run lint-staged",
-        "prettier": "npm run prettier:css && npm run prettier:js",
-        "prettier:css": "prettier --write ./**/*.scss",
-        "prettier:js": "prettier --write ./**/*.js",
-        "stylelint": "stylelint *.css --fix"
-    }
+  "name": "irnmn-components",
+  "version": "1.0.0",
+  "description": "Irnmn Web Components",
+  "main": "index.js",
+  "author": {
+    "name": "Ennismore",
+    "email": "dev@ennismore.com",
+    "url": "https://ennismore.com",
+    "role": "developer"
+  },
+  "license": "ISC",
+  "devDependencies": {
+    "@chromatic-com/storybook": "^4.0.0",
+    "@storybook/addon-a11y": "^9.0.6",
+    "@storybook/addon-docs": "^9.0.6",
+    "@storybook/addon-vitest": "^9.0.6",
+    "@storybook/web-components-vite": "^9.0.6",
+    "@vitest/browser": "^3.2.3",
+    "@vitest/coverage-v8": "^3.2.3",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^6.13.0",
+    "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-storybook": "^9.0.6",
+    "husky": "^8.0.3",
+    "lint-staged": "^15.2.0",
+    "lit": "^3.3.0",
+    "playwright": "^1.52.0",
+    "prettier": "^3.1.1",
+    "storybook": "^9.0.6",
+    "stylelint": "^14.16.1",
+    "vitest": "^3.2.3"
+  },
+  "scripts": {
+    "lint": "npm run lint:css && npm run lint:js",
+    "lint:fix": "eslint --fix ./**/*.js ./**/*.jsx",
+    "lint:css": "npm run stylelint",
+    "lint:js": "npm run eslint",
+    "eslint": "eslint ./**/*.js",
+    "prepare": "husky install",
+    "pre-push": "npm run lint-staged",
+    "prettier": "npm run prettier:css && npm run prettier:js",
+    "prettier:css": "prettier --write ./**/*.scss",
+    "prettier:js": "prettier --write ./**/*.js",
+    "stylelint": "stylelint *.css --fix",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "plugin:storybook/recommended"
+    ]
+  }
 }

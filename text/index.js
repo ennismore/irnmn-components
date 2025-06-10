@@ -6,7 +6,7 @@ import {
 } from '../utils/components.js';
 import { CLASS_NAMES } from './utils/constants.js';
 
-class IRNMNText extends HTMLElement {
+export default class IRNMNText extends HTMLElement {
     constructor() {
         super();
         this.label = this.getAttribute('label') || 'Text';
