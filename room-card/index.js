@@ -1,5 +1,4 @@
 class IrnmnRoomCard extends HTMLElement {
-
     constructor() {
         super();
     }
@@ -92,15 +91,15 @@ class IrnmnRoomCard extends HTMLElement {
                     "NEXT_BUTTON": ".room-card__slider-next"
                 }'>
                     <div class="room-card__slider-container">
-                        ${this.images.map(src => `<div class="room-card__slider-slide"><figure><img src="${src}" alt="Room image"></figure></div>`).join('')}
+                        ${this.images.map((src) => `<div class="room-card__slider-slide"><figure><img src="${src}" alt="Room image"></figure></div>`).join('')}
                     </div>
                     <div class="room-card__slider-navigation">
-                        <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || "See previous image"}">
+                        <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || 'See previous image'}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="34" viewBox="0 0 18 34" fill="none">
                             <path d="M16.0391 32L1.03906 17L16.0391 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                         </button>
-                        <button class="room-card__slider-next" aria-label="${this.labels.nextSlide || "See next image"}">
+                        <button class="room-card__slider-next" aria-label="${this.labels.nextSlide || 'See next image'}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none">
                             <path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
@@ -117,7 +116,9 @@ class IrnmnRoomCard extends HTMLElement {
                             <li></li>
                         </ul>
                     </div>
-                    ${this.link360 ? `
+                    ${
+                        this.link360
+                            ? `
                         <a href="${this.link360}" target="_blank" class="room-card__slider-360">
                             <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
                             <path d="M10.9016 6.58242V2.85742C10.9016 2.45742 10.6766 2.10742 10.3266 1.95742L7.42656 0.607422C7.15156 0.482422 6.85156 0.482422 6.57656 0.607422L3.67656 1.95742C3.32656 2.13242 3.10156 2.48242 3.10156 2.85742V6.58242C3.10156 6.93242 3.30156 7.28242 3.60156 7.45742L6.50156 9.13242C6.65156 9.23242 6.82656 9.25742 7.00156 9.25742C7.17656 9.25742 7.35156 9.20742 7.50156 9.13242L10.4016 7.45742C10.7266 7.28242 10.9016 6.95742 10.9016 6.58242ZM6.80156 1.05742C6.85156 1.03242 6.92656 1.00742 7.00156 1.00742C7.07656 1.00742 7.15156 1.03242 7.20156 1.05742L10.0766 2.38242L7.00156 3.80742L3.92656 2.38242L6.80156 1.05742ZM3.85156 7.03242C3.70156 6.93242 3.60156 6.78242 3.60156 6.60742V2.85742C3.60156 2.83242 3.60156 2.80742 3.60156 2.78242L6.75156 4.23242V8.68242L3.85156 7.03242ZM10.1516 7.03242L7.25156 8.70742V4.23242L10.4016 2.78242C10.4016 2.80742 10.4016 2.83242 10.4016 2.85742V6.58242C10.4016 6.75742 10.3266 6.93242 10.1516 7.03242Z" fill="white" style="fill:white;fill-opacity:1;"/>
@@ -125,9 +126,11 @@ class IrnmnRoomCard extends HTMLElement {
                             <path d="M10.6017 10.2822C10.4767 10.2572 10.3267 10.3572 10.3017 10.4822C10.2767 10.6072 10.3767 10.7572 10.5017 10.7822C12.3767 11.1322 13.2017 11.7322 13.2017 12.1572C13.2017 12.7322 11.7767 13.4822 9.12666 13.7322C9.00166 13.7572 8.87666 13.8572 8.90166 14.0072C8.90166 14.1322 9.02666 14.2322 9.15166 14.2322H9.17666C11.2767 14.0322 13.7017 13.3572 13.7017 12.1572C13.7017 11.3572 12.5767 10.6822 10.6017 10.2822Z" fill="white" style="fill:white;fill-opacity:1;"/>
                             <path d="M5.60078 12.6072C5.50078 12.5322 5.35078 12.5322 5.25078 12.6322C5.15078 12.7322 5.17578 12.8822 5.27578 12.9822L6.40078 13.9572L5.25078 15.1322C5.15078 15.2322 5.15078 15.3822 5.25078 15.4822C5.30078 15.5322 5.37578 15.5572 5.42578 15.5572C5.47578 15.5572 5.55078 15.5322 5.60078 15.4822L6.95078 14.1322C7.00078 14.0822 7.02578 14.0072 7.02578 13.9572C7.02578 13.9072 7.00078 13.8322 6.95078 13.7822L5.60078 12.6072Z" fill="white" style="fill:white;fill-opacity:1;"/>
                             </svg>
-                            ${this.labels.view360 || "360 tour"}
+                            ${this.labels.view360 || '360 tour'}
                         </a>
-                    ` : ''}
+                    `
+                            : ''
+                    }
                 </irnmn-slider>
 
                 <div class="room-card__content">
@@ -135,8 +138,8 @@ class IrnmnRoomCard extends HTMLElement {
                     <h2 class="room-card__title">${this.title}</h2>
 
                     <ul class="room-card__extras">
-                        ${this.extras.map(extra => `<li>${extra}</li>`).join('')}
-                        <li><button class="btn btn-secondary expand-room-modal">${this.labels.more || "More info"}</button></li>
+                        ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
+                        <li><button class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button></li>
                     </ul>
 
                     <!-- Room pricing component to be build -->
@@ -152,23 +155,31 @@ class IrnmnRoomCard extends HTMLElement {
                     <p class="room-card__description">${this.description}</p>
 
                     <div class="room-card__amenities --room-amenities">
-                        <h4 class="room-card__amenities-title">${this.labels.roomAmenities || "Room Amenities"}</h4>
+                        <h4 class="room-card__amenities-title">${this.labels.roomAmenities || 'Room Amenities'}</h4>
                         <ul class="room-card__amenities-list">
-                        ${this.roomAmenities.map(amenity => `
+                        ${this.roomAmenities
+                            .map(
+                                (amenity) => `
                             <li class="amenity">
                                 ${amenity}
                             </li>
-                        `).join('')}
+                        `,
+                            )
+                            .join('')}
                     </div>
 
                     <div class="room-card__amenities --hotel-amenities">
-                        <h4 class="room-card__amenities-title">${this.labels.hotelAmenities || "Hotel Amenities"}</h4>
+                        <h4 class="room-card__amenities-title">${this.labels.hotelAmenities || 'Hotel Amenities'}</h4>
                         <ul class="room-card__amenities-list">
-                        ${this.hotelAmenities.map(amenity => `
+                        ${this.hotelAmenities
+                            .map(
+                                (amenity) => `
                             <li class="amenity">
                                 ${amenity}
                             </li>
-                        `).join('')}
+                        `,
+                            )
+                            .join('')}
                     </div>
 
                 </div>

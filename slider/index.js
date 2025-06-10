@@ -212,7 +212,9 @@ class IRNMNSlider extends HTMLElement {
      * @returns {void}
      */
     updateTotalSlides(totalSlides) {
-        const totalSlidesElem = this.querySelector(this.CLASSNAMES.TOTAL_SLIDES);
+        const totalSlidesElem = this.querySelector(
+            this.CLASSNAMES.TOTAL_SLIDES,
+        );
         if (totalSlidesElem) {
             totalSlidesElem.textContent = totalSlides;
         }
@@ -323,7 +325,9 @@ class IRNMNSlider extends HTMLElement {
                 displayedSlideIndex = this.currentSlide;
                 break;
         }
-        const currentSlideElem = this.querySelector(this.CLASSNAMES.CURRENT_SLIDE);
+        const currentSlideElem = this.querySelector(
+            this.CLASSNAMES.CURRENT_SLIDE,
+        );
         if (currentSlideElem) {
             currentSlideElem.textContent = displayedSlideIndex;
         }
