@@ -4,7 +4,6 @@ class IrnmnRoomCard extends HTMLElement {
         super();
         // Placeholder data for prerendering
         this.linePlaceholder = '<span class="placeholder"></span>';
-        this.listPlaceholder = '<li class="placeholder"></li>';
         this.roomData = null;
 
         this.isSyncTitle = false;
@@ -12,7 +11,7 @@ class IrnmnRoomCard extends HTMLElement {
         this.isSyncImages = false;
         this.isSyncExtras = false;
 
-        this.title = '';
+        this.heading = '';
         this.description = '';
         this.syncedImages = [];
         this.syncedExtras = [];
@@ -86,34 +85,34 @@ class IrnmnRoomCard extends HTMLElement {
         }
     }
 
-    get rawTitle() {
-        return this.getAttribute('title') || '';
+    get manualTitle() {
+        return this.getAttribute('heading') || '';
     }
 
-    get rawDescription() {
+    get manualDescription() {
         return this.getAttribute('description') || '';
     }
 
-    get rawImages() {
+    get manualImages() {
         return this.getAttribute('images') || '';
     }
 
-    get rawExtras() {
+    get manualExtras() {
         return this.getAttribute('extras') || '';
     }
 
     async connectedCallback() {
-        // Detect if sync is needed for title/description/images/extras
-        this.isSyncTitle = this.rawTitle === 'sync';
-        this.isSyncDescription = this.rawDescription === 'sync';
-        this.isSyncImages = this.rawImages === 'sync';
-        this.isSyncExtras = this.rawExtras === 'sync';
+        // Detect if sync is needed for heading/description/images/extras
+        this.isSyncTitle = this.manualTitle === 'sync';
+        this.isSyncDescription = this.manualDescription === 'sync';
+        this.isSyncImages = this.manualImages === 'sync';
+        this.isSyncExtras = this.manualExtras === 'sync';
 
         // Prerender with placeholder data
-        this.title = this.isSyncTitle ? this.linePlaceholder : this.rawTitle;
-        this.description = this.isSyncDescription ? this.linePlaceholder + this.linePlaceholder + this.linePlaceholder : this.rawDescription;
-        this.syncedImages = this.isSyncImages ? [] : this.images;
-        this.syncedExtras = this.isSyncExtras ? [this.listPlaceholder, this.listPlaceholder, this.listPlaceholder] : this.extras;
+        this.heading = this.isSyncTitle ? this.linePlaceholder : this.manualTitle;
+        this.description = this.isSyncDescription ? this.linePlaceholder + this.linePlaceholder + this.linePlaceholder : this.manualDescription;
+        this.syncedImages = this.isSyncImages ? ['', '', ''] : this.images;
+        this.syncedExtras = this.isSyncExtras ? [this.linePlaceholder, this.linePlaceholder, this.linePlaceholder] : this.extras;
         this.render();
 
         // If sync is needed, fetch and update
@@ -121,7 +120,7 @@ class IrnmnRoomCard extends HTMLElement {
             this.roomData = await this.fetchRoomData();
             if (this.roomData && this.roomData.content) {
                 if (this.isSyncTitle) {
-                    this.title = this.roomData.content.name || '';
+                    this.heading = this.roomData.content.name || '';
                 }
                 if (this.isSyncDescription) {
                     this.description = this.roomData.content.description || '';
@@ -239,7 +238,7 @@ class IrnmnRoomCard extends HTMLElement {
 
                 <div class="room-card__content">
 
-                    <h2 class="room-card__title">${this.title}</h2>
+                    <h2 class="room-card__heading">${this.heading}</h2>
 
                     <ul class="room-card__extras">
                         ${extrasToRender.map(extra => `<li>${extra}</li>`).join('')}
@@ -258,7 +257,7 @@ class IrnmnRoomCard extends HTMLElement {
                     <p class="room-card__description">${this.description}</p>
 
                     <div class="room-card__amenities --room-amenities">
-                        <h4 class="room-card__amenities-title">${this.labels.roomAmenities || "Room Amenities"}</h4>
+                        <h4 class="room-card__amenities-heading">${this.labels.roomAmenities || "Room Amenities"}</h4>
                         <ul class="room-card__amenities-list">
                         ${this.roomAmenities.map(amenity => `
                             <li class="amenity">
@@ -268,7 +267,7 @@ class IrnmnRoomCard extends HTMLElement {
                     </div>
 
                     <div class="room-card__amenities --hotel-amenities">
-                        <h4 class="room-card__amenities-title">${this.labels.hotelAmenities || "Hotel Amenities"}</h4>
+                        <h4 class="room-card__amenities-heading">${this.labels.hotelAmenities || "Hotel Amenities"}</h4>
                         <ul class="room-card__amenities-list">
                         ${this.hotelAmenities.map(amenity => `
                             <li class="amenity">
