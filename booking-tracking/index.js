@@ -47,6 +47,18 @@ class IRNMNBookingTracking extends HTMLElement {
         return this.getAttribute('debug') || false;
     }
 
+    get eventName() {
+        return this.getAttribute('event-name') || 'room_check_availability';
+    }
+
+    get checkinFieldName() {
+        return this.getAttribute('checkin-field-name') || 'checkin_date';
+    }
+
+    get checkoutFieldName() {
+        return this.getAttribute('checkout-field-name') || 'checkout_date';
+    }
+
     /**
      * Handle tracking event for the booking form submission
      *
@@ -79,10 +91,10 @@ class IRNMNBookingTracking extends HTMLElement {
 
         // build the tracking event
         const tracking_event = {
-            event: 'room_check_availability',
+            event: this.event,
             destination: activeLocation?.hotelName?.toLowerCase() || '',
-            checkin_date: formData.get(this.startDateName),
-            checkout_date: formData.get(this.endDateName),
+            [this.checkinFieldName]: formData.get(this.startDateName),
+            [this.checkoutFieldName]: formData.get(this.endDateName),
             rooms: roomsTotal,
             adult: adult_total,
             child: children_total,
