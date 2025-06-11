@@ -5,7 +5,7 @@ import IRNMNText from "../text";
 //import { Button } from './Button';
 
 const meta: Meta<IRNMNText> = {
-    title: 'Component/Text',
+    title: 'Components/Text',
     tags: ['autodocs'],
     component: 'irnmn-text',
     render: (args) => {
