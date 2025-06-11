@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit-html';
 import '../room-card/index.js';
+import '../slider/index.js'; // slider is used in room-card
 import '../room-card/style.css';
 import readme from '../room-card/README.md?raw';
 
