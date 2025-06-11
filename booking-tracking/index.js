@@ -4,14 +4,11 @@ class IRNMNBookingTracking extends HTMLElement {
     }
 
     connectedCallback() {
-
         if (!this.formId) return;
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
 
-
-        console.log("connected");
         this.form.addEventListener('submit', (event) =>
             this.handleTracking(event),
         );
@@ -69,8 +66,7 @@ class IRNMNBookingTracking extends HTMLElement {
      * passed to the https://allinclusive-collection.com/ booking engine when the form is submitted.
      *
      */
-    handleTracking() {
-        console.log("handle tracking");
+    handleTracking(event) {
         // Early return if the form is not valid and validation is required
         if (this.needValidation && !this.form.hasAttribute('valid')) {
             return;
@@ -105,11 +101,18 @@ class IRNMNBookingTracking extends HTMLElement {
             placement: this.placement,
             code: formData.get(this.promoCodeName)?.toLowerCase() || '',
         };
-        if (this.debug) {
-            console.log('Tracking Event:', tracking_event);
-        }
+
         // Push the event to the dataLayer
         window.dataLayer?.push(tracking_event);
+
+        if (this.debug) {
+            console.log('Tracking Event:', tracking_event);
+
+            if(event) {
+                event.preventDefault();
+                return;
+            }
+        }
     }
 }
 
