@@ -4,11 +4,14 @@ class IRNMNBookingTracking extends HTMLElement {
     }
 
     connectedCallback() {
+
         if (!this.formId) return;
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
 
+
+        console.log("connected");
         this.form.addEventListener('submit', (event) =>
             this.handleTracking(event),
         );
@@ -67,6 +70,7 @@ class IRNMNBookingTracking extends HTMLElement {
      *
      */
     handleTracking() {
+        console.log("handle tracking");
         // Early return if the form is not valid and validation is required
         if (this.needValidation && !this.form.hasAttribute('valid')) {
             return;
@@ -91,7 +95,7 @@ class IRNMNBookingTracking extends HTMLElement {
 
         // build the tracking event
         const tracking_event = {
-            event: this.event,
+            event: this.eventName,
             destination: activeLocation?.hotelName?.toLowerCase() || '',
             [this.checkinFieldName]: formData.get(this.startDateName),
             [this.checkoutFieldName]: formData.get(this.endDateName),
