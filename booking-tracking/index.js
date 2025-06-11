@@ -108,7 +108,8 @@ class IRNMNBookingTracking extends HTMLElement {
         if (this.debug) {
             console.log('Tracking Event:', tracking_event);
 
-            if(event) {
+            // Preventing form submission so we can observe dataLayer changes
+            if (event) {
                 event.preventDefault();
                 return;
             }
