@@ -1,6 +1,6 @@
 /**
  * General-purpose Popup Component
- * This component provides accessible modals with support for API-based content loading.
+ * This component provides accessible modals with support for API-based content loading or <template> content.
  * Includes accessibility features such as keyboard navigation, focus trapping, and optional one-time display per session.
  * @class IRNMNPopup
  * @extends {HTMLElement}
@@ -13,7 +13,7 @@ class IRNMNPopup extends HTMLElement {
     constructor() {
         super();
         this.lastFocusedElement = null; // Keeps track of the last focused element before modal is opened, for focus restoration
-        this.content = null; // Stores the content fetched from API
+        this.content = null; // Stores the content fetched from API or template
         this.styles = null; // Stores styles dynamically fetched from the API
     }
 
@@ -53,22 +53,23 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
+     * Getter for the modal-content attribute.
+     * @returns {string} - The content source type: 'endpoint' (default) or 'template'.
+     */
+    get modalContentType() {
+        return this.getAttribute('modal-content') || 'endpoint';
+    }
+
+    /**
      * Called when the element is added to the DOM.
      * Fetches content, renders the modal, and attaches event listeners.
      */
     async connectedCallback() {
-        if (!this.modalEndpoint) {
-            console.warn(
-                'Modal endpoint is not set. Please provide a valid endpoint.',
-            );
-            return;
-        }
-
         await this.renderPopup();
     }
 
     static get observedAttributes() {
-        return ['modal-endpoint'];
+        return ['modal-endpoint', 'modal-content'];
     }
 
     /**
@@ -119,22 +120,41 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
-     * Fetches content from the specified API endpoint.
-     * @returns {string} - Rendered HTML content fetched from the API
+     * Fetches content from the specified API endpoint or <template> child.
+     * @returns {string} - Rendered HTML content
      */
     async getContent() {
-        try {
-            const response = await fetch(this.modalEndpoint);
-            if (!response.ok)
-                throw new Error(`HTTP error! status: ${response.status}`);
+        if (this.modalContentType === 'template') {
+            // Use <template> child as content
+            const template = this.querySelector('template');
+            if (template) {
+                // Remove the template from the DOM to avoid duplicate rendering
+                return template.innerHTML;
+            } else {
+                console.warn('No <template> found inside <irnmn-modal>.');
+                return '';
+            }
+        } else {
+            // Default: fetch from endpoint
+            if (!this.modalEndpoint) {
+                console.warn(
+                    'Modal endpoint is not set. Please provide a valid endpoint.',
+                );
+                return '';
+            }
+            try {
+                const response = await fetch(this.modalEndpoint);
+                if (!response.ok)
+                    throw new Error(`HTTP error! status: ${response.status}`);
 
-            const data = await response.json();
-            this.styles = data.blockAssets?.styles || [];
+                const data = await response.json();
+                this.styles = data.blockAssets?.styles || [];
 
-            return data.content?.rendered || '';
-        } catch (error) {
-            console.error('Error fetching modal content:', error);
-            return '';
+                return data.content?.rendered || '';
+            } catch (error) {
+                console.error('Error fetching modal content:', error);
+                return '';
+            }
         }
     }
 
@@ -200,8 +220,6 @@ class IRNMNPopup extends HTMLElement {
         });
 
         // Close modal on any element with data-close attribute
-        // Commonly used for buttons or links
-        // that should close any modal when clicked
         this.querySelectorAll('[data-close]').forEach((el) => {
             el.addEventListener('click', (e) => {
                 e.preventDefault();
