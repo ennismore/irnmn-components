@@ -47,6 +47,18 @@ class IRNMNBookingTracking extends HTMLElement {
         return this.getAttribute('debug') || false;
     }
 
+    get eventName() {
+        return this.getAttribute('event-name') || 'room_check_availability';
+    }
+
+    get checkinFieldName() {
+        return this.getAttribute('checkin-field-name') || 'checkin_date';
+    }
+
+    get checkoutFieldName() {
+        return this.getAttribute('checkout-field-name') || 'checkout_date';
+    }
+
     /**
      * Handle tracking event for the booking form submission
      *
@@ -54,7 +66,7 @@ class IRNMNBookingTracking extends HTMLElement {
      * passed to the https://allinclusive-collection.com/ booking engine when the form is submitted.
      *
      */
-    handleTracking() {
+    handleTracking(event) {
         // Early return if the form is not valid and validation is required
         if (this.needValidation && !this.form.hasAttribute('valid')) {
             return;
@@ -79,21 +91,29 @@ class IRNMNBookingTracking extends HTMLElement {
 
         // build the tracking event
         const tracking_event = {
-            event: 'room_check_availability',
+            event: this.eventName,
             destination: activeLocation?.hotelName?.toLowerCase() || '',
-            checkin_date: formData.get(this.startDateName),
-            checkout_date: formData.get(this.endDateName),
+            [this.checkinFieldName]: formData.get(this.startDateName),
+            [this.checkoutFieldName]: formData.get(this.endDateName),
             rooms: roomsTotal,
             adult: adult_total,
             child: children_total,
             placement: this.placement,
             code: formData.get(this.promoCodeName)?.toLowerCase() || '',
         };
-        if (this.debug) {
-            console.log('Tracking Event:', tracking_event);
-        }
+
         // Push the event to the dataLayer
         window.dataLayer?.push(tracking_event);
+
+        if (this.debug) {
+            console.log('Tracking Event:', tracking_event);
+
+            // Preventing form submission so we can observe dataLayer changes
+            if (event) {
+                event.preventDefault();
+                return;
+            }
+        }
     }
 }
 
