@@ -415,14 +415,13 @@
     flex-direction: row;
     flex-wrap: nowrap;
     gap: var(--space-5);
-    align-items: stretch;
 }
 
 .--one-column .room-card__slider {
-    flex: 1 1 0;
+    flex: 1 1 auto;
     min-width: 0;
     max-width: 100%;
-    align-self: stretch;
+    align-self: flex-start;
 }
 
 .--one-column .room-card__content {
