@@ -212,8 +212,12 @@ class IRNMNSlider extends HTMLElement {
      * @returns {void}
      */
     updateTotalSlides(totalSlides) {
-        this.querySelector(this.CLASSNAMES.TOTAL_SLIDES).textContent =
-            totalSlides;
+        const totalSlidesElem = this.querySelector(
+            this.CLASSNAMES.TOTAL_SLIDES,
+        );
+        if (totalSlidesElem) {
+            totalSlidesElem.textContent = totalSlides;
+        }
     }
 
     /**
@@ -321,8 +325,12 @@ class IRNMNSlider extends HTMLElement {
                 displayedSlideIndex = this.currentSlide;
                 break;
         }
-        this.querySelector(this.CLASSNAMES.CURRENT_SLIDE).textContent =
-            displayedSlideIndex;
+        const currentSlideElem = this.querySelector(
+            this.CLASSNAMES.CURRENT_SLIDE,
+        );
+        if (currentSlideElem) {
+            currentSlideElem.textContent = displayedSlideIndex;
+        }
         // Dispatch a custom event when the slide changes
         const slideChangeEvent = new CustomEvent('slideChange', {
             detail: {
@@ -347,6 +355,8 @@ class IRNMNSlider extends HTMLElement {
         }
         swipeContainer.style.transition = 'none';
         this.centerSlide(swipeContainer);
+        this.classList.remove('transitioning-prev');
+        this.classList.remove('transitioning-next');
     }
 
     /**
@@ -355,6 +365,7 @@ class IRNMNSlider extends HTMLElement {
     moveToNextSlide(updateSlides, clonedSlidesCount) {
         this.currentSlide = (this.currentSlide + 1) % clonedSlidesCount;
         updateSlides();
+        this.classList.add('transitioning-next');
     }
 
     /**
@@ -364,6 +375,7 @@ class IRNMNSlider extends HTMLElement {
         this.currentSlide =
             (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
         updateSlides();
+        this.classList.add('transitioning-prev');
     }
 
     /**
