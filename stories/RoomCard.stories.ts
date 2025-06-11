@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/web-components';
 import { html } from 'lit-html';
 import '../room-card/index.js';
-import '../room-card/style.css'; // default base style
+import '../room-card/style.css';
 import readme from '../room-card/README.md?raw';
 
-// Automatically get all .css files from room-card folder
-// except "style.css"
+// Automatically get all .css files from room-card folder except "style.css"
 const variantFiles = import.meta.glob('../room-card/*.css', {
   as: 'url',
   eager: true,
@@ -45,45 +44,92 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<{ version: string }>;
+type Args = { version: string };
+type Story = StoryObj<Args>;
+
+const injectVariantStyle = (version: string) => {
+  const styleId = 'room-card-branded-style';
+  const existing = document.getElementById(styleId);
+  if (existing) existing.remove();
+
+  if (version !== 'default') {
+    const href = variantStyles[version];
+    if (href) {
+      const link = document.createElement('link');
+      link.id = styleId;
+      link.rel = 'stylesheet';
+      link.href = href;
+      document.head.appendChild(link);
+    }
+  }
+};
+
+const renderCard = () => html`
+    <irnmn-room-card
+        room-code="D2A"
+        checkin-date-name="checkin"
+        checkout-date-name="checkout"
+        date-name="checkInOutDates"
+        date-locale="en"
+        title="DELUXE SEA VIEW"
+        description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
+        images='[{"source":"https://picsum.photos/id/10/300/200","altText":"Room image 1"},{"source":"https://picsum.photos/id/89/300/200","altText":"Room image 2"},{"source":"https://picsum.photos/id/12/300/200","altText":"Room image 3"}]'
+        link-360="https://example.com/room-details"
+        extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
+        room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
+        hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
+        labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+    ></irnmn-room-card>
+`;
 
 export const Default: Story = {
   args: {
     version: 'default',
   },
   render: ({ version }) => {
-    const styleId = 'room-card-branded-style';
-    const existing = document.getElementById(styleId);
-    if (existing) existing.remove();
+    injectVariantStyle(version);
+    return renderCard();
+  },
+};
 
-    if (version !== 'default') {
-      const href = variantStyles[version];
-      if (href) {
-        const link = document.createElement('link');
-        link.id = styleId;
-        link.rel = 'stylesheet';
-        link.href = href;
-        document.head.appendChild(link);
-      }
-    }
-
+export const OneColumn: Story = {
+  args: {
+    version: 'default',
+  },
+  render: ({ version }) => {
+    injectVariantStyle(version);
     return html`
-      <irnmn-room-card
-        title="Deluxe Sea View"
-        description="Spacious room with a beautiful sea view, king-size bed, and private balcony."
-        images='["https://picsum.photos/600/400?1", "https://picsum.photos/600/400?2"]'
-        extras='["Free Wi-Fi", "Air Conditioning", "Mini Bar"]'
-        room-amenities='["King Bed", "Sea View", "Balcony"]'
-        hotel-amenities='["Pool", "Spa", "Gym"]'
-        labels='{
-          "more": "More Info",
-          "prevSlide": "Previous",
-          "nextSlide": "Next",
-          "roomAmenities": "Room Amenities",
-          "hotelAmenities": "Hotel Amenities",
-          "view360": "View 360"
-        }'
-      ></irnmn-room-card>
+      <div class="--one-column" style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
+        ${renderCard()}
+      </div>
+    `;
+  },
+};
+
+export const TwoColumns: Story = {
+  args: {
+    version: 'default',
+  },
+  render: ({ version }) => {
+    injectVariantStyle(version);
+    return html`
+      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
+        ${renderCard()} ${renderCard()}
+      </div>
+    `;
+  },
+};
+
+export const ThreeColumns: Story = {
+  args: {
+    version: 'default',
+  },
+  render: ({ version }) => {
+    injectVariantStyle(version);
+    return html`
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
+        ${renderCard()} ${renderCard()} ${renderCard()}
+      </div>
     `;
   },
 };
