@@ -61,6 +61,14 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
+     * Getter for the labelledby attribute.
+     * @returns {string} - The ID of the element that labels the modal, used for accessibility.
+     */
+    get labelledby() {
+        return this.getAttribute('labelledby') || '';
+    }
+
+    /**
      * Called when the element is added to the DOM.
      * Fetches content, renders the modal, and attaches event listeners.
      */
@@ -163,7 +171,7 @@ class IRNMNPopup extends HTMLElement {
      */
     render() {
         this.innerHTML = `
-            <dialog class="irnmn-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
+            <dialog class="irnmn-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="${this.labelledby}">
                 <div class="irnmn-modal__container">
                     <button class="irnmn-modal__close" aria-label="${this.closeLabel}">${this.closeLabel}</button>
                     ${this.content}

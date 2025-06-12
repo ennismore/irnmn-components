@@ -1,6 +1,7 @@
 class IrnmnRoomCard extends HTMLElement {
     constructor() {
         super();
+        this.uniqueId = `card-${Math.random().toString(36).substr(2, 9)}`;
     }
 
     get roomCode() {
@@ -88,13 +89,13 @@ class IrnmnRoomCard extends HTMLElement {
             modal.open();
             const modalSlider = modal.querySelector('irnmn-slider');
             if (modalSlider) {
-                modalSlider.refresh(); // Refresh the slider to ensure it displays correctly
+                modalSlider.refresh();
             }
         });
     }
 
-    render() {
-        const roomSliderHTML = `
+    renderSlider() {
+        return `
             <irnmn-slider class="room-card__slider" selectors='{
                 "SWIPE_CONTAINER": ".room-card__slider-container",
                 "SLIDES": ".room-card__slider-slide",
@@ -104,15 +105,15 @@ class IrnmnRoomCard extends HTMLElement {
             }'>
                 <div class="room-card__slider-container">
                     ${this.images
-                        .map((img) => {
-                            if (typeof img === 'string') {
-                                return `<div class="room-card__slider-slide"><figure><img src="${img}" alt="Room image"></figure></div>`;
-                            } else if (img && typeof img === 'object') {
-                                return `<div class="room-card__slider-slide"><figure><img src="${img.source}" alt="${img.altText || 'Room image'}"></figure></div>`;
-                            }
-                            return '';
-                        })
-                        .join('')}
+                .map((img) => {
+                    if (typeof img === 'string') {
+                        return `<div class="room-card__slider-slide"><figure><img src="${img}" alt="Room image"></figure></div>`;
+                    } else if (img && typeof img === 'object') {
+                        return `<div class="room-card__slider-slide"><figure><img src="${img.source}" alt="${img.altText || 'Room image'}"></figure></div>`;
+                    }
+                    return '';
+                })
+                .join('')}
                 </div>
                 <div class="room-card__slider-navigation">
                     <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || 'See previous image'}">
@@ -137,9 +138,8 @@ class IrnmnRoomCard extends HTMLElement {
                         <li></li>
                     </ul>
                 </div>
-                ${
-                    this.link360
-                        ? `
+                ${this.link360
+                ? `
                     <a href="${this.link360}" target="_blank" class="room-card__slider-360">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
                         <path d="M10.9016 6.58242V2.85742C10.9016 2.45742 10.6766 2.10742 10.3266 1.95742L7.42656 0.607422C7.15156 0.482422 6.85156 0.482422 6.57656 0.607422L3.67656 1.95742C3.32656 2.13242 3.10156 2.48242 3.10156 2.85742V6.58242C3.10156 6.93242 3.30156 7.28242 3.60156 7.45742L6.50156 9.13242C6.65156 9.23242 6.82656 9.25742 7.00156 9.25742C7.17656 9.25742 7.35156 9.20742 7.50156 9.13242L10.4016 7.45742C10.7266 7.28242 10.9016 6.95742 10.9016 6.58242ZM6.80156 1.05742C6.85156 1.03242 6.92656 1.00742 7.00156 1.00742C7.07656 1.00742 7.15156 1.03242 7.20156 1.05742L10.0766 2.38242L7.00156 3.80742L3.92656 2.38242L6.80156 1.05742ZM3.85156 7.03242C3.70156 6.93242 3.60156 6.78242 3.60156 6.60742V2.85742C3.60156 2.83242 3.60156 2.80742 3.60156 2.78242L6.75156 4.23242V8.68242L3.85156 7.03242ZM10.1516 7.03242L7.25156 8.70742V4.23242L10.4016 2.78242C10.4016 2.80742 10.4016 2.83242 10.4016 2.85742V6.58242C10.4016 6.75742 10.3266 6.93242 10.1516 7.03242Z" fill="white" style="fill:white;fill-opacity:1;"/>
@@ -150,11 +150,13 @@ class IrnmnRoomCard extends HTMLElement {
                         ${this.labels.view360 || '360 tour'}
                     </a>
                 `
-                        : ''
-                }
+                : ''
+            }
             </irnmn-slider> `;
+    }
 
-        const roomPricingHTML = `
+    renderPricing() {
+        return `
             <room-pricing
                 room-code="${this.roomCode}"
                 checkin-date-name="${this.checkinDateName}"
@@ -164,73 +166,65 @@ class IrnmnRoomCard extends HTMLElement {
                 labels='${JSON.stringify(this.labels)}'
             >PRICING PLACEHOLDER</room-pricing>
         `;
+    }
 
-        const roomAmenitiesHTML = `
-        <div class="room-card__amenities --room-amenities">
-            <h4 class="room-card__amenities-title">${this.labels.roomAmenities || 'Room Amenities'}</h4>
-            <ul class="room-card__amenities-list">
-            ${this.roomAmenities
-                .map(
-                    (amenity) => `
-                <li class="amenity">
-                    ${amenity}
-                </li>
-            `,
-                )
-                .join('')}
-        </div>`;
+    renderExtras(moreButton = false) {
+        return `
+            <ul class="room-card__extras">
+                ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
+                ${moreButton ? `<li><button aria-label="${this.labels.more || 'More info'}" class="btn btn-secondary expand-room-modal">
+                    ${this.labels.more || 'More info'}</button>
+                </li>` : ''}
+            </ul>
+        `;
+    }
 
-        const hotelAmenitiesHTML = `
-        <div class="room-card__amenities --hotel-amenities">
-            <h4 class="room-card__amenities-title">${this.labels.hotelAmenities || 'Hotel Amenities'}</h4>
-            <ul class="room-card__amenities-list">
-            ${this.hotelAmenities
-                .map(
-                    (amenity) => `
-                <li class="amenity">
-                    ${amenity}
-                </li>
-            `,
-                )
-                .join('')}
-        </div>`;
+    renderAmenities(list, label, className) {
+        return `
+            <div class="room-card__amenities ${className}">
+                <h4 class="room-card__amenities-title">${label}</h4>
+                <ul class="room-card__amenities-list">
+                    ${list.map((amenity) => `<li class="amenity">${amenity}</li>`).join('')}
+                </ul>
+            </div>
+        `;
+    }
+
+    render() {
+        const roomSliderHTML = this.renderSlider();
+        const roomPricingHTML = this.renderPricing();
+        const roomAmenitiesHTML = this.renderAmenities(
+            this.roomAmenities,
+            this.labels.roomAmenities || 'Room Amenities',
+            '--room-amenities'
+        );
+        const hotelAmenitiesHTML = this.renderAmenities(
+            this.hotelAmenities,
+            this.labels.hotelAmenities || 'Hotel Amenities',
+            '--hotel-amenities'
+        );
 
         this.innerHTML = `
             <div class="room-card">
-
                 ${roomSliderHTML}
-
                 <div class="room-card__content">
-
                     <h2 class="room-card__title">${this.title}</h2>
-
-                    <ul class="room-card__extras">
-                        ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
-                        <li><button class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button></li>
-                    </ul>
-
+                    ${this.renderExtras(true)}
                     ${roomPricingHTML}
-
                     <p class="room-card__description">${this.description}</p>
-
                 </div>
             </div>
-            <irnmn-modal class="room-modal" modal-content="template" modal-close="${this.labels.close || 'Close'}">
+            <irnmn-modal class="room-modal" modal-content="template" modal-close="${this.labels.close || 'Close'}" labelledby="room-modal-title__${this.uniqueId}">
                 <template>
                     <div class="room-modal__inner">
                         ${roomSliderHTML}
                         <div class="room-card__content">
                             <div class="room-modal__header">
-                                <h2 class="room-card__title">${this.title}</h2>
+                                <h2 class="room-card__title" id="room-modal-title__${this.uniqueId}">${this.title}</h2>
                                 ${roomPricingHTML}
                             </div>
-
-                            <ul class="room-card__extras">
-                                ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
-                            </ul>
-
+                            ${this.renderExtras(false)}
                             <p class="room-card__description">${this.description}</p>
-
                             ${roomAmenitiesHTML}
                             ${hotelAmenitiesHTML}
                         </div>

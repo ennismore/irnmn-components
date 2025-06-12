@@ -8,6 +8,7 @@ The **IRNMNPopup** is a general-purpose popup component that provides accessible
 - **API or Template Content**: Dynamically fetches and displays content from a specified API endpoint, or uses a `<template>` child for static content.
 - **Session-Based Display**: Optionally restricts the modal to display only once per session.
 - **Dynamic Styles**: Supports loading stylesheets dynamically from API-provided URLs.
+- **Custom Labeling**: Supports `labelledby` for improved accessibility.
 
 ## Usage
 
@@ -52,6 +53,7 @@ customElements.define('irnmn-modal', IRNMNPopup);
 | `modal-close`          | Label for the close button.                                                 | `"Close"`     |
 | `session-key`          | Unique key to track session-based display of the modal.                     | `null`        |
 | `init-show`            | Whether the modal should be initially displayed (`"true"` or `"false"`).    | `false`       |
+| `labelledby`           | ID of the element that labels the modal for accessibility.                  | `""`          |
 
 ## Showing and Closing the Popup
 
@@ -91,7 +93,7 @@ The component is designed with accessibility in mind, including:
 
 - Keyboard navigation support and focus trapping within the modal.
 - Focus restoration to the previously focused element upon modal closure.
-- ARIA attributes for screen reader compatibility.
+- ARIA attributes for screen reader compatibility, including support for `labelledby`.
 - Escape key and click-outside-to-close support.
 
 ## Styling Classes
@@ -127,4 +129,5 @@ When using API-based content, the modal fetches its content and styles dynamical
 - If `modal-content="template"`, the first `<template>` child will be used as the modal content.
 - The modal uses the native `<dialog>` element for accessibility and focus management.
 - The component exposes `open()` and `close()` methods for programmatic control.
+- The `labelledby` attribute can be used to improve accessibility by associating the modal with a label element.
 
