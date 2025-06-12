@@ -242,6 +242,8 @@ class IRNMNPopup extends HTMLElement {
         modal.setAttribute('aria-hidden', 'false');
         modal.focus();
 
+        document.querySelector('body').classList.add('irnmn-modal-open');
+
         // Dispatch the `irnmn-modal-opened` event
         this.dispatchEvent(
             new CustomEvent('irnmn-modal-opened', {
@@ -270,6 +272,8 @@ class IRNMNPopup extends HTMLElement {
         if (this.lastFocusedElement) {
             this.lastFocusedElement.focus();
         }
+
+        document.querySelector('body').classList.remove('irnmn-modal-open');
 
         // Dispatch the `irnmn-modal-closed` event
         this.dispatchEvent(

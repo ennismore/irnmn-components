@@ -8,4 +8,5 @@
     --room-card-font-family: "ABC Prophet Light", sans-serif;
     --room-card-title-font-family: "ABC Prophet", sans-serif;
     --room-card-image-aspect-ratio: 3/2;
+    --room-card-slider-360-bg: rgba(0, 0, 0, 0.25);
 }

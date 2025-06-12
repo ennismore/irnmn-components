@@ -41,7 +41,7 @@
     --room-card-slider-360-padding: var(--space-1) var(--space-2);
     --room-card-slider-360-radius: var(--space-1);
     --room-card-slider-360-hover-color: var(--room-card-slider-button-hover-color);
-    --room-card-slider-360-hover-bg: var(--room-card-slider-button-hover-bg);
+    --room-card-slider-360-hover-bg: var(--room-card-slider-360-bg);
     --room-card-slider-360-icon-size: var(--space-4);
 
     /* Image */
@@ -81,6 +81,14 @@
     --room-card-amenities-list-padding-left: var(--space-3);
     --room-card-amenities-list-dot-size: var(--space-1);
     --room-card-amenities-list-dot-top: calc(var(--space-1) * 1.5);
+
+    /* Modal */
+    --room-modal-bg:#ffffff;
+    --room-modal-width: 100%;
+    --room-modal-max-width: 870px;
+    --room-modal-backdrop: rgba(0, 0, 0, 0.25);
+    --room-modal-close-color: var(--room-card-text-color);
+
 }
 
 @media (max-width: 959px) {
@@ -283,6 +291,7 @@
     font-size: var(--room-card-slider-360-font-size);
     padding: var(--room-card-slider-360-padding);
     border-radius: var(--room-card-slider-360-radius);
+    backdrop-filter: blur(6px);
 }
 .room-card__slider-360:hover {
     color: var(--room-card-slider-360-hover-color);
@@ -316,6 +325,7 @@
     padding: var(--room-card-description-padding);
     margin:0;
     line-height: var(--room-card-description-line-height);
+    display: none;
 }
 .room-card__extras {
     display: flex;
@@ -370,7 +380,7 @@
     flex-wrap: wrap;
     gap: var(--space-4);
     list-style: none;
-    padding: var(--space-4) 0;
+    padding: var(--space-4) 0 0 0;
     margin: 0;
     color: var(--room-card-amenities-color);
     font-size: var(--room-card-amenities-font-size);
@@ -437,6 +447,10 @@
         gap : var(--space-4);
     }
 
+    .--one-column .room-card__description {
+        display: block;
+    }
+
 }
 
 /* Responsive styles for smaller screens */
@@ -447,4 +461,76 @@
         gap: var(--space-3);
     }
 
+}
+
+/* MODAL STYLES */
+
+/* Lock body scroll when modal is open */
+body.irnmn-modal-open {
+    overflow: hidden;
+}
+
+.room-modal .irnmn-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000; /* adjust as needed */
+    padding: 0;
+    margin: 0;
+    border: none;
+    align-items: center;
+    justify-content: center;
+}
+.room-modal .irnmn-modal::backdrop {
+    background-color: var(--room-modal-backdrop);
+}
+.room-modal .irnmn-modal--visible {
+    display: flex;
+}
+.room-modal .irnmn-modal__container {
+    all: unset;
+    display: block;
+    z-index: 9999;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 0;
+    box-sizing: border-box;
+    background-color: var(--room-modal-bg);
+    font-family: var(--room-card-font-family);
+    color: var(--room-card-text-color);
+    width: var(--room-modal-width);
+    max-width: var(--room-modal-max-width);
+    padding: var(--space-7) var(--space-6) 0 var(--space-6);
+}
+.room-modal .room-modal__inner{
+    padding: 0 0 var(--space-7) 0;
+    overflow: auto;
+    max-height: calc( 100vh - 2 * var(--space-6) - var(--space-7) );
+}
+.room-modal .irnmn-modal__close {
+    position: fixed;
+    padding: 0;
+    top: var(--space-4);
+    right: var(--space-6);
+    height: var(--space-3);
+    width: var(--space-3);
+    overflow: hidden;
+    text-indent: 200%;
+    cursor: pointer;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9.89922 9.0002L16.7617 2.1377C17.0148 1.88457 17.0148 1.49082 16.7617 1.2377C16.5086 0.98457 16.1148 0.98457 15.8617 1.2377L8.99922 8.10019L2.13672 1.2377C1.88359 0.98457 1.48984 0.98457 1.23672 1.2377C0.983594 1.49082 0.983594 1.88457 1.23672 2.1377L8.09922 9.0002L1.23672 15.8627C0.983594 16.1158 0.983594 16.5096 1.23672 16.7627C1.34922 16.8752 1.51797 16.9596 1.68672 16.9596C1.85547 16.9596 2.02422 16.9033 2.13672 16.7627L8.99922 9.9002L15.8617 16.7627C15.9742 16.8752 16.143 16.9596 16.3117 16.9596C16.4805 16.9596 16.6492 16.9033 16.7617 16.7627C17.0148 16.5096 17.0148 16.1158 16.7617 15.8627L9.89922 9.0002Z" fill="black"/></svg>') center/60% no-repeat;
+    background-color: transparent;
+    background-size: contain;
+    border: none;
+}
+.room-modal .room-card__content{
+    padding: var(--space-5) 0 0 0;
+    gap: var(--space-4);
+    width: 100%;
+    max-width: 100%;
+    min-width: 100%;
+}
+.room-modal .room-card__description {
+    display: block;
 }
