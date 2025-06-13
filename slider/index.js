@@ -425,6 +425,18 @@ class IRNMNSlider extends HTMLElement {
         this.addListener(swipeContainer, 'mouseup', touchEnd);
         this.addListener(swipeContainer, 'mouseleave', touchEnd);
     }
+
+    refresh() {
+        const swipeContainer = this.querySelector(
+            this.CLASSNAMES.SWIPE_CONTAINER,
+        );
+        if (!swipeContainer) {
+            console.error('Swipe container not found');
+            return;
+        }
+        this.calculateSlideOffsets(swipeContainer);
+        this.centerSlide(swipeContainer);
+    }
 }
 
 customElements.define('irnmn-slider', IRNMNSlider);
