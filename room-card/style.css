@@ -386,22 +386,16 @@
     font-size: var(--room-card-amenities-font-size);
     border-top: 1px solid var(--room-card-divider-color);
 }
+
 .room-card__amenities-title {
     font-weight: var(--room-card-amenities-title-font-weight);
-    flex: 1;
     padding: 0;
     margin: 0;
 }
 .room-card__amenities-list {
     padding: 0;
     margin: 0;
-    flex: 2;
-    columns: var(--room-card-amenities-list-columns);
-    -webkit-columns: var(--room-card-amenities-list-columns);
-    -moz-columns: var(--room-card-amenities-list-columns);
-    column-gap: var(--room-card-amenities-list-column-gap);
     list-style: none;
-    column-fill: balance;
     width: 100%;
 }
 .room-card__amenities ul > li {
@@ -410,6 +404,21 @@
     page-break-inside: avoid;
     padding-left: var(--room-card-amenities-list-padding-left);
     position: relative;
+}
+
+/* Desktop styles for amenities */
+@media (min-width: 960px) {
+    .room-card__amenities-title {
+        flex: 1;
+    }
+    .room-card__amenities-list {
+        flex: 2;
+        columns: var(--room-card-amenities-list-columns);
+        -webkit-columns: var(--room-card-amenities-list-columns);
+        -moz-columns: var(--room-card-amenities-list-columns);
+        column-gap: var(--room-card-amenities-list-column-gap);
+        column-fill: balance;
+    }
 }
 .room-card__amenities ul > li::before {
     content: "";
@@ -421,9 +430,10 @@
     top: var(--room-card-amenities-list-dot-top);
 }
 
-/* Styles for one-column layout */
+
 @media (min-width: 960px) {
 
+    /* Styles for one-column layout */
     .--one-column .room-card {
         display: flex;
         flex-direction: row;
@@ -527,10 +537,32 @@ body.irnmn-modal-open {
 .room-modal .room-card__content{
     padding: var(--space-5) 0 0 0;
     gap: var(--space-4);
-    width: 100%;
-    max-width: 100%;
-    min-width: 100%;
+    width: auto;
+    max-width: auto;
+    min-width: auto;
 }
 .room-modal .room-card__description {
     display: block;
+}
+
+@media (max-width: 959px) {
+    .room-modal .irnmn-modal__container {
+        padding: var(--space-7) 0 0 0;
+    }
+
+    .room-modal .room-modal__inner {
+        padding: 0 0 var(--space-3) 0;
+        max-height: calc( 100vh - var(--space-7) );
+    }
+
+    .room-modal .room-card__content {
+        padding: var(--space-4);
+    }
+
+    .room-modal .irnmn-modal__close{
+        height: var(--space-4);
+        width: var(--space-4);
+        top: var(--space-4);
+        right: var(--space-4);
+    }
 }

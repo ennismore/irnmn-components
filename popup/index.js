@@ -133,36 +133,47 @@ class IRNMNPopup extends HTMLElement {
      */
     async getContent() {
         if (this.modalContentType === 'template') {
-            // Use <template> child as content
-            const template = this.querySelector('template');
-            if (template) {
-                // Remove the template from the DOM to avoid duplicate rendering
-                return template.innerHTML;
-            } else {
-                console.warn('No <template> found inside <irnmn-modal>.');
-                return '';
-            }
-        } else {
-            // Default: fetch from endpoint
-            if (!this.modalEndpoint) {
-                console.warn(
-                    'Modal endpoint is not set. Please provide a valid endpoint.',
-                );
-                return '';
-            }
-            try {
-                const response = await fetch(this.modalEndpoint);
-                if (!response.ok)
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            return this.getTemplateContent();
+        }
+        return await this.getEndpointContent();
+    }
 
-                const data = await response.json();
-                this.styles = data.blockAssets?.styles || [];
+    /**
+     * Retrieves content from a <template> child element.
+     * @returns {string} - The inner HTML of the template or an empty string.
+     */
+    getTemplateContent() {
+        const template = this.querySelector('template');
+        if (template) {
+            return template.innerHTML;
+        }
+        console.warn('No <template> found inside <irnmn-modal>.');
+        return '';
+    }
 
-                return data.content?.rendered || '';
-            } catch (error) {
-                console.error('Error fetching modal content:', error);
-                return '';
-            }
+    /**
+     * Fetches content from the specified API endpoint.
+     * @returns {Promise<string>} - The rendered HTML content or an empty string.
+     */
+    async getEndpointContent() {
+        if (!this.modalEndpoint) {
+            console.warn(
+                'Modal endpoint is not set. Please provide a valid endpoint.',
+            );
+            return '';
+        }
+        try {
+            const response = await fetch(this.modalEndpoint);
+            if (!response.ok)
+                throw new Error(`HTTP error! status: ${response.status}`);
+
+            const data = await response.json();
+            this.styles = data.blockAssets?.styles || [];
+
+            return data.content?.rendered || '';
+        } catch (error) {
+            console.error('Error fetching modal content:', error);
+            return '';
         }
     }
 
