@@ -1,6 +1,6 @@
 /**
  * General-purpose Popup Component
- * This component provides accessible modals with support for API-based content loading.
+ * This component provides accessible modals with support for API-based content loading or <template> content.
  * Includes accessibility features such as keyboard navigation, focus trapping, and optional one-time display per session.
  * @class IRNMNPopup
  * @extends {HTMLElement}
@@ -13,7 +13,7 @@ class IRNMNPopup extends HTMLElement {
     constructor() {
         super();
         this.lastFocusedElement = null; // Keeps track of the last focused element before modal is opened, for focus restoration
-        this.content = null; // Stores the content fetched from API
+        this.content = null; // Stores the content fetched from API or template
         this.styles = null; // Stores styles dynamically fetched from the API
     }
 
@@ -53,22 +53,31 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
+     * Getter for the modal-content attribute.
+     * @returns {string} - The content source type: 'endpoint' (default) or 'template'.
+     */
+    get modalContentType() {
+        return this.getAttribute('modal-content') || 'endpoint';
+    }
+
+    /**
+     * Getter for the labelledby attribute.
+     * @returns {string} - The ID of the element that labels the modal, used for accessibility.
+     */
+    get labelledby() {
+        return this.getAttribute('labelledby') || '';
+    }
+
+    /**
      * Called when the element is added to the DOM.
      * Fetches content, renders the modal, and attaches event listeners.
      */
     async connectedCallback() {
-        if (!this.modalEndpoint) {
-            console.warn(
-                'Modal endpoint is not set. Please provide a valid endpoint.',
-            );
-            return;
-        }
-
         await this.renderPopup();
     }
 
     static get observedAttributes() {
-        return ['modal-endpoint'];
+        return ['modal-endpoint', 'modal-content'];
     }
 
     /**
@@ -119,10 +128,40 @@ class IRNMNPopup extends HTMLElement {
     }
 
     /**
-     * Fetches content from the specified API endpoint.
-     * @returns {string} - Rendered HTML content fetched from the API
+     * Fetches content from the specified API endpoint or <template> child.
+     * @returns {string} - Rendered HTML content
      */
     async getContent() {
+        if (this.modalContentType === 'template') {
+            return this.getTemplateContent();
+        }
+        return await this.getEndpointContent();
+    }
+
+    /**
+     * Retrieves content from a <template> child element.
+     * @returns {string} - The inner HTML of the template or an empty string.
+     */
+    getTemplateContent() {
+        const template = this.querySelector('template');
+        if (template) {
+            return template.innerHTML;
+        }
+        console.warn('No <template> found inside <irnmn-modal>.');
+        return '';
+    }
+
+    /**
+     * Fetches content from the specified API endpoint.
+     * @returns {Promise<string>} - The rendered HTML content or an empty string.
+     */
+    async getEndpointContent() {
+        if (!this.modalEndpoint) {
+            console.warn(
+                'Modal endpoint is not set. Please provide a valid endpoint.',
+            );
+            return '';
+        }
         try {
             const response = await fetch(this.modalEndpoint);
             if (!response.ok)
@@ -143,7 +182,7 @@ class IRNMNPopup extends HTMLElement {
      */
     render() {
         this.innerHTML = `
-            <dialog class="irnmn-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1">
+            <dialog class="irnmn-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="${this.labelledby}">
                 <div class="irnmn-modal__container">
                     <button class="irnmn-modal__close" aria-label="${this.closeLabel}">${this.closeLabel}</button>
                     ${this.content}
@@ -200,8 +239,6 @@ class IRNMNPopup extends HTMLElement {
         });
 
         // Close modal on any element with data-close attribute
-        // Commonly used for buttons or links
-        // that should close any modal when clicked
         this.querySelectorAll('[data-close]').forEach((el) => {
             el.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -223,6 +260,8 @@ class IRNMNPopup extends HTMLElement {
         modal.classList.add('irnmn-modal--visible');
         modal.setAttribute('aria-hidden', 'false');
         modal.focus();
+
+        document.querySelector('body').classList.add('irnmn-modal-open');
 
         // Dispatch the `irnmn-modal-opened` event
         this.dispatchEvent(
@@ -252,6 +291,8 @@ class IRNMNPopup extends HTMLElement {
         if (this.lastFocusedElement) {
             this.lastFocusedElement.focus();
         }
+
+        document.querySelector('body').classList.remove('irnmn-modal-open');
 
         // Dispatch the `irnmn-modal-closed` event
         this.dispatchEvent(

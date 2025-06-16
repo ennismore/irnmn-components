@@ -1,13 +1,14 @@
 # IRNMNPopup Component
 
-The **IRNMNPopup** is a general-purpose popup component designed to provide accessible modals with support for API-based content loading. It includes features such as keyboard navigation, focus trapping, and optional one-time display per session.
+The **IRNMNPopup** is a general-purpose popup component that provides accessible modals with support for API-based content loading **or** `<template>` content. It includes accessibility features such as keyboard navigation, focus trapping, and optional one-time display per session.
 
 ## Features
 
-- **Accessible Modals**: Includes keyboard navigation, focus trapping, and ARIA attributes for accessibility compliance.
-- **API-Based Content Loading**: Dynamically fetches and displays content from a specified API endpoint.
+- **Accessible Modals**: Keyboard navigation, focus trapping, ARIA attributes, and focus restoration for accessibility compliance.
+- **API or Template Content**: Dynamically fetches and displays content from a specified API endpoint, or uses a `<template>` child for static content.
 - **Session-Based Display**: Optionally restricts the modal to display only once per session.
 - **Dynamic Styles**: Supports loading stylesheets dynamically from API-provided URLs.
+- **Custom Labeling**: Supports `labelledby` for improved accessibility.
 
 ## Usage
 
@@ -15,7 +16,12 @@ The **IRNMNPopup** is a general-purpose popup component designed to provide acce
 
 Include the component in your project by adding the custom element definition:
 
-### Example
+```js
+import { IRNMNPopup } from './path/to/irnmn-modal.js';
+customElements.define('irnmn-modal', IRNMNPopup);
+```
+
+### Example: API Content
 
 ```html
 <irnmn-modal
@@ -26,14 +32,28 @@ Include the component in your project by adding the custom element definition:
 </irnmn-modal>
 ```
 
+### Example: Template Content
+
+```html
+<irnmn-modal modal-content="template" modal-close="Dismiss">
+  <template>
+    <h2>Welcome!</h2>
+    <p>This is static modal content.</p>
+    <button data-close>OK</button>
+  </template>
+</irnmn-modal>
+```
+
 ### Attributes
 
-| Attribute              | Description                                                       | Default Value |
-| ---------------------- | ----------------------------------------------------------------- | ------------- |
-| `modal-endpoint`       | URL endpoint to fetch modal content.                              | `null`        |
-| `modal-close`          | Label for the close button.                                       | `"Close"`     |
-| `session-key`          | Unique key to track session-based display of the modal.           | `null`        |
-| `init-show`            | Whether the modal should be initially displayed.                 | `false`       |
+| Attribute              | Description                                                                 | Default Value |
+| ---------------------- | --------------------------------------------------------------------------- | ------------- |
+| `modal-endpoint`       | URL endpoint to fetch modal content (used if `modal-content` is not `template`). | `null`        |
+| `modal-content`        | Content source type: `'endpoint'` (default) or `'template'`.                | `'endpoint'`  |
+| `modal-close`          | Label for the close button.                                                 | `"Close"`     |
+| `session-key`          | Unique key to track session-based display of the modal.                     | `null`        |
+| `init-show`            | Whether the modal should be initially displayed (`"true"` or `"false"`).    | `false`       |
+| `labelledby`           | ID of the element that labels the modal for accessibility.                  | `""`          |
 
 ## Showing and Closing the Popup
 
@@ -57,6 +77,8 @@ document.querySelector('irnmn-modal').close();
 
 This will hide the modal, restore focus to the previously focused element, and dispatch the `irnmn-modal-closed` event.
 
+You can also close the modal by clicking the close button, clicking outside the modal, pressing the Escape key, or clicking any element with the `data-close` attribute inside the modal.
+
 ## Events
 
 | Event Name           | Description                          |
@@ -69,26 +91,23 @@ This will hide the modal, restore focus to the previously focused element, and d
 
 The component is designed with accessibility in mind, including:
 
-- Keyboard navigation support.
+- Keyboard navigation support and focus trapping within the modal.
 - Focus restoration to the previously focused element upon modal closure.
-- ARIA attributes for screen reader compatibility.
-- Focus trapping to ensure keyboard navigation remains within the modal.
+- ARIA attributes for screen reader compatibility, including support for `labelledby`.
+- Escape key and click-outside-to-close support.
 
 ## Styling Classes
 
-- `.irnmn-modal`: The root element of the modal dialog. Use this selector to style the overall modal container.
-- `.irnmn-modal__container`: The inner container that holds the modal content and close button. Customize padding, background, or layout here.
-- `.irnmn-modal__close`: The close button inside the modal. Style this to match your design, including hover and focus states.
+- `.irnmn-modal`: The root `<dialog>` element of the modal dialog.
+- `.irnmn-modal__container`: The inner container that holds the modal content and close button.
+- `.irnmn-modal__close`: The close button inside the modal.
+- `.irnmn-modal--visible`: Added dynamically when the modal is displayed (use for transitions/animations).
 
-## Notes
-
-- You can override these styles in your own CSS file to match your application's design.
-- The `irnmn-modal--visible` class is added dynamically when the modal is displayed. You can use this class to add animations or transitions for showing and hiding the modal.
-- The component dynamically loads stylesheets provided by the API, ensuring the modal matches the design requirements.
+You can override these styles in your own CSS file to match your application's design. The component dynamically loads stylesheets provided by the API, ensuring the modal matches the design requirements.
 
 ## API Integration
 
-The modal fetches its content and styles dynamically from the specified `modal-endpoint`. Ensure the API response includes the following structure:
+When using API-based content, the modal fetches its content and styles dynamically from the specified `modal-endpoint`. The API response should include the following structure:
 
 ```json
 {
@@ -101,4 +120,14 @@ The modal fetches its content and styles dynamically from the specified `modal-e
 }
 ```
 
-This allows for seamless integration and customization of modal content and appearance.
+- `content.rendered`: The HTML content to display inside the modal.
+- `blockAssets.styles`: An array of stylesheet URLs to load dynamically.
+
+## Notes
+
+- If `session-key` is set, the modal will only show once per session (using `sessionStorage`).
+- If `modal-content="template"`, the first `<template>` child will be used as the modal content.
+- The modal uses the native `<dialog>` element for accessibility and focus management.
+- The component exposes `open()` and `close()` methods for programmatic control.
+- The `labelledby` attribute can be used to improve accessibility by associating the modal with a label element.
+
