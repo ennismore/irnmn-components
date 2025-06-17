@@ -255,8 +255,9 @@ class IRNMNGuestsSelector extends HTMLElement {
                         aria-label-more="${this.labels.ariaLabelMoreAdults}"
                         aria-label-less="${this.labels.ariaLabelLessAdults}">
                     </irnmn-number-picker>
-                ${this.enableChildren
-                ? `
+                ${
+                    this.enableChildren
+                        ? `
                     <irnmn-number-picker
                         class="children-picker"
                         label="${this.labels.children}"
@@ -269,8 +270,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                     </irnmn-number-picker>
                     <div class="${CLASS_NAMES.childrenAgeDropdowns}"></div>
                 `
-                : ''
-            }
+                        : ''
+                }
                 </div>
             </div>
         `;

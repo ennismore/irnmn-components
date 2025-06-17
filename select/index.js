@@ -128,34 +128,36 @@ class IrnmnSelect extends HTMLElement {
         this.innerHTML = `
             <div class="${CLASS_NAMES.select} ${this.selectedOption === null ? CLASS_NAMES.unselected : ''} ${this.useNativeSelect ? 'using-native-select' : ''}" >
                 ${`
-                    ${this.useNativeSelect
-                ? `
+                    ${
+                        this.useNativeSelect
+                            ? `
                             <select value="${this.selectedNativeOption}">
                                 <option ${!this.selectedOption ? 'selected' : ''} disabled>${this.placeholder}</option>
                                 ${this.options
-                    .map(
-                        (option, index) =>
-                            `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`,
-                    )
-                    .join('')}
+                                    .map(
+                                        (option, index) =>
+                                            `<option ${this.selectedOption === index ? 'selected' : ''} value="${option.value}">${option.name}</option>`,
+                                    )
+                                    .join('')}
                             </select>
                             `
-                : ``
-            }
+                            : ``
+                    }
                     <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
                         ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
                     </div>
                     <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
-                    ${this.placeholder
-                ? `
+                    ${
+                        this.placeholder
+                            ? `
                         <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemUnselectable}" role="option" aria-selected="false" tabindex="-1" disabled>
                             ${this.placeholder}
                         </li>`
-                : ''
-            }
+                            : ''
+                    }
                     ${this.options
-                .map(
-                    (option, index) => `
+                        .map(
+                            (option, index) => `
                         <li class="${CLASS_NAMES.item} ${CLASS_NAMES.itemSelectable}"
                             ${this.anchorLinks ? '' : 'role="option"'}
                             tabindex="-1"
@@ -168,8 +170,8 @@ class IrnmnSelect extends HTMLElement {
                         ${this.anchorLinks ? '</a>' : ''}
                         </li>
                     `,
-                )
-                .join('')}
+                        )
+                        .join('')}
                 </ul>`}
             </div>
         `;
