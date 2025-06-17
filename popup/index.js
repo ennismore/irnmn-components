@@ -342,6 +342,7 @@ class IRNMNPopup extends HTMLElement {
         return this.closeModal();
     }
 }
-
-customElements.define('irnmn-modal', IRNMNPopup);
+if (!customElements.get('irnmn-modal')) {
+    customElements.define('irnmn-modal', IRNMNPopup);
+}
 export { IRNMNPopup };
