@@ -828,4 +828,6 @@ class IRNMNCalendar extends HTMLElement {
         return buttons[newIndex] || null;
     }
 }
-customElements.define('irnmn-calendar', IRNMNCalendar);
+if (!customElements.get('irnmn-calendar')) {
+    customElements.define('irnmn-calendar', IRNMNCalendar);
+}

@@ -71,5 +71,6 @@ class IRNMNBookingMarriot extends HTMLElement {
         return `${dateArray[1]}/${dateArray[2]}/${dateArray[0]}`;
     }
 }
-
-customElements.define('irnmn-booking-marriot', IRNMNBookingMarriot);
+if (!customElements.get('irnmn-booking-marriot')) {
+    customElements.define('irnmn-booking-marriot', IRNMNBookingMarriot);
+}

@@ -115,5 +115,6 @@ class IRNMNBookingAIC extends HTMLElement {
         return langAttr.split('-')[0]; //Split at the dash and return the first part
     }
 }
-
-customElements.define('irnmn-booking-aic', IRNMNBookingAIC);
+if (!customElements.get('irnmn-booking-aic')) {
+    customElements.define('irnmn-booking-aic', IRNMNBookingAIC);
+}

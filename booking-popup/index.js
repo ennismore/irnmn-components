@@ -200,5 +200,6 @@ class IRNMNBookingModal extends IRNMNPopup {
         this.stopTimer();
     }
 }
-
-customElements.define('irnmn-booking-modal', IRNMNBookingModal);
+if (!customElements.get('irnmn-booking-modal')) {
+    customElements.define('irnmn-booking-modal', IRNMNBookingModal);
+}

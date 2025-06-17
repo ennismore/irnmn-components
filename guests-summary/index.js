@@ -246,4 +246,6 @@ class IRNMNGuestsSummary extends HTMLElement {
 }
 
 // Define the custom element
-customElements.define('irnmn-guests-summary', IRNMNGuestsSummary);
+if (!customElements.get('irnmn-guests-summary')) {
+    customElements.define('irnmn-guests-summary', IRNMNGuestsSummary);
+}

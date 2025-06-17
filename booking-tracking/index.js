@@ -117,4 +117,6 @@ class IRNMNBookingTracking extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-booking-tracking', IRNMNBookingTracking);
+if (!customElements.get('irnmn-booking-tracking')) {
+    customElements.define('irnmn-booking-tracking', IRNMNBookingTracking);
+}

@@ -321,5 +321,6 @@ class IrnmnRoomCard extends HTMLElement {
         `;
     }
 }
-
-customElements.define('irnmn-room-card', IrnmnRoomCard);
+if (!customElements.get('irnmn-room-card')) {
+    customElements.define('irnmn-room-card', IrnmnRoomCard);
+}

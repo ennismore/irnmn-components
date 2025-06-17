@@ -167,5 +167,6 @@ class IRNMNBookingAllCom extends HTMLElement {
         }
     }
 }
-
-customElements.define('irnmn-booking-all-com', IRNMNBookingAllCom);
+if (!customElements.get('irnmn-booking-all-com')) {
+    customElements.define('irnmn-booking-all-com', IRNMNBookingAllCom);
+}

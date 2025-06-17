@@ -464,4 +464,6 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-rooms-selector', IRNMNRoomsSelector);
+if (!customElements.get('irnmn-rooms-selector')) {
+    customElements.define('irnmn-rooms-selector', IRNMNRoomsSelector);
+}

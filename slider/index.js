@@ -439,4 +439,6 @@ class IRNMNSlider extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-slider', IRNMNSlider);
+if (!customElements.get('irnmn-slider')) {
+    customElements.define('irnmn-slider', IRNMNSlider);
+}

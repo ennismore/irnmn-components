@@ -415,4 +415,6 @@ class IRNMNLocation extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-location', IRNMNLocation);
+if (!customElements.get('irnmn-location')) {
+    customElements.define('irnmn-location', IRNMNLocation);
+}

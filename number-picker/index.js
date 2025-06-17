@@ -135,4 +135,6 @@ class IRNMNNumberPicker extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-number-picker', IRNMNNumberPicker);
+if (!customElements.get('irnmn-number-picker')) {
+    customElements.define('irnmn-number-picker', IRNMNNumberPicker);
+}
