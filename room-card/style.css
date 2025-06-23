@@ -86,6 +86,17 @@
     --room-modal-backdrop: rgba(0, 0, 0, 0.25);
     --room-modal-close-color: var(--room-card-text-color);
 
+    /* CTA */
+    --room-card-cta-color: #fff;
+    --room-card-cta-bg: #000;
+    --room-card-cta-border: none;
+    --room-card-cta-hover-color: var(--room-card-cta-bg);
+    --room-card-cta-hover-bg: var(--room-card-cta-color);
+    --room-card-cta-hover-border: none;
+    --room-card-cta-radius: var(--space-1);
+    --room-card-cta-font-size: var(--room-card-content-font-size);
+
+
 }
 
 @media (max-width: 959px) {
@@ -424,7 +435,28 @@
     left: 0;
     top: var(--room-card-amenities-list-dot-top);
 }
+.room-card__pricing-cta{
+    color: var(--room-card-cta-color);
+    background-color: var(--room-card-cta-bg);
+    text-decoration: none;
+    padding: var(--space-2) var(--space-3);
+    line-height: 150%;
+    border-radius: var(--room-card-cta-radius);
+    display: inline-block;
+    font-size: var(--room-card-cta-font-size);
+    border: var(--room-card-cta-border);
+    cursor: pointer;
 
+    @media (max-width: 959px) {
+        display: block;
+        width: 100%;
+    }
+}
+.room-card__pricing-cta:hover {
+    color: var(--room-card-cta-hover-color);
+    background-color: var(--room-card-cta-hover-bg);
+    border: var(--room-card-cta-hover-border);
+}
 
 @media (min-width: 960px) {
 
@@ -548,8 +580,8 @@ body.irnmn-modal-open {
     padding: var(--space-5) 0 0 0;
     gap: var(--space-4);
     width: auto;
-    max-width: auto;
-    min-width: auto;
+    max-width: none;
+    min-width: 0;
     @media (min-width: 960px) {
         font-size: calc( var(--room-card-content-font-size) * 1.15);
     }
@@ -563,5 +595,23 @@ body.irnmn-modal-open {
 .room-modal .room-card__title {
     font-size: calc( var(--room-card-title-font-size) * 1.333333);
 }
-
-
+.room-modal .room-modal__header{
+    @media (min-width: 960px) {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+.room-modal .room-card__pricing-cta {
+    padding: var(--space-2) var(--space-4);
+}
+.room-modal .room-modal__header .room-card__pricing{
+    @media (max-width: 959px) {
+        display:none;
+    }
+}
+.room-modal .room-card__content > .room-card__pricing{
+    @media (min-width: 960px) {
+        display:none;
+    }
+}
