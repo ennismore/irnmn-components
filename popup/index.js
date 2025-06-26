@@ -250,20 +250,30 @@ class IRNMNPopup extends HTMLElement {
     /**
      * Displays the modal and sets accessibility attributes.
      * Ensures that the content is fully loaded before showing the modal.
+     * Includes View Transition API if available.
      */
     async showModal() {
         const modal = this.querySelector('.irnmn-modal');
         if (!modal) return;
 
         this.lastFocusedElement = document.activeElement;
-        modal.showModal();
-        modal.classList.add('irnmn-modal--visible');
-        modal.setAttribute('aria-hidden', 'false');
-        modal.focus();
 
-        document.querySelector('body').classList.add('irnmn-modal-open');
+        const run = () => {
+            modal.showModal();
+            modal.classList.add('irnmn-modal--visible');
+            modal.setAttribute('aria-hidden', 'false');
+            modal.focus();
+            document.body.classList.add('irnmn-modal-open');
+        };
 
-        // Dispatch the `irnmn-modal-opened` event
+        if (document.startViewTransition) {
+            await document.startViewTransition(() => {
+                run();
+            });
+        } else {
+            run();
+        }
+
         this.dispatchEvent(
             new CustomEvent('irnmn-modal-opened', {
                 detail: { element: this },
@@ -273,28 +283,36 @@ class IRNMNPopup extends HTMLElement {
 
     /**
      * Closes the modal, restores focus, and ensures accessibility compliance.
-     * @param {HTMLElement} modal - The modal element to close.
+     * Includes View Transition API if available.
      */
     closeModal() {
         const modal = this.querySelector('.irnmn-modal');
         if (!modal) return;
-        modal.close();
-        modal.classList.remove('irnmn-modal--visible');
-        modal.setAttribute('aria-hidden', 'true');
 
-        if (this.sessionKey) {
-            // Store the session key in sessionStorage to prevent showing the modal again
-            sessionStorage.setItem(this.sessionKey, 'shown');
+        const run = () => {
+            modal.close();
+            modal.classList.remove('irnmn-modal--visible');
+            modal.setAttribute('aria-hidden', 'true');
+
+            if (this.sessionKey) {
+                sessionStorage.setItem(this.sessionKey, 'shown');
+            }
+
+            if (this.lastFocusedElement) {
+                this.lastFocusedElement.focus();
+            }
+
+            document.body.classList.remove('irnmn-modal-open');
+        };
+
+        if (document.startViewTransition) {
+            document.startViewTransition(() => {
+                run();
+            });
+        } else {
+            run();
         }
 
-        // Restore focus to the last focused element before the modal was opened
-        if (this.lastFocusedElement) {
-            this.lastFocusedElement.focus();
-        }
-
-        document.querySelector('body').classList.remove('irnmn-modal-open');
-
-        // Dispatch the `irnmn-modal-closed` event
         this.dispatchEvent(
             new CustomEvent('irnmn-modal-closed', {
                 detail: { element: this },
