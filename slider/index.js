@@ -42,7 +42,17 @@ class IRNMNSlider extends HTMLElement {
     }
 
     connectedCallback() {
-        this.initSlider();
+        // Wait for visibility before initializing
+        const observer = new IntersectionObserver(
+            ([entry], obs) => {
+                if (entry.isIntersecting) {
+                    this.initSlider();
+                    obs.disconnect();
+                }
+            },
+            { root: null, threshold: 0 },
+        );
+        observer.observe(this);
     }
 
     /**

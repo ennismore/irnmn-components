@@ -176,10 +176,6 @@ class IrnmnRoomCard extends HTMLElement {
         // DRY: open modal, refresh slider, set up modal book button close
         function openModalAndSetup(modal) {
             modal.open();
-            const modalSlider = modal.querySelector('irnmn-slider');
-            if (modalSlider) {
-                modalSlider.refresh();
-            }
             const modalBookButtons = modal.querySelectorAll('.--book-button');
             modalBookButtons.forEach((button) => {
                 button.removeEventListener('click', button._modalCloseHandler);
