@@ -1,64 +1,106 @@
 import { html } from 'lit-html';
+
+// Register components and base styles
 import '../room-card/index.js';
 import '../slider/index.js';
 import '../popup/index.js';
 import '../room-card/style.css';
 
-// to get variables from
+// ---- Load the CSS text directly (adjust path if needed) ----
 import rawCss from '../room-card/style.css?raw';
 
-const cssVarsConfig = extractCssVars(rawCss);
+// ---- Parse CSS Variables + Category Comments ----
+const cssVarsConfig: Record<string, any> = {};
+let currentCategory = 'Global';
 
-console.log('CSS Variables Config:', cssVarsConfig);
+// Split the CSS content into individual lines for parsing
+const lines = rawCss.split('\n');
 
-function extractCssVars(cssText: string): Record<string, any> {
-    const rootMatch = cssText.match(/:root\s*{([^}]*)}/s);
-    if (!rootMatch) return {};
+for (const line of lines) {
+  // Look for a category comment in the format /* => Category Name */
+  const categoryMatch = line.match(/\/\*\s*=>\s*(.+?)\s*\*\//);
+  if (categoryMatch) {
+    // If found, set the current category to apply to following variables
+    currentCategory = categoryMatch[1].trim();
+  }
 
-    const varsBlock = rootMatch[1];
-    const lines = varsBlock.split(';').map(line => line.trim()).filter(Boolean);
+  // Look for CSS custom property declarations, e.g. --my-var: value;
+  const varMatch = line.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);
+  if (varMatch) {
+    const name = `--${varMatch[1]}`;     // Full variable name (with -- prefix)
+    const value = varMatch[2].trim();     // Raw value from CSS
 
-    const config: Record<string, any> = {};
+    let control: any = 'text';            // Default control type in Storybook
+    let defaultValue: any = value;        // Default value to apply to the variable
+    let unit = '';                        // Unit suffix (e.g., 'px' or 'rem')
 
-    for (const line of lines) {
-        const [rawKey, rawValue] = line.split(':').map(part => part.trim());
-        if (!rawKey?.startsWith('--') || !rawValue) continue;
+    // Try to infer a more appropriate control type based on value format
 
-        const isPx = /^\d+px$/.test(rawValue);
-        config[rawKey] = {
-        control: isPx
-            ? { type: 'range', min: 0, max: 100 }
-            : 'text',
-        defaultValue: isPx
-            ? Number(rawValue.replace(/[^0-9.]/g, '')) // fix here
-            : rawValue,
-        unit: isPx ? 'px' : '',
-        };
+    // If value is a hex color, use the color picker control
+    if (/^#[0-9a-f]{3,6}$/i.test(value)) {
+      control = 'color';
+
+    // If value is a pixel number (e.g., 16px), use a numeric range slider
+    } else if (/^\d+px$/.test(value)) {
+      defaultValue = parseInt(value, 10);
+      let maxValue = 100;
+      if(defaultValue > 100) {
+        maxValue = 1000; // Allow larger values for px
+      }
+      control = { type: 'range', min: 0, max: maxValue};
+      unit = 'px';
+
+    // If value is in rem, use a smaller slider with decimal steps
+    } else if (/^\d*\.?\d+rem$/.test(value)) {
+      control = { type: 'range', min: 0, max: 5, step: 0.125 };
+      defaultValue = parseFloat(value);
+      unit = 'rem';
+
+    // If value is a percentage, use a range slider
+    } else if (/^\d*\.?\d+%$/.test(value)) {
+      control = { type: 'range', min: 0, max: 100};
+      defaultValue = parseInt(value, 10);
+      unit = '%';
     }
 
-    return config;
+    let displayedName = name.replace('--', '').replace(/-/g, ' '); // Displayed name for Storybook
+    if (unit) {
+      displayedName = `${displayedName} (${unit})`; // Append unit to displayed name
+    }
+
+    // Register the variable config to be used by Storybook
+    cssVarsConfig[displayedName] = {
+      variable : name,               // CSS variable name
+      control,                       // Storybook control type
+      defaultValue,                  // Default value to display/apply
+      unit,                          // Unit suffix to re-append during apply
+      table: {
+        category: currentCategory, // Control panel grouping
+        name: displayedName, // Displayed name in Storybook
+      },
+    };
+  }
 }
 
+// ---- Apply variables to document.documentElement ----
+const applyCssVars = (vars: Record<string, any>, config: Record<string, any>) => {
+    for (const [label, val] of Object.entries(vars)) {
+      const variable = config[label]?.variable ?? label;
+      const unit = config[label]?.unit ?? '';
+      document.documentElement.style.setProperty(variable, `${val}${unit}`);
+    }
+  };
 
+// ---- Storybook metadata ----
 export default {
-  title: 'Playground/CSS Variables',
+  title: 'Playground/Live Editor',
   argTypes: Object.fromEntries(
     Object.entries(cssVarsConfig).map(([key, config]) => [key, config])
   ),
 };
 
-const applyCssVars = (vars: Record<string, any>, argTypes: Record<string, any>) => {
-  for (const [key, value] of Object.entries(vars)) {
-    if (!(key in argTypes)) continue;
-    const unit = argTypes[key]?.unit ?? '';
-    document.documentElement.style.setProperty(key, `${value}${unit}`);
-  }
-};
-
-const Template = (
-  args: Record<string, any>,
-  { argTypes }: { argTypes: Record<string, any> }
-) => {
+// ---- Story Template ----
+const Template = (args: Record<string, any>, { argTypes }: { argTypes: Record<string, any> }) => {
   applyCssVars(args, argTypes);
 
   return html`
@@ -82,6 +124,7 @@ const Template = (
   `;
 };
 
+// ---- Initial Values ----
 export const LiveEditor = Template.bind({});
 LiveEditor.args = Object.fromEntries(
   Object.entries(cssVarsConfig).map(([key, config]) => [key, config.defaultValue])
