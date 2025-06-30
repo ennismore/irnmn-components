@@ -208,7 +208,7 @@ const Template = (args: Record<string, any>) => {
     `;
   };
 // ---- Utility: Get only changed variables to be saved ----
-export const getChangedVars = (args: Record<string, any>): Record<string, string> => {
+const getChangedVars = (args: Record<string, any>): Record<string, string> => {
     const changes: Record<string, string> = {};
 
     for (const varName of Object.keys(rawVarData)) {
