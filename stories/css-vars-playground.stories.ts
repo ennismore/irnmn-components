@@ -11,7 +11,7 @@ import rawCss from '../room-card/style.css?raw';
 const rawVarData: Record<string, any> = {}; // Hold parsed data before building final config
 let currentCategory = 'Global';
 
-// First pass: collect variable names and raw values
+// First pass: Parse the CSS to extract raw variable info
 const lines = rawCss.split('\n');
 
 for (const line of lines) {
@@ -23,37 +23,55 @@ for (const line of lines) {
   const varMatch = line.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);
   if (varMatch) {
     const varName = `--${varMatch[1]}`;
-    const rawValue = varMatch[2].trim();
-    const isReference = /^var\(--[a-zA-Z0-9-_]+\)$/.test(rawValue);
-    const referenceTarget = isReference ? rawValue.slice(4, -1) : null;
+    const value = varMatch[2].trim();
+
+    let control: any = 'text';
+    let defaultValue: any = value;
+    let unit = '';
+    let isReference = false;
+    let referenceTarget = '';
+
+    // Detect if it's referencing another variable (e.g., var(--some-var))
+    const referenceMatch = value.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);
+    if (referenceMatch) {
+      isReference = true;
+      referenceTarget = referenceMatch[1];
+    }
 
     rawVarData[varName] = {
       name: varName,
-      rawValue,
+      rawValue: value,
+      isReference,
       referenceTarget,
       category: currentCategory,
     };
   }
 }
 
-// Helper to resolve inherited value (recursively)
-function resolveReference(varName: string, visited = new Set()): any {
-  if (!rawVarData[varName] || visited.has(varName)) return null;
-  visited.add(varName);
+// Helper: recursively resolve reference type/unit from rawVarData
+const resolveReference = (target: string, seen = new Set()): any => {
+  if (seen.has(target)) return {}; // Prevent circular refs
+  seen.add(target);
+  const data = rawVarData[target];
+  if (!data) return {};
+  if (!data.isReference) return data;
+  return resolveReference(data.referenceTarget, seen);
+};
 
-  const { rawValue, referenceTarget } = rawVarData[varName];
-  if (!referenceTarget) return { value: rawValue };
+// ---- Second pass: build cssVarsConfig with logic-aware filtering ----
+const cssVarsConfig: Record<string, any> = {};
+const varNames = Object.keys(rawVarData);
 
-  const resolved = resolveReference(referenceTarget, visited);
-  return resolved;
-}
+for (const varName of varNames) {
+  const varData = rawVarData[varName];
+  const resolved = varData.isReference ? resolveReference(varData.referenceTarget) : {};
 
-// Infer control from value
-function inferControl(value: string) {
   let control: any = 'text';
-  let defaultValue: any = value;
+  let defaultValue: any = varData.rawValue;
   let unit = '';
 
+  // Try to infer type and control from final resolved value (if reference), or direct value
+  const value = varData.isReference ? resolved.rawValue : varData.rawValue;
   if (/^#[0-9a-f]{3,6}$/i.test(value)) {
     control = 'color';
   } else if (/^\d*\.?\d+px$/.test(value)) {
@@ -70,74 +88,64 @@ function inferControl(value: string) {
     unit = '%';
   }
 
-  return { control, defaultValue, unit };
-}
-
-// ---- Second pass: build cssVarsConfig ----
-const cssVarsConfig: Record<string, any> = {};
-const varNames = Object.keys(rawVarData);
-
-for (const varName of varNames) {
-  const { rawValue, referenceTarget, category } = rawVarData[varName];
-
-  let resolvedValue = rawValue;
-  if (referenceTarget) {
-    const resolved = resolveReference(referenceTarget);
-    if (resolved?.value) {
-      resolvedValue = resolved.value;
-    }
-  }
-
-  const { control, defaultValue, unit } = inferControl(resolvedValue);
   const readableLabel = varName.replace('--', '').replace(/-/g, ' ') + (unit ? ` (${unit})` : '');
 
-  // Store in rawVarData for later reference
-  Object.assign(rawVarData[varName], { control, defaultValue, unit, readableLabel });
+  // Filtered list of compatible references (same control + unit)
+  const compatibleRefs = varNames.filter((v) => {
+    if (v === varName) return false;
+    const other = resolveReference(v);
+    if (!other) return false;
+    const otherValue = other.rawValue;
+    if (control === 'color') return /^#[0-9a-f]{3,6}$/i.test(otherValue);
+    if (unit && otherValue.endsWith(unit)) return true;
+    if (!unit && !/^#[0-9a-f]{3,6}$/i.test(otherValue) && !/px|rem|%/.test(otherValue)) return true;
+    return false;
+  });
 
-  // Mode switch (custom vs reference)
+  // Mode switch control
   cssVarsConfig[`__switch__${varName}`] = {
     name: `${readableLabel} Mode`,
     control: { type: 'inline-radio' },
     options: ['Custom', 'Reference'],
-    defaultValue: referenceTarget ? 'Reference' : 'Custom',
-    table: { category },
+    defaultValue: varData.isReference ? 'Reference' : 'Custom',
+    table: { category: varData.category },
   };
 
-  // Custom input control
+  // Custom input
   cssVarsConfig[varName] = {
     name: ` ↳ ${readableLabel}`,
     control,
-    defaultValue,
+    defaultValue: varData.isReference ? undefined : defaultValue,
     unit,
-    table: { category },
+    table: { category: varData.category },
     if: { arg: `__switch__${varName}`, eq: 'Custom' },
   };
 
-  // Reference selector
+  // Reference dropdown
   cssVarsConfig[`__ref__${varName}`] = {
     name: ` ↳ ${readableLabel} Ref`,
     control: { type: 'select' },
-    options: varNames.filter((v) => v !== varName),
-    defaultValue: referenceTarget || varNames[0],
-    table: { category },
+    options: compatibleRefs,
+    defaultValue: varData.isReference ? varData.referenceTarget : compatibleRefs[0],
+    table: { category: varData.category },
     if: { arg: `__switch__${varName}`, eq: 'Reference' },
   };
 }
 
-// ---- Apply CSS variables to document root ----
+// ---- Apply variables to document.documentElement ----
 const applyCssVars = (args: Record<string, any>) => {
   for (const varName of varNames) {
     const mode = args[`__switch__${varName}`];
     const ref = args[`__ref__${varName}`];
     const val = args[varName];
-    const unit = rawVarData[varName]?.unit ?? '';
+    const unit = cssVarsConfig[varName]?.unit ?? '';
 
     const finalValue = mode === 'Reference' ? `var(${ref})` : `${val}${unit}`;
     document.documentElement.style.setProperty(varName, finalValue);
   }
 };
 
-// ---- Storybook metadata ----
+// ---- Storybook Metadata ----
 export default {
   title: 'Playground/Live Editor',
   argTypes: cssVarsConfig,
