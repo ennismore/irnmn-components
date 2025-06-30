@@ -17,17 +17,15 @@ const lines = rawCss.split('\n');
 for (const line of lines) {
   const categoryMatch = line.match(/\/\*\s*=>\s*(.+?)\s*\*\//);
   if (categoryMatch) {
+    // Update current category if a new one is found
     currentCategory = categoryMatch[1].trim();
   }
 
+  // Match CSS variable definitions like --var-name: value;
   const varMatch = line.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);
   if (varMatch) {
     const varName = `--${varMatch[1]}`;
     const value = varMatch[2].trim();
-
-    let control: any = 'text';
-    let defaultValue: any = value;
-    let unit = '';
     let isReference = false;
     let referenceTarget = '';
 
@@ -38,6 +36,7 @@ for (const line of lines) {
       referenceTarget = referenceMatch[1];
     }
 
+    // Store raw variable data
     rawVarData[varName] = {
       name: varName,
       rawValue: value,
@@ -72,7 +71,10 @@ for (const varName of varNames) {
 
   // Try to infer type and control from final resolved value (if reference), or direct value
   const value = varData.isReference ? resolved.rawValue : varData.rawValue;
-  if (/^#[0-9a-f]{3,6}$/i.test(value)) {
+  if (
+    /^#[0-9a-f]{3,6}$/i.test(value) ||
+    /^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(value)
+  ) {
     control = 'color';
   } else if (/^\d*\.?\d+px$/.test(value)) {
     defaultValue = parseFloat(value);
@@ -125,7 +127,7 @@ for (const varName of varNames) {
   cssVarsConfig[`__ref__${varName}`] = {
     name: ` ↳ ${readableLabel} Ref`,
     control: { type: 'select' },
-    options: compatibleRefs,
+    options: control != 'text' ? compatibleRefs : varNames, // If text, show all vars
     defaultValue: varData.isReference ? varData.referenceTarget : compatibleRefs[0],
     table: { category: varData.category },
     if: { arg: `__switch__${varName}`, eq: 'Reference' },
