@@ -155,28 +155,85 @@ export default {
 
 // ---- Story Template ----
 const Template = (args: Record<string, any>) => {
-  applyCssVars(args);
+    applyCssVars(args);
+    const changedVars = getChangedVars(args);
+    const cssText = Object.entries(changedVars)
+      .map(([key, value]) => `${key}: ${value};`)
+      .join('\n');
 
-  return html`
-    <div style="padding: 2rem; border: 1px dashed gray;">
-      <irnmn-room-card
-        room-code="D2A"
-        checkin-date-name="checkin"
-        checkout-date-name="checkout"
-        date-name="checkInOutDates"
-        date-locale="en"
-        title="DELUXE SEA VIEW"
-        description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
-        images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
-        link-360="https://example.com/room-details"
-        extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
-        room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
-        hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
-        labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-      ></irnmn-room-card>
-    </div>
-  `;
-};
+    // Function to open the modal (must be outside html template)
+    setTimeout(() => {
+      const btn = document.getElementById('show-css-btn');
+      const dlg = document.getElementById('css-modal') as HTMLDialogElement;
+      const pre = document.getElementById('css-preview');
+
+      if (btn && dlg && pre) {
+        btn.onclick = () => {
+          pre.textContent = cssText || '/* Aucun changement */';
+          dlg.showModal();
+        };
+      }
+    }, 0);
+
+    return html`
+      <div style="margin-bottom: 2rem; border: 1px dashed gray;">
+        <irnmn-room-card
+          room-code="D2A"
+          checkin-date-name="checkin"
+          checkout-date-name="checkout"
+          date-name="checkInOutDates"
+          date-locale="en"
+          title="DELUXE SEA VIEW"
+          description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
+          images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
+          link-360="https://example.com/room-details"
+          extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
+          room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
+          hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
+          labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+        ></irnmn-room-card>
+      </div>
+
+      <button id="show-css-btn" style="margin-bottom: 1rem; padding: 0.5rem 1rem;">
+        See CSS
+      </button>
+
+      <dialog id="css-modal" style="max-width: 600px; padding: 1rem; border-radius: 8px;">
+        <form method="dialog">
+          <button style="float: right;">❌</button>
+        </form>
+        <h3>🎨 CSS Overrides</h3>
+        <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
+      </dialog>
+    `;
+  };
+// ---- Utility: Get only changed variables to be saved ----
+export const getChangedVars = (args: Record<string, any>): Record<string, string> => {
+    const changes: Record<string, string> = {};
+
+    for (const varName of Object.keys(rawVarData)) {
+      const mode = args[`__switch__${varName}`];
+      const ref = args[`__ref__${varName}`];
+      const val = args[varName];
+      const unit = cssVarsConfig[varName]?.unit ?? '';
+      const defaultMode = cssVarsConfig[`__switch__${varName}`]?.defaultValue;
+      const defaultVal = cssVarsConfig[varName]?.defaultValue;
+      const defaultRef = cssVarsConfig[`__ref__${varName}`]?.defaultValue;
+
+      if (mode === 'Reference') {
+        if (mode !== defaultMode || ref !== defaultRef) {
+          changes[varName] = `var(${ref})`;
+        }
+      } else if (mode === 'Custom') {
+        if (mode !== defaultMode || `${val}${unit}` !== `${defaultVal}${unit}`) {
+          changes[varName] = `${val}${unit}`;
+        }
+      }
+    }
+
+    return changes;
+  };
+
 
 // ---- Initial Values ----
 export const LiveEditor = Template.bind({});
