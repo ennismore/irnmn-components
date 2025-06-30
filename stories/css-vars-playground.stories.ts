@@ -11,7 +11,7 @@ import rawCss from '../room-card/style.css?raw';
 const rawVarData: Record<string, any> = {}; // Hold parsed data before building final config
 let currentCategory = 'Global';
 
-// First pass: Parse the CSS to extract raw variable info
+// First pass: collect variable names and raw values
 const lines = rawCss.split('\n');
 
 for (const line of lines) {
@@ -23,40 +23,54 @@ for (const line of lines) {
   const varMatch = line.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);
   if (varMatch) {
     const varName = `--${varMatch[1]}`;
-    const value = varMatch[2].trim();
-
-    let control: any = 'text';
-    let defaultValue: any = value;
-    let unit = '';
-
-    // Infer control type
-    if (/^#[0-9a-f]{3,6}$/i.test(value)) {
-      control = 'color';
-    } else if (/^\d*\.?\d+px$/.test(value)) {
-      defaultValue = parseFloat(value);
-      control = { type: 'range', min: 0, max: defaultValue > 100 ? 1000 : 100 };
-      unit = 'px';
-    } else if (/^\d*\.?\d+rem$/.test(value)) {
-      defaultValue = parseFloat(value);
-      control = { type: 'range', min: 0, max: 5, step: 0.125 };
-      unit = 'rem';
-    } else if (/^\d*\.?\d+%$/.test(value)) {
-      defaultValue = parseFloat(value);
-      control = { type: 'range', min: 0, max: 100 };
-      unit = '%';
-    }
-
-    const readableLabel = varName.replace('--', '').replace(/-/g, ' ') + (unit ? ` (${unit})` : '');
+    const rawValue = varMatch[2].trim();
+    const isReference = /^var\(--[a-zA-Z0-9-_]+\)$/.test(rawValue);
+    const referenceTarget = isReference ? rawValue.slice(4, -1) : null;
 
     rawVarData[varName] = {
       name: varName,
-      defaultValue,
-      control,
-      unit,
+      rawValue,
+      referenceTarget,
       category: currentCategory,
-      readableLabel,
     };
   }
+}
+
+// Helper to resolve inherited value (recursively)
+function resolveReference(varName: string, visited = new Set()): any {
+  if (!rawVarData[varName] || visited.has(varName)) return null;
+  visited.add(varName);
+
+  const { rawValue, referenceTarget } = rawVarData[varName];
+  if (!referenceTarget) return { value: rawValue };
+
+  const resolved = resolveReference(referenceTarget, visited);
+  return resolved;
+}
+
+// Infer control from value
+function inferControl(value: string) {
+  let control: any = 'text';
+  let defaultValue: any = value;
+  let unit = '';
+
+  if (/^#[0-9a-f]{3,6}$/i.test(value)) {
+    control = 'color';
+  } else if (/^\d*\.?\d+px$/.test(value)) {
+    defaultValue = parseFloat(value);
+    control = { type: 'range', min: 0, max: defaultValue > 100 ? 1000 : 100 };
+    unit = 'px';
+  } else if (/^\d*\.?\d+rem$/.test(value)) {
+    defaultValue = parseFloat(value);
+    control = { type: 'range', min: 0, max: 5, step: 0.125 };
+    unit = 'rem';
+  } else if (/^\d*\.?\d+%$/.test(value)) {
+    defaultValue = parseFloat(value);
+    control = { type: 'range', min: 0, max: 100 };
+    unit = '%';
+  }
+
+  return { control, defaultValue, unit };
 }
 
 // ---- Second pass: build cssVarsConfig ----
@@ -64,18 +78,32 @@ const cssVarsConfig: Record<string, any> = {};
 const varNames = Object.keys(rawVarData);
 
 for (const varName of varNames) {
-  const { control, defaultValue, unit, category, readableLabel } = rawVarData[varName];
+  const { rawValue, referenceTarget, category } = rawVarData[varName];
 
-  // Mode switch
+  let resolvedValue = rawValue;
+  if (referenceTarget) {
+    const resolved = resolveReference(referenceTarget);
+    if (resolved?.value) {
+      resolvedValue = resolved.value;
+    }
+  }
+
+  const { control, defaultValue, unit } = inferControl(resolvedValue);
+  const readableLabel = varName.replace('--', '').replace(/-/g, ' ') + (unit ? ` (${unit})` : '');
+
+  // Store in rawVarData for later reference
+  Object.assign(rawVarData[varName], { control, defaultValue, unit, readableLabel });
+
+  // Mode switch (custom vs reference)
   cssVarsConfig[`__switch__${varName}`] = {
     name: `${readableLabel} Mode`,
-    control: {type: 'inline-radio'},
+    control: { type: 'inline-radio' },
     options: ['Custom', 'Reference'],
-    defaultValue: 'Custom',
+    defaultValue: referenceTarget ? 'Reference' : 'Custom',
     table: { category },
   };
 
-  // Custom input
+  // Custom input control
   cssVarsConfig[varName] = {
     name: ` ↳ ${readableLabel}`,
     control,
@@ -85,20 +113,20 @@ for (const varName of varNames) {
     if: { arg: `__switch__${varName}`, eq: 'Custom' },
   };
 
-  // Reference dropdown
+  // Reference selector
   cssVarsConfig[`__ref__${varName}`] = {
     name: ` ↳ ${readableLabel} Ref`,
-    control: { type: 'select'},
+    control: { type: 'select' },
     options: varNames.filter((v) => v !== varName),
-    defaultValue: varNames[0],
+    defaultValue: referenceTarget || varNames[0],
     table: { category },
     if: { arg: `__switch__${varName}`, eq: 'Reference' },
   };
 }
 
-// ---- Apply variables to document.documentElement ----
+// ---- Apply CSS variables to document root ----
 const applyCssVars = (args: Record<string, any>) => {
-  for (const varName of Object.keys(rawVarData)) {
+  for (const varName of varNames) {
     const mode = args[`__switch__${varName}`];
     const ref = args[`__ref__${varName}`];
     const val = args[varName];
@@ -109,14 +137,14 @@ const applyCssVars = (args: Record<string, any>) => {
   }
 };
 
-// ---- Storybook Metadata ----
+// ---- Storybook metadata ----
 export default {
   title: 'Playground/Live Editor',
   argTypes: cssVarsConfig,
 };
 
 // ---- Story Template ----
-const Template = (args: Record<string, any>, { argTypes }: { argTypes: Record<string, any> }) => {
+const Template = (args: Record<string, any>) => {
   applyCssVars(args);
 
   return html`
