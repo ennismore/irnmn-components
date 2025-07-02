@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Irnmn Web Components",
   "main": "index.js",
+  "homepage": "https://ennismore.github.io/irnmn-components/",
   "author": {
     "name": "Ennismore",
     "email": "dev@ennismore.com",
