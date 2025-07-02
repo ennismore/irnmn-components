@@ -4,7 +4,7 @@ import '../room-card/index.js';
 import '../slider/index.js'; // slider is used in room-card
 import '../popup/index.js'; // popup is used in room-card
 import '../room-card/style.css';
-import readme from '../room-card/README.md?raw';
+import readme from '../room-card/readme.md?raw';
 
 // Automatically get all .css files from room-card folder except "style.css"
 const variantFiles = import.meta.glob('../room-card/*.css', {
