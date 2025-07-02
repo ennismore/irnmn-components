@@ -73,6 +73,7 @@ const renderCard = () => html`
         checkout-date-name="checkout"
         date-name="checkInOutDates"
         date-locale="en"
+        badge-label="Limited avaibility"
         title="DELUXE SEA VIEW"
         description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
         images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'

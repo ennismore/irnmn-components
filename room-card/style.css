@@ -44,6 +44,10 @@
     --room-card-slider-360-hover-bg: var(--room-card-slider-360-bg);
     --room-card-slider-360-icon-size: var(--space-4);
 
+    /* Badge */
+    --room-card-badge-bg: yellow;
+    --room-card-badge-color: #000;
+
     /* Image */
     --room-card-image-padding: 0;
     --room-card-image-aspect-ratio: 16 / 9;
@@ -318,6 +322,17 @@
     vertical-align: middle;
     fill: currentColor;
 }
+.room-card__badge {
+    position: absolute;
+    top: var(--space-3);
+    left: var(--space-3);
+    background-color: var(--room-card-badge-bg);
+    color: var(--room-card-badge-color);
+    padding: var(--space-1) var(--space-2);
+    font-size: 0.750rem;
+    border-radius: var(--space-1);
+}
+
 /* ROOM CARD CONTENT */
 .room-card__content {
     padding: var(--space-3) var(--space-2);
