@@ -1,24 +1,27 @@
-
-
 /** @type { import('@storybook/web-components-vite').StorybookConfig } */
 const config = {
-    "stories": [
+    stories: [
         "../stories/**/*.mdx",
         "../stories/**/*.stories.@(js|jsx|mjs|ts|tsx)",
     ],
-    "addons": [
+    addons: [
         "@chromatic-com/storybook",
         "@storybook/addon-docs",
         "@storybook/addon-a11y",
         "@storybook/addon-vitest"
     ],
-    "framework": {
-        "name": "@storybook/web-components-vite",
-        "options": {}
+    framework: {
+        name: "@storybook/web-components-vite",
+        options: {}
     },
-    viteFinal(config) {
-        config.assetsInclude = [...(config.assetsInclude || []), '**/*.md'];
+    viteFinal: async (config) => {
+        // Ensure raw markdown imports are allowed (e.g. ?raw)
+        config.assetsInclude = [
+            ...(config.assetsInclude || []),
+            '**/*.md'
+        ];
         return config;
     }
 };
+
 export default config;
