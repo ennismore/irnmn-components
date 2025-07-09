@@ -219,7 +219,7 @@ class IrnmnRoomCard extends HTMLElement {
                 "PREV_BUTTON": ".room-card__slider-prev",
                 "NEXT_BUTTON": ".room-card__slider-next"
             }'>
-                <div class="room-card__slider-container">
+                <div class="room-card__slider-container" aria-polite="true" aria-label="Room images">
                     ${this.images
                         .map((img) => {
                             if (typeof img === 'string') {
