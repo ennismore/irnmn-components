@@ -357,7 +357,10 @@ class IRNMNLocation extends HTMLElement {
                         const url = new URL(attributeValue);
                         this.replaceLangIDInUrl(url);
                         this.parentForm.action = url.href;
-                        console.log('replaceLangIDInUrl:', this.replaceLangIDInUrl(url));
+                        console.log(
+                            'replaceLangIDInUrl:',
+                            this.replaceLangIDInUrl(url),
+                        );
                         console.log('parentFormAction:', url.href);
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
@@ -395,7 +398,9 @@ class IRNMNLocation extends HTMLElement {
      */
     replaceLangIDInUrl(url) {
         // Get the language attribute from the HTML document, defaulting to 'en-US'
-        const langAttr = (document.documentElement.lang || 'en-US').split('-')[0];
+        const langAttr = (document.documentElement.lang || 'en-US').split(
+            '-',
+        )[0];
 
         // Decode the URL to handle encoded {langID}
         const decodedHref = decodeURIComponent(url.href);
@@ -405,7 +410,7 @@ class IRNMNLocation extends HTMLElement {
             const replaced = decodedHref.replace(/{langID}/gi, langAttr);
             url.href = replaced;
         }
-        
+
         return url.href;
     }
 
