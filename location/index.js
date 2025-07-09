@@ -354,6 +354,7 @@ class IRNMNLocation extends HTMLElement {
 
                 if (attrName === 'externalServiceUrl' && attributeValue) {
                     try {
+                        alert('test');
                         const url = new URL(attributeValue);
                         this.replaceLangIDInUrl(url);
                         this.parentForm.action = url.href;
