@@ -389,14 +389,24 @@ class IRNMNLocation extends HTMLElement {
     }
 
     /**
-     * Replaces {langID} in a URL with the current HTML lang attribute (e.g., 'en').
+     * Replaces {langID} (handlebars, encoded or not) in a URL with the current HTML lang attribute (e.g., 'en').
      * @param {URL} url - The URL object to modify.
+     * @return {string} The updated URL string.
      */
     replaceLangIDInUrl(url) {
-        const langAttr = document.documentElement.lang || 'en-US';
-        if (url.href.includes('{langID}')) {
-            url.href = url.href.replace('{langID}', langAttr);
+        // Get the language attribute from the HTML document, defaulting to 'en-US'
+        const langAttr = (document.documentElement.lang || 'en-US').split('-')[0];
+
+        // Decode the URL to handle encoded {langID}
+        const decodedHref = decodeURIComponent(url.href);
+
+        // Only replace if {langID} exists in the decoded URL
+        if (decodedHref.match(/{langID}/i)) {
+            const replaced = decodedHref.replace(/{langID}/gi, langAttr);
+            url.href = replaced;
         }
+        
+        return url.href;
     }
 
     renderErrorMessage() {
