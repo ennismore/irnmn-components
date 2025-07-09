@@ -354,10 +354,11 @@ class IRNMNLocation extends HTMLElement {
 
                 if (attrName === 'externalServiceUrl' && attributeValue) {
                     try {
-                        alert('test');
                         const url = new URL(attributeValue);
                         this.replaceLangIDInUrl(url);
                         this.parentForm.action = url.href;
+                        console.log('replaceLangIDInUrl:', this.replaceLangIDInUrl(url));
+                        console.log('parentFormAction:', url.href);
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
                     }
