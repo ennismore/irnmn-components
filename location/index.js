@@ -356,7 +356,7 @@ class IRNMNLocation extends HTMLElement {
                     try {
                         const url = new URL(attributeValue);
                         this.replaceLangIDInUrl(url);
-                        this.parentForm.action = url.href; 
+                        this.parentForm.action = url.href;
                         console.log('3:', url.href);
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
@@ -393,14 +393,19 @@ class IRNMNLocation extends HTMLElement {
      * @return {string} The updated URL string.
      */
     replaceLangIDInUrl(url) {
-        const langAttr = (document.documentElement.lang || 'en-US').split('-')[0];
+        const langAttr = (document.documentElement.lang || 'en-US').split(
+            '-',
+        )[0];
 
         console.log('langAttr:', langAttr);
         console.log('Original URL:', url.href);
 
         // Replace all encoded and unencoded {langID} (case-insensitive)
         // Handles both %7B/%7D (uppercase and lowercase) and curly braces
-        url.href = url.href.replace(/(\{langID\}|%7BlangID%7D|%7blangid%7d)/gi, langAttr);
+        url.href = url.href.replace(
+            /(\{langID\}|%7BlangID%7D|%7blangid%7d)/gi,
+            langAttr,
+        );
 
         console.log('Updated URL:', url.href);
         return url.href;
