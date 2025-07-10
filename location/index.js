@@ -360,7 +360,6 @@ class IRNMNLocation extends HTMLElement {
                         this.replaceLangIDInUrl(url);
 
                         this.parentForm.action = url.href;
-
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
                     }
