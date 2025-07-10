@@ -404,7 +404,7 @@ class IRNMNLocation extends HTMLElement {
 
         // Regex matches {langID} or %7BlangID%7D (case-insensitive)
         url.href = url.href.replace(/(\{langID\}|%7BlangID%7D)/gi, langAttr);
-        
+
         return url.href;
     }
 
