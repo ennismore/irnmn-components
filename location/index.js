@@ -354,6 +354,8 @@ class IRNMNLocation extends HTMLElement {
 
                 if (attrName === 'externalServiceUrl' && attributeValue) {
                     try {
+                        console.log('attributeValue:', attributeValue);
+
                         const url = new URL(attributeValue);
 
                         console.log('url:', url);
