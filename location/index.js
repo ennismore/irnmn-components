@@ -361,9 +361,9 @@ class IRNMNLocation extends HTMLElement {
                             'replaceLangIDInUrl:',
                             this.replaceLangIDInUrl(url),
                         );
-                        console.log('parentFormAction:', url.href);
+                        console.log('1:', url.href);
                     } catch (e) {
-                        console.error('Invalid URL for externalServiceUrl', e);
+                        console.error('2', e);
                     }
                 }
 
