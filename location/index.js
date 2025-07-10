@@ -357,10 +357,7 @@ class IRNMNLocation extends HTMLElement {
                         const url = new URL(attributeValue);
                         this.replaceLangIDInUrl(url);
                         this.parentForm.action = url.href;
-                        console.log(
-                            '1:',
-                            this.replaceLangIDInUrl(url),
-                        );
+                        console.log('1:', this.replaceLangIDInUrl(url));
                         console.log('2:', url.href);
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
@@ -404,7 +401,7 @@ class IRNMNLocation extends HTMLElement {
 
         // Regex matches {langID} or %7BlangID%7D (case-insensitive)
         url.href = url.href.replace(/(\{langID\}|%7BlangID%7D)/gi, langAttr);
-        
+
         return url.href;
     }
 
