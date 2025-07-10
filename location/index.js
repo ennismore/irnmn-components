@@ -402,15 +402,9 @@ class IRNMNLocation extends HTMLElement {
             '-',
         )[0];
 
-        // Decode the URL to handle encoded {langID}
-        const decodedHref = decodeURIComponent(url.href);
-
-        // Only replace if {langID} exists in the decoded URL
-        if (decodedHref.match(/{langID}/i)) {
-            const replaced = decodedHref.replace(/{langID}/gi, langAttr);
-            url.href = replaced;
-        }
-
+        // Regex matches {langID} or %7BlangID%7D (case-insensitive)
+        url.href = url.href.replace(/(\{langID\}|%7BlangID%7D)/gi, langAttr);
+        
         return url.href;
     }
 
