@@ -244,7 +244,7 @@ class IrnmnRoomCard extends HTMLElement {
                     </button>
                 </div>
                 <div class="room-card__slider-indicators">
-                    <ul aria-hideden="true">
+                    <ul aria-hidden="true">
                         <li></li>
                         <li></li>
                         <li></li>
