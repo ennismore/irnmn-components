@@ -1,4 +1,4 @@
-import { BOOKING_AREA_TYPE, CLASS_NAME_PREFIX } from './utils/constants.js';
+import { CLASS_NAME_PREFIX } from './utils/constants.js';
 
 class IRNMNBookingArea extends HTMLElement {
     constructor() {
@@ -19,7 +19,7 @@ class IRNMNBookingArea extends HTMLElement {
          */
         this.bookingAreaSettings = Object.preventExtensions({
             bookingArea: {
-                type: BOOKING_AREA_TYPE.BAR,
+                type: 'bar',
                 formId: "",
                 classNames: [`${CLASS_NAME_PREFIX}__form`],
                 formAction: ""
@@ -37,7 +37,7 @@ class IRNMNBookingArea extends HTMLElement {
                 classNames: [`${CLASS_NAME_PREFIX}__calendar`],
                 id: "",
                 label: "Check in / Check out",
-                placeholder: ' Check in / Check out',
+                placeholder: 'Add Dates',
                 name: "checkInOutDates",
                 formatDateValue: 'YYYY-MM-DD',
                 openingDate: "",
@@ -98,6 +98,7 @@ class IRNMNBookingArea extends HTMLElement {
                 name: "rateCode",
                 value: "",
                 dataId: "promo-code",
+                show: true
 
             },
             bookingTracking: {
@@ -112,6 +113,8 @@ class IRNMNBookingArea extends HTMLElement {
                 label: "Check Availability"
             }
         });
+
+        this.parseBookingAreaSettings();
 
         /**
          * Render the first time only when locations are loaded
@@ -131,6 +134,37 @@ class IRNMNBookingArea extends HTMLElement {
         );
     }
 
+    parseBookingAreaSettings() {
+        const settings = this.getAttribute('settings');
+        const parsedSettings = JSON.parse(settings);
+/*
+        console.log("Booking Settings Before:", this.bookingAreaSettings);
+        console.log("Settings Attribute:", JSON.parse(settings));
+        console.log("Booking Settings AFTER:", this.deepMergeObjects(this.bookingAreaSettings, parsedSettings)) */
+        this.bookingAreaSettings = this.deepMergeObjects(this.bookingAreaSettings, parsedSettings)
+    }
+
+    /**
+     * Merges Obj1 with Obj2
+     * Overrides values in Obj1 with Obj2's values where applicable
+     *
+     * @param {Array} obj1
+     * @param {Array} obj2
+     * @returns
+     */
+    deepMergeObjects(obj1, obj2) {
+        for (let key in obj2) {
+            if (obj2.hasOwnProperty(key)) {
+                if (obj2[key] instanceof Object && obj1[key] instanceof Object) {
+                    obj1[key] = this.deepMergeObjects(obj1[key], obj2[key]);
+                } else {
+                    obj1[key] = obj2[key];
+                }
+            }
+        }
+        return obj1;
+    }
+
     /**
      * Gets the label for the location dropdown.
      *
@@ -140,8 +174,13 @@ class IRNMNBookingArea extends HTMLElement {
         return this.getAttribute('label') || 'Select Location';
     }
 
+    /**
+     * Gets the promoCode's visibility
+     *
+     * @return {boolean}
+     */
     get showPromoCode() {
-        return true;
+        return this.bookingAreaSettings.promoCode.show;
     }
 
     /**
@@ -158,7 +197,7 @@ class IRNMNBookingArea extends HTMLElement {
 
     render() {
         // Adding a base class for the irnmn-booking-area element based on the type
-        const BOOKING_AREA_CLASS = this.bookingAreaSettings.bookingArea.type == BOOKING_AREA_TYPE.BAR
+        const BOOKING_AREA_CLASS = this.bookingAreaSettings.bookingArea.type == 'bar'
             ? `${CLASS_NAME_PREFIX}--booking-area__bar`
             : `${CLASS_NAME_PREFIX}--booking-area__panel`;
         this.classList.add(BOOKING_AREA_CLASS);
@@ -208,7 +247,7 @@ class IRNMNBookingArea extends HTMLElement {
                 </irnmn-calendar>
 
 
-                ${ this.bookingAreaSettings.bookingArea.type == BOOKING_AREA_TYPE.BAR ?
+                ${ this.bookingAreaSettings.bookingArea.type == 'bar' ?
                     `
                     <div class="${CLASS_NAME_PREFIX}__input ${this.classNamesToString(this.bookingAreaSettings.guestSummary.classNames)}">
                         <label>${this.bookingAreaSettings.guestSummary.label}</label>
@@ -226,12 +265,12 @@ class IRNMNBookingArea extends HTMLElement {
                     ` : ''
                 }
 
-                ${ this.bookingAreaSettings.bookingArea.type == BOOKING_AREA_TYPE.PANEL ?
+                ${ this.bookingAreaSettings.bookingArea.type == 'panel' ?
                     `
                     <irnmn-rooms-selector
                         class="${CLASS_NAME_PREFIX}__input ${this.classNamesToString(this.bookingAreaSettings.roomSelector.classNames)}"
                         rooms-number="${this.bookingAreaSettings.roomSelector.roomsNumber}"
-                        labels='${this.bookingAreaSettings.roomSelector.roomLabels}'
+                        labels='${JSON.stringify(this.bookingAreaSettings.roomSelector.roomLabels)}'
                         max-total-guests="${this.bookingAreaSettings.roomSelector.maxTotalGuests}"
                         adults-number="${this.bookingAreaSettings.roomSelector.adultsNumber}"
                         enable-children="${this.bookingAreaSettings.roomSelector.enableChildren}"
