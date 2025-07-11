@@ -298,7 +298,7 @@ class IrnmnRoomCard extends HTMLElement {
                 ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
                 ${
                     moreButton
-                        ? `<li><button aria-label="${this.labels.more || 'More info'}" class="btn btn-secondary expand-room-modal">
+                        ? `<li><button aria-label="More information about ${this.title || 'this room'}" class="btn btn-secondary expand-room-modal">
                     ${this.labels.more || 'More info'}</button>
                 </li>`
                         : ''
