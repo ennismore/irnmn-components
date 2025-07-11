@@ -281,7 +281,7 @@ class IrnmnRoomCard extends HTMLElement {
     renderPricing() {
         return `
         <div class="room-card__pricing">
-            <button class="room-card__pricing-cta btn --book-button">${this.labels.book || 'BOOK'}</button>
+            <button class="room-card__pricing-cta btn --book-button" aria-label="Book ${this.title || 'this room'}">${this.labels.book || 'BOOK'}</button>
         </div>
         `;
     }
