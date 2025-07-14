@@ -238,9 +238,9 @@ class IRNMNLocation extends HTMLElement {
 
         const options = this.locations
             ? this.locations.map((location) => ({
-                value: location.hotelCode, // Used as the unique identifier
-                name: location.hotelName, // Used as the display text
-            }))
+                  value: location.hotelCode, // Used as the unique identifier
+                  name: location.hotelName, // Used as the display text
+              }))
             : null;
 
         // Get the hidden input value or default value

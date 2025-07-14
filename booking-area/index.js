@@ -1,6 +1,6 @@
 import { CLASS_NAME_PREFIX } from './utils/constants.js';
 
-class IRNMNBookingArea extends HTMLElement {
+export default class IRNMNBookingArea extends HTMLElement {
     constructor() {
         super();
     }
@@ -20,55 +20,54 @@ class IRNMNBookingArea extends HTMLElement {
         this.bookingAreaSettings = Object.preventExtensions({
             bookingArea: {
                 type: 'bar',
-                formId: "",
+                formId: '',
                 classNames: [`${CLASS_NAME_PREFIX}__form`],
-                formAction: ""
+                formAction: '',
             },
             location: {
                 classNames: [`${CLASS_NAME_PREFIX}__location`],
-                label: "Location",
-                placeholder: "Please Select",
-                name: "hotelCode",
-                errorMessage: "",
-                default: "",
-                locationsEndpoint: ""
+                label: 'Location',
+                placeholder: 'Please Select',
+                name: 'hotelCode',
+                errorMessage: '',
+                default: '',
+                locationsEndpoint: '',
             },
             calendar: {
                 classNames: [`${CLASS_NAME_PREFIX}__calendar`],
-                id: "",
-                label: "Check in / Check out",
+                id: '',
+                label: 'Check in / Check out',
                 placeholder: 'Add Dates',
-                name: "checkInOutDates",
+                name: 'checkInOutDates',
                 formatDateValue: 'YYYY-MM-DD',
-                openingDate: "",
-                openDateMessage: "",
-                errorMessage: "",
+                openingDate: '',
+                openDateMessage: '',
+                errorMessage: '',
                 inputName: 'date-selection',
-                checkInDateName: "checkin",
-                checkOutDateName: "checkout",
-                weekDays: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-                dateLocale: "en-gb"
+                checkInDateName: 'checkin',
+                checkOutDateName: 'checkout',
+                weekDays: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+                dateLocale: 'en-gb',
             },
             guestSummary: {
                 classNames: [`${CLASS_NAME_PREFIX}__guests-summary`],
-                label: "Guests",
+                label: 'Guests',
                 guestLabels: {
-                    adults: "Guests",
-                    room: "Room",
-                    rooms: "Rooms"
+                    adults: 'Guests',
+                    room: 'Room',
+                    rooms: 'Rooms',
                 },
-                storageKey: "irnmn-rooms",
+                storageKey: 'irnmn-rooms',
                 sumGuests: true,
                 enableChildren: true,
                 ariaLabels: {
-                    edit: "Open the booking panel to edit Rooms and Guests"
+                    edit: 'Open the booking panel to edit Rooms and Guests',
                 },
-                editLabel: "edit"
-
+                editLabel: 'edit',
             },
             roomSelector: {
                 classNames: [`${CLASS_NAME_PREFIX}__room-selector`],
-                id: "",
+                id: '',
                 roomsNumber: 4,
                 maxTotalGuests: 6,
                 adultsNumber: 4,
@@ -77,41 +76,40 @@ class IRNMNBookingArea extends HTMLElement {
                 childrenNumber: 3,
                 maxChildAge: 17,
                 roomLabels: {
-                    room: "Room",
-                    rooms: "Rooms",
-                    guests: "Guests",
-                    adults: "Adults",
-                    children: "Children",
-                    childAge: "Child age",
-                    selectRoom: "Number of rooms",
-                    remove: "remove",
-                    ariaLabelMoreAdults: "Add more adults",
-                    ariaLabelLessAdults: "Remove an adult",
-                    ariaLabelMoreChildren: "Add more children",
-                    ariaLabelLessChildren: "Remove a child"
-                }
+                    room: 'Room',
+                    rooms: 'Rooms',
+                    guests: 'Guests',
+                    adults: 'Adults',
+                    children: 'Children',
+                    childAge: 'Child age',
+                    selectRoom: 'Number of rooms',
+                    remove: 'remove',
+                    ariaLabelMoreAdults: 'Add more adults',
+                    ariaLabelLessAdults: 'Remove an adult',
+                    ariaLabelMoreChildren: 'Add more children',
+                    ariaLabelLessChildren: 'Remove a child',
+                },
             },
             promoCode: {
                 classNames: [`${CLASS_NAME_PREFIX}__promo-code`],
-                label: "Code",
-                placeholder: "I have a code",
-                name: "rateCode",
-                value: "",
-                dataId: "promo-code",
-                show: true
-
+                label: 'Code',
+                placeholder: 'I have a code',
+                name: 'rateCode',
+                value: '',
+                dataId: 'promo-code',
+                show: true,
             },
             bookingTracking: {
-                startDateName: "checkin",
-                endDateName: "checkout",
-                promoCodeName: "rateCode",
-                placement: "",
-                needValidation: true
+                startDateName: 'checkin',
+                endDateName: 'checkout',
+                promoCodeName: 'rateCode',
+                placement: '',
+                needValidation: true,
             },
             submit: {
                 classNames: [`${CLASS_NAME_PREFIX}__submit`],
-                label: "Check Availability"
-            }
+                label: 'Check Availability',
+            },
         });
 
         this.parseBookingAreaSettings();
@@ -127,21 +125,21 @@ class IRNMNBookingArea extends HTMLElement {
      * Cleans up event listeners to prevent memory leaks.
      */
     disconnectedCallback() {
-        // Remove the custom sync event listener to avoid memory leaks
-        document.removeEventListener(
-            'locationSync',
-            this.syncLocation.bind(this),
-        );
     }
 
     parseBookingAreaSettings() {
         const settings = this.getAttribute('settings');
+        if(!settings) return;
+
         const parsedSettings = JSON.parse(settings);
-/*
+        /*
         console.log("Booking Settings Before:", this.bookingAreaSettings);
         console.log("Settings Attribute:", JSON.parse(settings));
         console.log("Booking Settings AFTER:", this.deepMergeObjects(this.bookingAreaSettings, parsedSettings)) */
-        this.bookingAreaSettings = this.deepMergeObjects(this.bookingAreaSettings, parsedSettings)
+        this.bookingAreaSettings = this.deepMergeObjects(
+            this.bookingAreaSettings,
+            parsedSettings,
+        );
     }
 
     /**
@@ -155,7 +153,10 @@ class IRNMNBookingArea extends HTMLElement {
     deepMergeObjects(obj1, obj2) {
         for (let key in obj2) {
             if (obj2.hasOwnProperty(key)) {
-                if (obj2[key] instanceof Object && obj1[key] instanceof Object) {
+                if (
+                    obj2[key] instanceof Object &&
+                    obj1[key] instanceof Object
+                ) {
                     obj1[key] = this.deepMergeObjects(obj1[key], obj2[key]);
                 } else {
                     obj1[key] = obj2[key];
@@ -190,16 +191,17 @@ class IRNMNBookingArea extends HTMLElement {
      * @returns
      */
     classNamesToString(classNames) {
-        if(Array.isArray(classNames)) return classNames.join(" ");
+        if (Array.isArray(classNames)) return classNames.join(' ');
 
         return '';
     }
 
     render() {
         // Adding a base class for the irnmn-booking-area element based on the type
-        const BOOKING_AREA_CLASS = this.bookingAreaSettings.bookingArea.type == 'bar'
-            ? `${CLASS_NAME_PREFIX}--booking-area__bar`
-            : `${CLASS_NAME_PREFIX}--booking-area__panel`;
+        const BOOKING_AREA_CLASS =
+            this.bookingAreaSettings.bookingArea.type == 'bar'
+                ? `${CLASS_NAME_PREFIX}--booking-area__bar`
+                : `${CLASS_NAME_PREFIX}--booking-area__panel`;
         this.classList.add(BOOKING_AREA_CLASS);
 
         this.innerHTML = `
@@ -247,8 +249,9 @@ class IRNMNBookingArea extends HTMLElement {
                 </irnmn-calendar>
 
 
-                ${ this.bookingAreaSettings.bookingArea.type == 'bar' ?
-                    `
+                ${
+                    this.bookingAreaSettings.bookingArea.type == 'bar'
+                        ? `
                     <div class="${CLASS_NAME_PREFIX}__input ${this.classNamesToString(this.bookingAreaSettings.guestSummary.classNames)}">
                         <label>${this.bookingAreaSettings.guestSummary.label}</label>
                         <irnmn-guests-summary
@@ -262,11 +265,13 @@ class IRNMNBookingArea extends HTMLElement {
                             <span>${this.bookingAreaSettings.guestSummary.editLabel}</span>
                         </a>
                     </div>
-                    ` : ''
+                    `
+                        : ''
                 }
 
-                ${ this.bookingAreaSettings.bookingArea.type == 'panel' ?
-                    `
+                ${
+                    this.bookingAreaSettings.bookingArea.type == 'panel'
+                        ? `
                     <irnmn-rooms-selector
                         class="${CLASS_NAME_PREFIX}__input ${this.classNamesToString(this.bookingAreaSettings.roomSelector.classNames)}"
                         rooms-number="${this.bookingAreaSettings.roomSelector.roomsNumber}"
@@ -278,11 +283,13 @@ class IRNMNBookingArea extends HTMLElement {
                         children-number="${this.bookingAreaSettings.roomSelector.enableChildrenAges}"
                         max-child-age="${this.bookingAreaSettings.roomSelector.maxChildAge}"
                     </irnmn-rooms-selector>
-                    ` : ''
+                    `
+                        : ''
                 }
 
-                ${ this.showPromoCode ?
-                    `
+                ${
+                    this.showPromoCode
+                        ? `
                     <irnmn-text
                         class="${CLASS_NAME_PREFIX}__input ${this.classNamesToString(this.bookingAreaSettings.promoCode.classNames)}"
                         label="${this.bookingAreaSettings.promoCode.label}"
@@ -292,7 +299,7 @@ class IRNMNBookingArea extends HTMLElement {
                         data-id="${this.bookingAreaSettings.promoCode.dataId}"
                     ></irnmn-text>
                     `
-                    : ''
+                        : ''
                 }
 
                 <button class="${this.classNamesToString(this.bookingAreaSettings.submit.classNames)}" type="submit">
