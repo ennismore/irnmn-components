@@ -22,6 +22,28 @@ The only build script currently is just to run some linting and formatting. You 
 
 To test a component locally, you need to run a local dev server. A simple approach to this can be just run `npx http-server /path/to/project -o -p 9999` which creates a simple node server you can access the components.
 
+## Local Development - Method 1 
+Please use the following steps to install `irnmn-components` and `http-server` :
+
+1. Visit https://github.com/ennismore/irnmn-components and clone the repository anywhere in your local machine.
+2. Now install `http-server` globally via Homebrew: `brew install http-server` (Tested with v14.1.1)
+3. Navigate to your local directory `irnmn-components` and run: `http-server --cors`
+4. If the installation was correct the server will start and you'll get two available url's-ports. You can use the one that start with 127. Navigate to: `import 'http://127.0.0.1:8080/` to test.
+5. Now you have your web component server running you need to import the file you are working on to your project. Let's say you are working on a calendar task. Navigate to the your local server and go to calendar and then click to the index.js file. Your url should look like this: `'http://127.0.0.1:8080/calendar/index.js` Copy that url.
+6. Now you have copied the url you want to go to the project you are working on, for example: delano, hoxton etc. and find the main js file where all imports are located. This file should called index.js or main.js. Open the file and find web components and replace the following line:
+
+`import 'irnmn-components/calendar';` with `import 'http://127.0.0.1:8080/calendar/index.js';`
+
+I'm using calendar as an example but it can be any web component.
+
+7. That's it you are all set. Final step is to run npm start on your project and use console.log to your web component file to test if it's working correct.
+
+8. After you finish working and testing don't forget to replace your project's web component import as it was before: `import 'irnmn-components/calendar';` We don't want to commit an import with the local server url.
+
+9. This is it, after you finish testing you web component please read the Deployment documentation to make a release with your new changes and version. 
+
+
+## Local Development - Method 2 
 If the above method fails because of http VS https you can use `npm link` to link the irnmn-components repo on your local with the child theme you are working on.
 
 1. Go to your local directory of `irnmn-components` and run `npm link`
