@@ -26,7 +26,7 @@ To test a component locally, you need to run a local dev server. A simple approa
 Please use the following steps to install `irnmn-components` and `http-server` :
 
 1. Visit https://github.com/ennismore/irnmn-components and clone the repository anywhere in your local machine.
-2. Now use `http-server` via `npx` to install local server for `irnmn-components`. For more go to: https://www.npmjs.com/package/http-server 
+2. Now use `npx http-server` to install local server for `irnmn-components`. For more info visit: https://www.npmjs.com/package/http-server 
 3. Navigate to your local directory `irnmn-components` and run: `http-server --cors`
 4. If the installation was correct the server will start and you'll get two available url's-ports. You can use the one that start with 127. Navigate to: `import 'http://127.0.0.1:8080/` to test.
 5. Now you have your web component server running you need to import the file you are working on to your project. Let's say you are working on a calendar task. Navigate to the your local server and go to calendar and then click to the index.js file. Your url should look like this: `'http://127.0.0.1:8080/calendar/index.js` Copy that url.
