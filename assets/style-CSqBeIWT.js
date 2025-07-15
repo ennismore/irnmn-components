@@ -1,0 +1,101 @@
+var g=Object.defineProperty;var p=(d,s,e)=>s in d?g(d,s,{enumerable:!0,configurable:!0,writable:!0,value:e}):d[s]=e;var h=(d,s,e)=>p(d,typeof s!="symbol"?s+"":s,e);class v extends HTMLElement{static get observedAttributes(){return["title","description","badge-label","images","extras","room-amenities","hotel-amenities","link-360"]}constructor(){super(),this.uniqueId=`card-${Math.random().toString(36).substr(2,9)}`}get roomCode(){return this.getAttribute("room-code")||""}get title(){return this.getAttribute("title")||""}get description(){return this.getAttribute("description")||""}get images(){try{return JSON.parse(this.getAttribute("images")||"[]")}catch{return[]}}get badgeLabel(){return this.getAttribute("badge-label")||""}get extras(){try{return JSON.parse(this.getAttribute("extras")||"[]")}catch{return[]}}get roomAmenities(){try{return JSON.parse(this.getAttribute("room-amenities")||"[]")}catch{return[]}}get hotelAmenities(){try{return JSON.parse(this.getAttribute("hotel-amenities")||"[]")}catch{return[]}}get link360(){return this.getAttribute("link-360")||""}get labels(){try{return JSON.parse(this.getAttribute("labels")||"{}")}catch{return{}}}connectedCallback(){this.render(),this.addListeners()}attributeChangedCallback(s,e,t){e!==t&&(this.render(),this.addListeners())}addListeners(){const s=this.querySelectorAll(".expand-room-modal"),e=this.querySelectorAll("irnmn-slider figure"),t=this.querySelector(".room-modal");if(!s.length&&!e.length||!t)return;function i(n,a){let l=!1,u=0,m=0,c=10;n.addEventListener("pointerdown",o=>{l=!1,u=o.clientX,m=o.clientY}),n.addEventListener("pointermove",o=>{(Math.abs(o.clientX-u)>c||Math.abs(o.clientY-m)>c)&&(l=!0)}),n.addEventListener("pointerup",o=>{l||a(o)}),n.addEventListener("dragstart",()=>{l=!0})}function r(n){n.open(),n.querySelectorAll(".--book-button").forEach(l=>{l.removeEventListener("click",l._modalCloseHandler),l._modalCloseHandler=()=>{n.close()},l.addEventListener("click",l._modalCloseHandler)})}s.forEach(n=>{n.addEventListener("click",()=>r(t))}),e.forEach(n=>{i(n,()=>r(t))})}renderSlider(){return`
+            <irnmn-slider class="room-card__slider" selectors='{
+                "SWIPE_CONTAINER": ".room-card__slider-container",
+                "SLIDES": ".room-card__slider-slide",
+                "NAVIGATION": ".room-card__slider-navigation",
+                "PREV_BUTTON": ".room-card__slider-prev",
+                "NEXT_BUTTON": ".room-card__slider-next"
+            }'>
+                <div class="room-card__slider-container">
+                    ${this.images.map(s=>typeof s=="string"?`<div class="room-card__slider-slide"><figure><img src="${s}" alt="Room image"></figure></div>`:s&&typeof s=="object"?`<div class="room-card__slider-slide"><figure><img src="${s.url}" alt="${s.alt||"Room image"}"></figure></div>`:"").join("")}
+                </div>
+                <div class="room-card__slider-navigation">
+                    <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide||"See previous image"}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="34" viewBox="0 0 18 34" fill="none">
+                            <path d="M16.0391 32L1.03906 17L16.0391 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <button class="room-card__slider-next" aria-label="${this.labels.nextSlide||"See next image"}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none">
+                            <path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="room-card__slider-indicators">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                        <li></li>
+                    </ul>
+                </div>
+                ${this.link360?`
+                    <a href="${this.link360}" target="_blank" class="room-card__slider-360">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
+                        <path d="M10.9016 6.58242V2.85742C10.9016 2.45742 10.6766 2.10742 10.3266 1.95742L7.42656 0.607422C7.15156 0.482422 6.85156 0.482422 6.57656 0.607422L3.67656 1.95742C3.32656 2.13242 3.10156 2.48242 3.10156 2.85742V6.58242C3.10156 6.93242 3.30156 7.28242 3.60156 7.45742L6.50156 9.13242C6.65156 9.23242 6.82656 9.25742 7.00156 9.25742C7.17656 9.25742 7.35156 9.20742 7.50156 9.13242L10.4016 7.45742C10.7266 7.28242 10.9016 6.95742 10.9016 6.58242ZM6.80156 1.05742C6.85156 1.03242 6.92656 1.00742 7.00156 1.00742C7.07656 1.00742 7.15156 1.03242 7.20156 1.05742L10.0766 2.38242L7.00156 3.80742L3.92656 2.38242L6.80156 1.05742ZM3.85156 7.03242C3.70156 6.93242 3.60156 6.78242 3.60156 6.60742V2.85742C3.60156 2.83242 3.60156 2.80742 3.60156 2.78242L6.75156 4.23242V8.68242L3.85156 7.03242ZM10.1516 7.03242L7.25156 8.70742V4.23242L10.4016 2.78242C10.4016 2.80742 10.4016 2.83242 10.4016 2.85742V6.58242C10.4016 6.75742 10.3266 6.93242 10.1516 7.03242Z" fill="white" style="fill:white;fill-opacity:1;"/>
+                        <path d="M5.72578 14.3074C5.85078 14.3074 5.97578 14.2074 5.97578 14.0574C5.97578 13.9074 5.87578 13.8074 5.72578 13.8074C2.67578 13.6574 0.800781 12.8574 0.800781 12.1574C0.800781 11.7074 1.77578 11.0324 3.92578 10.7074C4.05078 10.6824 4.15078 10.5574 4.12578 10.4324C4.10078 10.3074 3.97578 10.2074 3.85078 10.2324C1.62578 10.5824 0.300781 11.3074 0.300781 12.1824C0.300781 13.4574 3.10078 14.1824 5.72578 14.3074Z" fill="white" style="fill:white;fill-opacity:1;"/>
+                        <path d="M10.6017 10.2822C10.4767 10.2572 10.3267 10.3572 10.3017 10.4822C10.2767 10.6072 10.3767 10.7572 10.5017 10.7822C12.3767 11.1322 13.2017 11.7322 13.2017 12.1572C13.2017 12.7322 11.7767 13.4822 9.12666 13.7322C9.00166 13.7572 8.87666 13.8572 8.90166 14.0072C8.90166 14.1322 9.02666 14.2322 9.15166 14.2322H9.17666C11.2767 14.0322 13.7017 13.3572 13.7017 12.1572C13.7017 11.3572 12.5767 10.6822 10.6017 10.2822Z" fill="white" style="fill:white;fill-opacity:1;"/>
+                        <path d="M5.60078 12.6072C5.50078 12.5322 5.35078 12.5322 5.25078 12.6322C5.15078 12.7322 5.17578 12.8822 5.27578 12.9822L6.40078 13.9572L5.25078 15.1322C5.15078 15.2322 5.15078 15.3822 5.25078 15.4822C5.30078 15.5322 5.37578 15.5572 5.42578 15.5572C5.47578 15.5572 5.55078 15.5322 5.60078 15.4822L6.95078 14.1322C7.00078 14.0822 7.02578 14.0072 7.02578 13.9572C7.02578 13.9072 7.00078 13.8322 6.95078 13.7822L5.60078 12.6072Z" fill="white" style="fill:white;fill-opacity:1;"/>
+                        </svg>
+                        ${this.labels.view360||"360 tour"}
+                    </a>
+                `:""}
+                ${this.badgeLabel?`<span class="room-card__badge">${this.badgeLabel}</span>`:""}
+            </irnmn-slider> `}renderPricing(){return`
+        <div class="room-card__pricing">
+            <button class="room-card__pricing-cta btn --book-button">${this.labels.book||"BOOK"}</button>
+        </div>
+        `}renderExtras(s=!0){return`
+            <div class="room-card__extras">
+                <p class="room-card__extras__list" role="list">
+                    ${this.extras.map(e=>`<span role="listitem">${e}</span>`).join("")}
+                </p>
+                ${s?`<button aria-label="${this.labels.more||"More info"}" class="btn btn-secondary expand-room-modal">${this.labels.more||"More info"}</button>`:""}
+            </div>
+        `}renderAmenities(s,e,t){return!Array.isArray(s)||s.length===0?"":`
+            <div class="room-card__amenities ${t}">
+                <h4 class="room-card__amenities-title">${e}</h4>
+                <ul class="room-card__amenities-list">
+                    ${s.map(i=>`<li class="amenity">${i}</li>`).join("")}
+                </ul>
+            </div>
+        `}render(){const s=this.renderSlider(),e=this.renderPricing(),t=this.renderAmenities(this.roomAmenities,this.labels.roomAmenities||"Room Amenities","--room-amenities"),i=this.renderAmenities(this.hotelAmenities,this.labels.hotelAmenities||"Hotel Amenities","--hotel-amenities");this.innerHTML=`
+            <div class="room-card">
+                ${s}
+                <div class="room-card__content">
+                    <h2 class="room-card__title">${this.title}</h2>
+                    ${this.renderExtras(!0)}
+                    ${e}
+                    <p class="room-card__description">${this.description}</p>
+                </div>
+            </div>
+
+            <irnmn-modal class="room-modal" modal-content="template" modal-close="${this.labels.close||"Close"}" labelledby="room-modal-title__${this.uniqueId}">
+                <template>
+                    <div class="room-modal__inner">
+                        ${s}
+                        <div class="room-card__content">
+                            <div class="room-modal__header">
+                                <h2 class="room-card__title" id="room-modal-title__${this.uniqueId}">${this.title}</h2>
+                                ${e}
+                            </div>
+                            ${this.renderExtras(!1)}
+                            <p class="room-card__description">${this.description}</p>
+                            ${e}
+                            ${t}
+                            ${i}
+                        </div>
+                    </div>
+                </template>
+            </irnmn-modal>
+        `}}customElements.get("irnmn-room-card")||customElements.define("irnmn-room-card",v);class b extends HTMLElement{constructor(){super();h(this,"CLASSNAMES",[]);h(this,"eventListeners",[]);h(this,"slides",[]);h(this,"slideOffsets",[]);h(this,"currentSlide",1);this.CLASSNAMES=this.selectors}get selectors(){let e=this.getAttribute("selectors"),t=[];try{e=JSON.parse(e)}catch(i){console.error("Error parsing selectors:",i)}for(let i in e)t[i.toUpperCase()]=e[i];return t}get transition(){return this.getAttribute("transition")||"0.3s ease"}connectedCallback(){new IntersectionObserver(([t],i)=>{t.isIntersecting&&(this.initSlider(),i.disconnect())},{root:null,threshold:0}).observe(this)}disconnectedCallback(){this.eventListeners.forEach(({element:e,event:t,handler:i})=>{e.removeEventListener(t,i)}),this.eventListeners=[]}initSlider(){const e=this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);if(!e){console.error("Swipe container not found");return}this.setupResizeListener(e),this.slides=Array.from(e.querySelectorAll(this.CLASSNAMES.SLIDES)),e.setAttribute("role","region"),e.setAttribute("aria-label","Slideshow with multiple slides");const t=this.slides.length;if(t===1){this.renderSingleSlide(this.slides[0]);return}this.dataset.sliderInitialized!=="true"&&(this.dataset.sliderInitialized="true",this.cloneSlides(e),this.calculateSlideOffsets(e),this.updateTotalSlides(t),this.initializePosition(e),this.addEventListeners(e,t))}setupResizeListener(e){let t;const i=()=>{clearTimeout(t),t=setTimeout(()=>{e&&(this.calculateSlideOffsets(e),this.centerSlide(e))},150)};window.addEventListener("resize",i),this.eventListeners.push({element:window,event:"resize",handler:i})}setupResizeListener(e){const t=()=>{e&&(this.calculateSlideOffsets(e),this.centerSlide(e))};window.addEventListener("resize",t),this.eventListeners.push({element:window,event:"resize",handler:t})}renderSingleSlide(e){var t,i,r;e.style.cssText="display: block; margin: 0 auto;",(t=this.querySelector(this.CLASSNAMES.PREV_BUTTON))==null||t.remove(),(i=this.querySelector(this.CLASSNAMES.NEXT_BUTTON))==null||i.remove(),(r=this.querySelector(this.CLASSNAMES.CONTROLS))==null||r.remove()}cloneSlides(e){const t=this.slides[0].cloneNode(!0),i=this.slides[this.slides.length-1].cloneNode(!0);e.appendChild(t),e.insertBefore(i,this.slides[0]),this.slides=Array.from(e.querySelectorAll(this.CLASSNAMES.SLIDES))}calculateSlideOffsets(){this.slideOffsets=[0];let e=0;this.slides.forEach(t=>{e+=t.offsetWidth,this.slideOffsets.push(e)})}updateTotalSlides(e){const t=this.querySelector(this.CLASSNAMES.TOTAL_SLIDES);t&&(t.textContent=e)}initializePosition(e){this.currentSlide=1,e.style.transition="none",this.centerSlide(e)}addEventListeners(e,t){const i=this.slides.length,r=()=>this.updateSlides(e,i,t),n=()=>this.resetPosition(e,i,t),a=()=>this.moveToNextSlide(r,i),l=()=>this.moveToPrevSlide(r,i);this.setupDragAndDrop(e,a,l,r),this.addListener(this.querySelector(this.CLASSNAMES.PREV_BUTTON),"click",l),this.addListener(this.querySelector(this.CLASSNAMES.NEXT_BUTTON),"click",a),this.addListener(e,"transitionend",n)}addListener(e,t,i){e&&(e.addEventListener(t,i),this.eventListeners.push({element:e,event:t,handler:i}))}centerSlide(e){const t=this.slideOffsets[this.currentSlide],i=this.slides[this.currentSlide].offsetWidth;e.style.transform=`translateX(calc(-${t}px + 50% - ${i/2}px))`}updateSlides(e,t,i){e.style.transition=this.transition,this.centerSlide(e);let r;switch(this.currentSlide){case 0:r=i;break;case t-1:r=1;break;default:r=this.currentSlide;break}const n=this.querySelector(this.CLASSNAMES.CURRENT_SLIDE);n&&(n.textContent=r);const a=new CustomEvent("slideChange",{detail:{currentSlideIndex:this.currentSlide,currentSlideDisplayedIndex:r,currentSlideElement:this.slides[this.currentSlide],totalSlides:i,clonedSlidesCount:t}});e.dispatchEvent(a)}resetPosition(e,t,i){this.currentSlide===0?this.currentSlide=i:this.currentSlide===t-1&&(this.currentSlide=1),e.style.transition="none",this.centerSlide(e),this.classList.remove("transitioning-prev"),this.classList.remove("transitioning-next")}moveToNextSlide(e,t){this.currentSlide=(this.currentSlide+1)%t,e(),this.classList.add("transitioning-next")}moveToPrevSlide(e,t){this.currentSlide=(this.currentSlide-1+t)%t,e(),this.classList.add("transitioning-prev")}setupDragAndDrop(e,t,i,r){let n=0,a=0,l=!1;const u=o=>{n=o.touches?o.touches[0].clientX:o.clientX,l=!0,e.style.transition="none"},m=o=>{if(!l)return;a=(o.touches?o.touches[0].clientX:o.clientX)-n;const S=this.slideOffsets[this.currentSlide],f=this.slides[this.currentSlide].offsetWidth;e.style.transform=`translateX(calc(-${S}px + 50% - ${f/2}px + ${a}px))`},c=()=>{l&&(e.style.transition=this.transition,a>50?i():a<-50?t():r(),a=0,l=!1)};this.addListener(e,"touchstart",u),this.addListener(e,"touchmove",m),this.addListener(e,"touchend",c),this.addListener(e,"mousedown",u),this.addListener(e,"mousemove",m),this.addListener(e,"mouseup",c),this.addListener(e,"mouseleave",c)}refresh(){const e=this.querySelector(this.CLASSNAMES.SWIPE_CONTAINER);if(!e){console.error("Swipe container not found");return}this.calculateSlideOffsets(e),this.centerSlide(e)}}customElements.get("irnmn-slider")||customElements.define("irnmn-slider",b);class L extends HTMLElement{constructor(){super(),this.lastFocusedElement=null,this.content=null,this.styles=null}get sessionKey(){return this.getAttribute("session-key")||null}get initShow(){return this.hasAttribute("init-show")&&this.getAttribute("init-show")==="true"}get closeLabel(){return this.getAttribute("modal-close")||"Close"}get modalEndpoint(){return this.getAttribute("modal-endpoint")}get modalContentType(){return this.getAttribute("modal-content")||"endpoint"}get labelledby(){return this.getAttribute("labelledby")||""}async connectedCallback(){await this.renderPopup()}static get observedAttributes(){return["modal-endpoint","modal-content"]}async attributeChangedCallback(s,e,t){e!==t&&await this.renderPopup()}async renderPopup(){if(!(this.sessionKey&&sessionStorage.getItem(this.sessionKey))&&(this.content=await this.getContent(),this.render(),this.attachEventListeners(),await this.loadAssets(),this.dispatchEvent(new CustomEvent("irnmn-modal-loaded",{detail:{element:this}})),!!this.initShow)){if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",()=>this.showModal());return}await this.showModal()}}async getContent(){return this.modalContentType==="template"?this.getTemplateContent():await this.getEndpointContent()}getTemplateContent(){const s=this.querySelector("template");return s?s.innerHTML:(console.warn("No <template> found inside <irnmn-modal>."),"")}async getEndpointContent(){var s,e;if(!this.modalEndpoint)return console.warn("Modal endpoint is not set. Please provide a valid endpoint."),"";try{const t=await fetch(this.modalEndpoint);if(!t.ok)throw new Error(`HTTP error! status: ${t.status}`);const i=await t.json();return this.styles=((s=i.blockAssets)==null?void 0:s.styles)||[],((e=i.content)==null?void 0:e.rendered)||""}catch(t){return console.error("Error fetching modal content:",t),""}}render(){this.innerHTML=`
+            <dialog class="irnmn-modal" role="dialog" aria-modal="true" aria-hidden="true" tabindex="-1" aria-labelledby="${this.labelledby}">
+                <div class="irnmn-modal__container">
+                    <button class="irnmn-modal__close" aria-label="${this.closeLabel}">${this.closeLabel}</button>
+                    ${this.content}
+                </div>
+            </dialog>
+        `}async loadAssets(){this.styles&&this.styles.length&&this.styles.forEach(s=>{if(!document.querySelector(`link[href="${s}"]`)){const e=document.createElement("link");e.rel="stylesheet",e.href=s,document.head.appendChild(e)}})}attachEventListeners(){const s=this.querySelector(".irnmn-modal"),e=this.querySelector(".irnmn-modal__close");e&&e.addEventListener("click",t=>{t.preventDefault(),this.closeModal()}),s.addEventListener("keydown",t=>{t.key==="Escape"?(t.preventDefault(),this.closeModal()):t.key==="Tab"&&this.trapFocus(t,s)}),s.addEventListener("click",t=>{t.target===s&&this.closeModal()}),this.querySelectorAll("[data-close]").forEach(t=>{t.addEventListener("click",i=>{i.preventDefault(),this.closeModal()})})}async showModal(){const s=this.querySelector(".irnmn-modal");if(!s)return;this.lastFocusedElement=document.activeElement;const e=()=>{s.showModal(),s.classList.add("irnmn-modal--visible"),s.setAttribute("aria-hidden","false"),s.focus(),document.body.classList.add("irnmn-modal-open")};document.startViewTransition?await document.startViewTransition(()=>{e()}):e(),this.dispatchEvent(new CustomEvent("irnmn-modal-opened",{detail:{element:this}}))}closeModal(){const s=this.querySelector(".irnmn-modal");if(!s)return;const e=()=>{s.close(),s.classList.remove("irnmn-modal--visible"),s.setAttribute("aria-hidden","true"),this.sessionKey&&sessionStorage.setItem(this.sessionKey,"shown"),this.lastFocusedElement&&this.lastFocusedElement.focus(),document.body.classList.remove("irnmn-modal-open")};document.startViewTransition?document.startViewTransition(()=>{e()}):e(),this.dispatchEvent(new CustomEvent("irnmn-modal-closed",{detail:{element:this}}))}trapFocus(s,e){if(s.key!=="Tab")return;const t=e.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])');if(t.length===0)return;const i=t[0],r=t[t.length-1];s.shiftKey&&document.activeElement===i?(s.preventDefault(),r.focus()):!s.shiftKey&&document.activeElement===r&&(s.preventDefault(),i.focus())}open(){return this.showModal()}close(){return this.closeModal()}}customElements.get("irnmn-modal")||customElements.define("irnmn-modal",L);
