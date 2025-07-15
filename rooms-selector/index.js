@@ -212,7 +212,7 @@ class IRNMNRoomsSelector extends HTMLElement {
             <div class="${CLASS_NAMES.roomsSelector}">
                 <label for="room-count">${this.labels.selectRoom}</label>
                 <div class="${CLASS_NAMES.roomCountSelect}-wrapper">
-                    <select class="${CLASS_NAMES.roomCountSelect}" name="rooms-total">
+                    <select id="room-count" class="${CLASS_NAMES.roomCountSelect}" name="rooms-total">
                         ${this.generateRoomOptions()}
                     </select>
                 </div>
