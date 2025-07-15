@@ -343,24 +343,41 @@
     display: none;
 }
 .room-card__extras {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
-    list-style: none;
     color: var(--room-card-extras-color);
     padding: var(--room-card-extras-padding);
     margin:0;
+    display: block;
 }
-.room-card__extras > *:not(:last-child)::after {
+.room-card__extras__list {
+    line-height: 1.6;
+    padding: 0;
+    margin: 0;
+}
+/* Clamp extras list to one line only in room card (not modal) */
+.room-card .room-card__extras__list {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
+.room-card__extras__list span {
+    display: inline;
+    margin-right: var(--space-2);
+    padding: var(--space-1) 0;
+    vertical-align: middle;
+}
+.room-card__extras__list span:not(:last-child)::after {
     content: "";
     display: inline-block;
     width: 1px;
-    height: 100%;
+    height: 1rem;
     background: var(--room-card-divider-color);
     margin-left: var(--space-2);
     vertical-align: middle;
 }
-.room-card__extras li button {
+.btn.expand-room-modal {
+    margin-top: var(--space-1);
+    display: inline-block;
     background: none;
     border: none;
     color: inherit;
@@ -370,8 +387,8 @@
     padding: var(--space-1) calc( var(--space-2) + .7rem) var(--space-1) var(--space-1);
     border-radius: var(--room-card-extras-button-radius);
 }
-.room-card__extras li button::before,
-.room-card__extras li button::after {
+.btn.expand-room-modal::before,
+.btn.expand-room-modal::after {
     content: "";
     position: absolute;
     right: var(--space-1);
@@ -382,10 +399,10 @@
     border-radius: var(--space-1);
     pointer-events: none;
 }
-.room-card__extras li button::after {
+.btn.expand-room-modal::after {
     transform: rotate(90deg);
 }
-.room-card__extras li button:hover{
+.btn.expand-room-modal:hover{
     color: var(--room-card-extras-hover-color);
     background-color: var(--room-card-extras-hover-bg);
 }
