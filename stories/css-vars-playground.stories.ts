@@ -6,6 +6,7 @@ import '../slider/index.js';
 import '../popup/index.js';
 import '../room-card/style.css';
 import rawCss from '../room-card/style.css?raw';
+import allBrandsFonts from './fonts/all-brands-fonts.css?url';
 
 // ---- Parse CSS and prepare variable config ----
 const rawVarData: Record<string, any> = {}; // Hold parsed data before building final config
@@ -90,7 +91,7 @@ for (const varName of varNames) {
     unit = '%';
   }
 
-  const readableLabel = varName.replace('--', '').replace(/-/g, ' ') + (unit ? ` (${unit})` : '');
+  const readableLabel = varName.replace('--', '').replace('room-card', '').replace(/-/g, ' ') + (unit ? ` (${unit})` : '');
 
   // Filtered list of compatible references (same control + unit)
   const compatibleRefs = varNames.filter((v) => {
@@ -161,18 +162,21 @@ const Template = (args: Record<string, any>) => {
       .map(([key, value]) => `${key}: ${value};`)
       .join('\n');
 
-    // Function to open the modal (must be outside html template)
-    setTimeout(() => {
-      const btn = document.getElementById('show-css-btn');
-      const dlg = document.getElementById('css-modal') as HTMLDialogElement;
-      const pre = document.getElementById('css-preview');
 
-      if (btn && dlg && pre) {
-        btn.onclick = () => {
-          pre.textContent = cssText || '/* Aucun changement */';
-          dlg.showModal();
-        };
-      }
+    loadExternalFontStylesheet(allBrandsFonts);
+
+    setTimeout(() => {
+        // Set up the button to show CSS overrides
+        const btn = document.getElementById('show-css-btn');
+        const dlg = document.getElementById('css-modal') as HTMLDialogElement;
+        const pre = document.getElementById('css-preview');
+
+        if (btn && dlg && pre) {
+            btn.onclick = () => {
+                pre.textContent = cssText || '/* Aucun changement */';
+                dlg.showModal();
+            };
+        }
     }, 0);
 
     return html`
@@ -234,6 +238,13 @@ const getChangedVars = (args: Record<string, any>): Record<string, string> => {
     return changes;
   };
 
+  const loadExternalFontStylesheet = (href: string) => {
+    if (document.querySelector(`link[href="${href}"]`)) return; // Avoid duplicate loading
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    document.head.appendChild(link);
+  };
 
 // ---- Initial Values ----
 export const LiveEditor = Template.bind({});
