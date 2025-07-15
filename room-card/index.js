@@ -292,18 +292,18 @@ class IrnmnRoomCard extends HTMLElement {
      * @returns {string} HTML string for extras.
      * @private
      */
-    renderExtras(moreButton = false) {
+    renderExtras(moreButton = true) {
         return `
-            <ul class="room-card__extras">
-                ${this.extras.map((extra) => `<li>${extra}</li>`).join('')}
+            <div class="room-card__extras">
+                <p class="room-card__extras__list" role="list">
+                    ${this.extras.map((extra) => `<span role="listitem">${extra}</span>`).join('')}
+                </p>
                 ${
                     moreButton
-                        ? `<li><button aria-label="${this.labels.more || 'More info'}" class="btn btn-secondary expand-room-modal">
-                    ${this.labels.more || 'More info'}</button>
-                </li>`
+                        ? `<button aria-label="${this.labels.more || 'More info'}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
                         : ''
                 }
-            </ul>
+            </div>
         `;
     }
 
