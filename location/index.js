@@ -395,7 +395,7 @@ class IRNMNLocation extends HTMLElement {
      * @return {string} The updated URL string.
      */
     replaceLangIDInUrl(url) {
-        const langAttr = (document.documentElement.lang || 'en-US');
+        const langAttr = document.documentElement.lang || 'en-US';
 
         // Replace all encoded and unencoded {langID} (case-insensitive)
         // Handles both %7B/%7D (uppercase and lowercase) and curly braces
