@@ -355,6 +355,10 @@ class IRNMNLocation extends HTMLElement {
                 if (attrName === 'externalServiceUrl' && attributeValue) {
                     try {
                         const url = new URL(attributeValue);
+
+                        // Replace {langID} in the URL with the current HTML lang attribute
+                        this.replaceLangIDInUrl(url);
+
                         this.parentForm.action = url.href;
                     } catch (e) {
                         console.error('Invalid URL for externalServiceUrl', e);
@@ -383,6 +387,24 @@ class IRNMNLocation extends HTMLElement {
                     });
             },
         );
+    }
+
+    /**
+     * Replaces {langID} (handlebars, encoded or not) in a URL with the current HTML lang attribute (e.g., 'en').
+     * @param {URL} url - The URL object to modify.
+     * @return {string} The updated URL string.
+     */
+    replaceLangIDInUrl(url) {
+        const langAttr = document.documentElement.lang || 'en-US';
+
+        // Replace all encoded and unencoded {langID} (case-insensitive)
+        // Handles both %7B/%7D (uppercase and lowercase) and curly braces
+        url.href = url.href.replace(
+            /(\{langID\}|%7BlangID%7D|%7blangid%7d)/gi,
+            langAttr,
+        );
+
+        return url.href;
     }
 
     renderErrorMessage() {
