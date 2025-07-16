@@ -6,7 +6,7 @@ import '../slider/index.js';
 import '../popup/index.js';
 import '../room-card/style.css';
 import rawCss from '../room-card/style.css?raw';
-import allBrandsFonts from './fonts/all-brands-fonts.css?url';
+import allBrandsFonts from './custom/fonts/all-brands-fonts.css?url';
 
 // ---- Parse CSS and prepare variable config ----
 const rawVarData: Record<string, any> = {}; // Hold parsed data before building final config
@@ -116,7 +116,7 @@ for (const varName of varNames) {
 
   // Custom input
   cssVarsConfig[varName] = {
-    name: ` ↳ ${readableLabel}`,
+    name: ` 🟢 ${readableLabel}`,
     control,
     defaultValue: varData.isReference ? undefined : defaultValue,
     unit,
@@ -126,7 +126,7 @@ for (const varName of varNames) {
 
   // Reference dropdown
   cssVarsConfig[`__ref__${varName}`] = {
-    name: ` ↳ ${readableLabel} Ref`,
+    name: ` 🔗 ${readableLabel}`,
     control: { type: 'select' },
     options: control != 'text' ? compatibleRefs : varNames, // If text, show all vars
     defaultValue: varData.isReference ? varData.referenceTarget : compatibleRefs[0],
@@ -150,7 +150,7 @@ const applyCssVars = (args: Record<string, any>) => {
 
 // ---- Storybook Metadata ----
 export default {
-  title: 'Playground/Live Editor',
+  title: 'Playground/Room Card',
   argTypes: cssVarsConfig,
 };
 
@@ -186,8 +186,9 @@ const Template = (args: Record<string, any>) => {
           checkin-date-name="checkin"
           checkout-date-name="checkout"
           date-name="checkInOutDates"
+          badge-label="limited availability"
           date-locale="en"
-          title="DELUXE SEA VIEW"
+          title="QUEEN DELUXE ROOM"
           description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
           images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
           link-360="https://example.com/room-details"
