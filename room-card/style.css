@@ -19,9 +19,11 @@
     --room-card-slider-border-radius: 0px;
     --room-card-image-aspect-ratio: 16 / 9;
 
-    /* Badge */
+    /* => Badge */
     --room-card-badge-bg: yellow;
     --room-card-badge-color: #000;
+    --room-card-badge-padding-top-bottom: var(--space-1);
+    --room-card-badge-padding-left-right: var(--space-2);
 
     /* => Slider Controls & Indicators */
     --room-card-slider-control-background: rgba(0, 0, 0, 0);
@@ -42,7 +44,8 @@
     --room-card-slider-360-pos-top: var(--space-3);
     --room-card-slider-360-color: var(--room-card-slider-control-color);
     --room-card-slider-360-background: var(--room-card-slider-control-background);
-    --room-card-slider-360-padding: var(--space-1) var(--space-2);
+    --room-card-slider-360-padding-top-bottom: var(--space-1);
+    --room-card-slider-360-padding-left-right: var(--space-2);
     --room-card-slider-360-radius: var(--space-1);
     --room-card-slider-360-hover-color: var(--room-card-slider-control-hover-color);
     --room-card-slider-360-hover-background: var(--room-card-slider-360-background);
@@ -70,6 +73,10 @@
     --room-card-more-button-background: rgba(0, 0, 0, 0);
     --room-card-more-button-hover-background: rgba(0, 0, 0, 0.1);
     --room-card-more-button-radius: var(--space-1);
+    --room-card-more-button-padding-top-bottom: var(--space-1);
+    --room-card-more-button-padding-left-right: var(--space-2);
+    --room-card-more-button-border: none;
+    --room-card-more-button-hover-border: none;
 
     /* => Amenities */
     --room-card-amenities-color: var(--room-card-text-color);
@@ -85,6 +92,8 @@
     --room-modal-max-width: 870px;
     --room-modal-backdrop: rgba(0, 0, 0, 0.25);
     --room-modal-close-color: var(--room-card-text-color);
+    --room-modal-padding-top-bottom: var(--space-7);
+    --room-modal-padding-left-right: var(--space-6);
 
     /* => CTA */
     --room-card-cta-color: #fff;
@@ -94,6 +103,8 @@
     --room-card-cta-hover-background: var(--room-card-cta-color);
     --room-card-cta-hover-border: none;
     --room-card-cta-radius: var(--space-1);
+    --room-card-cta-padding-top-bottom: var(--space-2);
+    --room-card-cta-padding-left-right: var(--space-3);
 
     /* => Font sizes */
     --room-card-slider-360-font-size: 0.875rem;
@@ -319,7 +330,7 @@
     background-color: var(--room-card-slider-360-background);
     text-decoration: none;
     font-size: var(--room-card-slider-360-font-size);
-    padding: var(--room-card-slider-360-padding);
+    padding: var(--room-card-slider-360-padding-top-bottom) var(--room-card-slider-360-padding-left-right);
     border-radius: var(--room-card-slider-360-radius);
     backdrop-filter: blur(6px);
     display: inline-flex;
@@ -342,7 +353,7 @@
     left: var(--space-3);
     background-color: var(--room-card-badge-bg);
     color: var(--room-card-badge-color);
-    padding: var(--space-1) var(--space-2);
+    padding: var(--room-card-badge-padding-top-bottom) var(--room-card-badge-padding-left-right);
     font-size: 0.750rem;
     border-radius: var(--space-1);
     line-height: 1.2;
@@ -414,16 +425,17 @@
     font: inherit;
     cursor: pointer;
     position: relative;
-    padding: var(--space-1) calc( var(--space-2) + .7rem) var(--space-1) var(--space-1);
+    padding: var(--room-card-more-button-padding-top-bottom) calc( var(--room-card-more-button-padding-left-right) + .9rem) var(--room-card-more-button-padding-top-bottom) var(--room-card-more-button-padding-left-right);
     border-radius: var(--room-card-more-button-radius);
     color: var(--room-card-more-button-color);
     background-color: var(--room-card-more-button-background);
+    border: var(--room-card-more-button-border);
 }
 .btn.expand-room-modal::before,
 .btn.expand-room-modal::after {
     content: "";
     position: absolute;
-    right: var(--space-1);
+    right: var(--room-card-more-button-padding-left-right);
     bottom: 50%;
     width: .7rem;
     height: 1px;
@@ -437,6 +449,7 @@
 .btn.expand-room-modal:hover{
     color: var(--room-card-more-button-hover-color);
     background-color: var(--room-card-more-button-hover-background);
+    border: var(--room-card-more-button-hover-border);
 }
 /* Room card amenities */
 .room-card__amenities {
@@ -500,7 +513,7 @@
     color: var(--room-card-cta-color);
     background-color: var(--room-card-cta-background);
     text-decoration: none;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--room-card-cta-padding-top-bottom) var(--room-card-cta-padding-left-right);
     line-height: 140%;
     border-radius: var(--room-card-cta-radius);
     display: inline-block;
@@ -600,16 +613,16 @@ body.irnmn-modal-open {
     color: var(--room-card-text-color);
     width: var(--room-modal-width);
     max-width: var(--room-modal-max-width);
-    padding: var(--space-7) var(--space-6) 0 var(--space-6);
+    padding: var(--room-modal-padding-top-bottom) var(--room-modal-padding-left-right) 0 var(--room-modal-padding-left-right);
 
     @media (max-width: 959px) {
         padding: var(--space-7) 0 0 0;
     }
 }
 .room-modal .room-modal__inner{
-    padding: 0 0 var(--space-7) 0;
+    padding: 0 0 var(--room-modal-padding-top-bottom) 0;
     overflow: auto;
-    max-height: calc( 100vh - 2 * var(--space-6) - var(--space-7) );
+    max-height: calc( 100vh - 2 * var(--room-modal-padding-left-right) - var(--room-modal-padding-top-bottom) );
 
     @media (max-width: 959px) {
         padding: 0 0 var(--space-3) 0;
@@ -619,8 +632,8 @@ body.irnmn-modal-open {
 .room-modal .irnmn-modal__close {
     position: fixed;
     padding: 0;
-    top: var(--space-4);
-    right: var(--space-6);
+    top: calc( ( var(--room-modal-padding-top-bottom) - var(--space-3) ) / 2 );
+    right: var(--room-modal-padding-left-right);
     height: var(--space-3);
     width: var(--space-3);
     overflow: hidden;
@@ -669,7 +682,6 @@ body.irnmn-modal-open {
     }
 }
 .room-modal .room-card__pricing-cta {
-    padding: var(--space-2) var(--space-4);
     font-size: var(--room-modal-cta-font-size);
 }
 .room-modal .room-modal__header .room-card__pricing{
