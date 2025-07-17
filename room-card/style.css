@@ -122,6 +122,13 @@
     --room-card-title-font-size: 1.125rem;
     --room-modal-title-font-size: 1.5rem;
 
+    --room-card-description-font-size: var(--room-card-global-font-size);
+
+    --room-card-extras-font-size: var(--room-card-global-font-size);
+    --room-modal-extras-font-size: var(--room-modal-global-font-size);
+
+    --room-card-amenities-font-size: var(--room-card-global-font-size);
+
     --room-card-cta-font-size: var(--room-card-global-font-size);
     --room-modal-cta-font-size: var(--room-modal-global-font-size);
 
@@ -392,6 +399,7 @@
     margin:0;
     line-height: var(--room-card-description-line-height);
     display: none;
+    font-size: var(--room-card-description-font-size);
 }
 .room-card__extras {
     color: var(--room-card-extras-color);
@@ -403,6 +411,7 @@
     line-height: 1.6;
     padding: 0;
     margin: 0;
+    font-size: var(--room-card-extras-font-size);
 }
 /* Clamp extras list to one line only in room card (not modal) */
 .room-card .room-card__extras__list {
@@ -473,6 +482,7 @@
     margin: 0;
     color: var(--room-card-amenities-color);
     border-top: 1px solid var(--room-card-divider-color);
+    font-size: var(--room-card-amenities-font-size);
 }
 
 .room-card__amenities-title {
@@ -678,6 +688,9 @@ body.irnmn-modal-open {
     @media (min-width: 960px) {
         font-size: calc( var(--room-card-content-font-size) * 1.15); /* 16px */
     }
+}
+.room-modal .room-card__extras__list {
+    font-size: var(--room-modal-extras-font-size);
 }
 .room-modal .room-card__description {
     display: block;
