@@ -7,6 +7,12 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.2.15 [2025-07-17]
+### update - location
+- update updateOtherComponents function
+- add replaceLangIDInUrl to replace {langID} to glitter url
+
+------
 ## v1.2.11 [2025-05-29]
 ### update - utils
 - update handleExternalUrl function
