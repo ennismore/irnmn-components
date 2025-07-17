@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-BN56KljY.js";import"./style-CM_X_Ycl.js";const z=`:root {
+import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:root {
     /* => Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
@@ -407,7 +407,7 @@ import{x as k}from"./iframe-BN56KljY.js";import"./style-CM_X_Ycl.js";const z=`:r
     margin:0;
     display: block;
 }
-.room-card__extras__list {
+.room-card__extras .room-card__extras__list {
     line-height: 1.6;
     padding: 0;
     margin: 0;
@@ -690,7 +690,7 @@ body.irnmn-modal-open {
         font-size: calc( var(--room-card-content-font-size) * 1.15); /* 16px */
     }
 }
-.room-modal .room-card__extras__list {
+.room-modal .room-card__extras .room-card__extras__list {
     font-size: var(--room-modal-extras-font-size);
 }
 .room-modal .room-card__description {
