@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:root {
+import{x as k}from"./iframe-C1brRy-c.js";import"./style-r4try3Wh.js";const z=`:root {
     /* => Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
@@ -19,32 +19,42 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     --room-card-slider-border-radius: 0px;
     --room-card-image-aspect-ratio: 16 / 9;
 
-    /* Badge */
+    /* => Badge */
     --room-card-badge-bg: yellow;
     --room-card-badge-color: #000;
+    --room-card-badge-padding-top-bottom: var(--space-1);
+    --room-card-badge-padding-left-right: var(--space-2);
+    --room-card-badge-border-radius: var(--space-1);
+    --room-card-badge-pos-top: var(--space-3);
+    --room-card-badge-pos-left: var(--space-3);
 
-    /* => Slider Controls & Indicators */
+    /* => Slider Controls */
     --room-card-slider-control-background: rgba(0, 0, 0, 0);
     --room-card-slider-control-color: #ffffff;
-    --room-card-slider-control-size: 40px;
-    --room-card-slider-control-offset: var(--space-3);
-    --room-card-slider-control-padding: var(--space-2);
     --room-card-slider-control-hover-background: var(--room-card-slider-control-background);
     --room-card-slider-control-hover-color: var(--room-card-slider-control-color);
 
+    --room-card-slider-control-size: 40px;
+    --room-card-slider-control-offset: var(--space-3);
+    --room-card-slider-control-padding: var(--space-2);
+    --room-card-slider-control-radius: 50%;
+
+    /* => Slider Indicators */
     --room-card-slider-indicator-size: 6px;
     --room-card-slider-indicator-gap: 5px;
     --room-card-slider-indicator-color: var(--room-card-slider-control-color);
-    --room-card-slider-indicator-box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+    --room-card-slider-indicators-offset: var(--space-2);
 
     /* => 360 tour button */
     --room-card-slider-360-pos-right: var(--space-3);
     --room-card-slider-360-pos-top: var(--space-3);
-    --room-card-slider-360-color: var(--room-card-slider-control-color);
-    --room-card-slider-360-background: var(--room-card-slider-control-background);
-    --room-card-slider-360-padding: var(--space-1) var(--space-2);
+    --room-card-slider-360-padding-top-bottom: var(--space-1);
+    --room-card-slider-360-padding-left-right: var(--space-2);
     --room-card-slider-360-radius: var(--space-1);
-    --room-card-slider-360-hover-color: var(--room-card-slider-control-hover-color);
+
+    --room-card-slider-360-color: rgba(255,255,255,1);
+    --room-card-slider-360-background: rgba(0, 0, 0, 0);
+    --room-card-slider-360-hover-color: var(--room-card-slider-360-color);
     --room-card-slider-360-hover-background: var(--room-card-slider-360-background);
 
     /* => Title */
@@ -70,6 +80,10 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     --room-card-more-button-background: rgba(0, 0, 0, 0);
     --room-card-more-button-hover-background: rgba(0, 0, 0, 0.1);
     --room-card-more-button-radius: var(--space-1);
+    --room-card-more-button-padding-top-bottom: var(--space-1);
+    --room-card-more-button-padding-left-right: var(--space-2);
+    --room-card-more-button-border: none;
+    --room-card-more-button-hover-border: none;
 
     /* => Amenities */
     --room-card-amenities-color: var(--room-card-text-color);
@@ -85,6 +99,8 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     --room-modal-max-width: 870px;
     --room-modal-backdrop: rgba(0, 0, 0, 0.25);
     --room-modal-close-color: var(--room-card-text-color);
+    --room-modal-padding-top-bottom: var(--space-7);
+    --room-modal-padding-left-right: var(--space-6);
 
     /* => CTA */
     --room-card-cta-color: #fff;
@@ -94,6 +110,8 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     --room-card-cta-hover-background: var(--room-card-cta-color);
     --room-card-cta-hover-border: none;
     --room-card-cta-radius: var(--space-1);
+    --room-card-cta-padding-top-bottom: var(--space-2);
+    --room-card-cta-padding-left-right: var(--space-3);
 
     /* => Font sizes */
     --room-card-slider-360-font-size: 0.875rem;
@@ -204,14 +222,18 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: var(--room-card-slider-control-padding);
+    border-radius: var(--room-card-slider-control-radius);
+    pointer-events: all;
+}
+.room-card__slider-prev svg,
+.room-card__slider-next svg {
     width: var(--room-card-slider-control-size);
     height: var(--room-card-slider-control-size);
-    padding: var(--room-card-slider-control-padding);
-    border-radius: 50%;
-    pointer-events: all;
 }
 .room-card__slider-prev{
     margin-left: var(--room-card-slider-control-offset);
+    transform: rotate(180deg);
 }
 .room-card__slider-next {
     margin-right: var(--room-card-slider-control-offset);
@@ -219,12 +241,12 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
 .room-card__slider-prev:hover,
 .room-card__slider-next:hover {
     background-color: var(--room-card-slider-control-hover-background);
-    color: var(--room-card-slider-control-control-color);
+    color: var(--room-card-slider-control-hover-color);
 }
 /* CAROUSEL INDICATORS */
 .room-card__slider-indicators {
     position: absolute;
-    bottom: var(--space-2);
+    bottom: var(--room-card-slider-indicators-offset);
     left: 50%;
     transform: translateX(-50%);
     width: calc( (5 * var(--room-card-slider-indicator-size)) + (4 * var(--room-card-slider-indicator-gap)));
@@ -249,7 +271,7 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     background-color: var(--room-card-slider-indicator-color);
     border-radius: 50%;
     opacity: 0.5;
-    box-shadow: var(--room-card-slider-indicator-box-shadow);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
 }
 .room-card__slider-indicators li:nth-child(4) {
     opacity: 1;
@@ -319,7 +341,7 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     background-color: var(--room-card-slider-360-background);
     text-decoration: none;
     font-size: var(--room-card-slider-360-font-size);
-    padding: var(--room-card-slider-360-padding);
+    padding: var(--room-card-slider-360-padding-top-bottom) var(--room-card-slider-360-padding-left-right);
     border-radius: var(--room-card-slider-360-radius);
     backdrop-filter: blur(6px);
     display: inline-flex;
@@ -338,13 +360,13 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
 }
 .room-card__badge {
     position: absolute;
-    top: var(--space-3);
-    left: var(--space-3);
+    top: var(--room-card-badge-pos-top);
+    left: var(--room-card-badge-pos-left);
     background-color: var(--room-card-badge-bg);
     color: var(--room-card-badge-color);
-    padding: var(--space-1) var(--space-2);
+    padding: var(--room-card-badge-padding-top-bottom) var(--room-card-badge-padding-left-right);
     font-size: 0.750rem;
-    border-radius: var(--space-1);
+    border-radius: var(--room-card-badge-border-radius);
     line-height: 1.2;
 }
 
@@ -414,16 +436,17 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     font: inherit;
     cursor: pointer;
     position: relative;
-    padding: var(--space-1) calc( var(--space-2) + .7rem) var(--space-1) var(--space-1);
+    padding: var(--room-card-more-button-padding-top-bottom) calc( var(--room-card-more-button-padding-left-right) + .9rem) var(--room-card-more-button-padding-top-bottom) var(--room-card-more-button-padding-left-right);
     border-radius: var(--room-card-more-button-radius);
     color: var(--room-card-more-button-color);
     background-color: var(--room-card-more-button-background);
+    border: var(--room-card-more-button-border);
 }
 .btn.expand-room-modal::before,
 .btn.expand-room-modal::after {
     content: "";
     position: absolute;
-    right: var(--space-1);
+    right: var(--room-card-more-button-padding-left-right);
     bottom: 50%;
     width: .7rem;
     height: 1px;
@@ -437,6 +460,7 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
 .btn.expand-room-modal:hover{
     color: var(--room-card-more-button-hover-color);
     background-color: var(--room-card-more-button-hover-background);
+    border: var(--room-card-more-button-hover-border);
 }
 /* Room card amenities */
 .room-card__amenities {
@@ -500,7 +524,7 @@ import{x as k}from"./iframe-W51Ka79f.js";import"./style-CSqBeIWT.js";const z=`:r
     color: var(--room-card-cta-color);
     background-color: var(--room-card-cta-background);
     text-decoration: none;
-    padding: var(--space-2) var(--space-3);
+    padding: var(--room-card-cta-padding-top-bottom) var(--room-card-cta-padding-left-right);
     line-height: 140%;
     border-radius: var(--room-card-cta-radius);
     display: inline-block;
@@ -600,16 +624,16 @@ body.irnmn-modal-open {
     color: var(--room-card-text-color);
     width: var(--room-modal-width);
     max-width: var(--room-modal-max-width);
-    padding: var(--space-7) var(--space-6) 0 var(--space-6);
+    padding: var(--room-modal-padding-top-bottom) var(--room-modal-padding-left-right) 0 var(--room-modal-padding-left-right);
 
     @media (max-width: 959px) {
         padding: var(--space-7) 0 0 0;
     }
 }
 .room-modal .room-modal__inner{
-    padding: 0 0 var(--space-7) 0;
+    padding: 0 0 var(--room-modal-padding-top-bottom) 0;
     overflow: auto;
-    max-height: calc( 100vh - 2 * var(--space-6) - var(--space-7) );
+    max-height: calc( 100vh - 2 * var(--room-modal-padding-left-right) - var(--room-modal-padding-top-bottom) );
 
     @media (max-width: 959px) {
         padding: 0 0 var(--space-3) 0;
@@ -619,8 +643,8 @@ body.irnmn-modal-open {
 .room-modal .irnmn-modal__close {
     position: fixed;
     padding: 0;
-    top: var(--space-4);
-    right: var(--space-6);
+    top: calc( ( var(--room-modal-padding-top-bottom) - var(--space-3) ) / 2 );
+    right: var(--room-modal-padding-left-right);
     height: var(--space-3);
     width: var(--space-3);
     overflow: hidden;
@@ -669,7 +693,6 @@ body.irnmn-modal-open {
     }
 }
 .room-modal .room-card__pricing-cta {
-    padding: var(--space-2) var(--space-4);
     font-size: var(--room-modal-cta-font-size);
 }
 .room-modal .room-modal__header .room-card__pricing{
@@ -682,21 +705,23 @@ body.irnmn-modal-open {
         display:none;
     }
 }
-`,C=""+new URL("all-brands-fonts-DiSmEnE4.css",import.meta.url).href,f={};let h="Global";const S=z.split(`
-`);for(const o of S){const r=o.match(/\/\*\s*=>\s*(.+?)\s*\*\//);r&&(h=r[1].trim());const a=o.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(a){const e=`--${a[1]}`,t=a[2].trim();let i=!1,n="";const d=t.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(i=!0,n=d[1]),f[e]={name:e,rawValue:t,isReference:i,referenceTarget:n,category:h}}}const u=(o,r=new Set)=>{if(r.has(o))return{};r.add(o);const a=f[o];return a?a.isReference?u(a.referenceTarget,r):a:{}},c={},v=Object.keys(f);for(const o of v){const r=f[o],a=r.isReference?u(r.referenceTarget):{};let e="text",t=r.rawValue,i="";const n=r.isReference?a.rawValue:r.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?e="color":/^\d*\.?\d+px$/.test(n)?(t=parseFloat(n),e={type:"range",min:0,max:t>100?1e3:100},i="px"):/^\d*\.?\d+rem$/.test(n)?(t=parseFloat(n),e={type:"range",min:0,max:5,step:.125},i="rem"):/^\d*\.?\d+%$/.test(n)&&(t=parseFloat(n),e={type:"range",min:0,max:100},i="%");const d=o.replace("--","").replace("room-card","").replace(/-/g," ")+(i?` (${i})`:""),m=v.filter(p=>{if(p===o)return!1;const l=u(p);if(!l)return!1;const s=l.rawValue;return e==="color"?/^#[0-9a-f]{3,6}$/i.test(s):!!(i&&s.endsWith(i)||!i&&!/^#[0-9a-f]{3,6}$/i.test(s)&&!/px|rem|%/.test(s))});c[`__switch__${o}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:r.isReference?"Reference":"Custom",table:{category:r.category}},c[o]={name:` ↳ ${d}`,control:e,defaultValue:r.isReference?void 0:t,unit:i,table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Custom"}},c[`__ref__${o}`]={name:` ↳ ${d} Ref`,control:{type:"select"},options:e!="text"?m:v,defaultValue:r.isReference?r.referenceTarget:m[0],table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Reference"}}}const $=o=>{var r;for(const a of v){const e=o[`__switch__${a}`],t=o[`__ref__${a}`],i=o[a],n=((r=c[a])==null?void 0:r.unit)??"",d=e==="Reference"?`var(${t})`:`${i}${n}`;document.documentElement.style.setProperty(a,d)}},O={title:"Playground/Live Editor",argTypes:c},R=o=>{$(o);const r=E(o),a=Object.entries(r).map(([e,t])=>`${e}: ${t};`).join(`
-`);return V(C),setTimeout(()=>{const e=document.getElementById("show-css-btn"),t=document.getElementById("css-modal"),i=document.getElementById("css-preview");e&&t&&i&&(e.onclick=()=>{i.textContent=a||"/* Aucun changement */",t.showModal()})},0),k`
+`,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let u="Global";const T=z.split(`
+`);for(const r of T){const o=r.match(/\/\*\s*=>\s*(.+?)\s*\*\//);o&&(u=o[1].trim());const e=r.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(e){const a=`--${e[1]}`,i=e[2].trim();let t=!1,n="";const d=i.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(t=!0,n=d[1]),f[a]={name:a,rawValue:i,isReference:t,referenceTarget:n,category:u}}}const h=(r,o=new Set)=>{if(o.has(r))return{};o.add(r);const e=f[r];return e?e.isReference?h(e.referenceTarget,o):e:{}},c={...$},v=Object.keys(f);for(const r of v){const o=f[r],e=o.isReference?h(o.referenceTarget):{};let a="text",i=o.rawValue,t="";const n=o.isReference?e.rawValue:o.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?a="color":/^\d*\.?\d+px$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:i>100?1e3:100},t="px"):/^\d*\.?\d+rem$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:5,step:.125},t="rem"):/^\d*\.?\d+%$/.test(n)&&(i=parseFloat(n),a={type:"range",min:0,max:100},t="%");const d=r.replace("--","").replace("room-card","").replace(/-/g," ")+(t?` (${t})`:""),m=v.filter(p=>{if(p===r)return!1;const l=h(p);if(!l)return!1;const s=l.rawValue;return a==="color"?/^#[0-9a-f]{3,6}$/i.test(s):!!(t&&s.endsWith(t)||!t&&!/^#[0-9a-f]{3,6}$/i.test(s)&&!/px|rem|%/.test(s))});c[`__switch__${r}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:o.isReference?"Reference":"Custom",table:{category:o.category}},c[r]={name:` 🟢 ${d}`,control:a,defaultValue:o.isReference?void 0:i,unit:t,table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Custom"}},c[`__ref__${r}`]={name:` 🔗 ${d}`,control:{type:"select"},options:a!="text"?m:v,defaultValue:o.isReference?o.referenceTarget:m[0],table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Reference"}}}const R=r=>{var o;for(const e of v){const a=r[`__switch__${e}`],i=r[`__ref__${e}`],t=r[e],n=((o=c[e])==null?void 0:o.unit)??"",d=a==="Reference"?`var(${i})`:`${t}${n}`;document.documentElement.style.setProperty(e,d)}},M={title:"Playground/Room Card",argTypes:c},V=r=>{R(r);const o=L(r),e=Object.entries(o).map(([a,i])=>`${a}: ${i};`).join(`
+`);return E(C),setTimeout(()=>{const a=document.getElementById("show-css-btn"),i=document.getElementById("css-modal"),t=document.getElementById("css-preview");a&&i&&t&&(a.onclick=()=>{t.textContent=e||"/* Aucun changement */",i.showModal()})},0),k`
       <div style="margin-bottom: 2rem; border: 1px dashed gray;">
         <irnmn-room-card
           room-code="D2A"
+          arrow-svg="${S[r.arrowDesign].replace(/"/g,"'")}"
           checkin-date-name="checkin"
           checkout-date-name="checkout"
           date-name="checkInOutDates"
+          badge-label="${r.badgeLabel}"
           date-locale="en"
-          title="DELUXE SEA VIEW"
-          description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
+          title="${r.titleText}"
+          description="${r.description}"
           images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
           link-360="https://example.com/room-details"
-          extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
+          extras='${JSON.stringify(r.extras.split(",").map(a=>a.trim()))}'
           room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
           hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
           labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
@@ -714,7 +739,7 @@ body.irnmn-modal-open {
         <h3>🎨 CSS Overrides</h3>
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
-    `},E=o=>{var a,e,t,i;const r={};for(const n of Object.keys(f)){const d=o[`__switch__${n}`],m=o[`__ref__${n}`],p=o[n],l=((a=c[n])==null?void 0:a.unit)??"",s=(e=c[`__switch__${n}`])==null?void 0:e.defaultValue,y=(t=c[n])==null?void 0:t.defaultValue,w=(i=c[`__ref__${n}`])==null?void 0:i.defaultValue;d==="Reference"?(d!==s||m!==w)&&(r[n]=`var(${m})`):d==="Custom"&&(d!==s||`${p}${l}`!=`${y}${l}`)&&(r[n]=`${p}${l}`)}return r},V=o=>{if(document.querySelector(`link[href="${o}"]`))return;const r=document.createElement("link");r.rel="stylesheet",r.href=o,document.head.appendChild(r)},g=R.bind({});g.args=Object.fromEntries(Object.entries(c).map(([o,r])=>[o,r.defaultValue]));var _,b,x;g.parameters={...g.parameters,docs:{...(_=g.parameters)==null?void 0:_.docs,source:{originalSource:`(args: Record<string, any>) => {
+    `},L=r=>{var e,a,i,t;const o={};for(const n of Object.keys(f)){const d=r[`__switch__${n}`],m=r[`__ref__${n}`],p=r[n],l=((e=c[n])==null?void 0:e.unit)??"",s=(a=c[`__switch__${n}`])==null?void 0:a.defaultValue,w=(i=c[n])==null?void 0:i.defaultValue,y=(t=c[`__ref__${n}`])==null?void 0:t.defaultValue;d==="Reference"?(d!==s||m!==y)&&(o[n]=`var(${m})`):d==="Custom"&&(d!==s||`${p}${l}`!=`${w}${l}`)&&(o[n]=`${p}${l}`)}return o},E=r=>{if(document.querySelector(`link[href="${r}"]`))return;const o=document.createElement("link");o.rel="stylesheet",o.href=r,document.head.appendChild(o)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([r,o])=>[r,o.defaultValue]));var b,_,x;g.parameters={...g.parameters,docs:{...(b=g.parameters)==null?void 0:b.docs,source:{originalSource:`(args: Record<string, any>) => {
   applyCssVars(args);
   const changedVars = getChangedVars(args);
   const cssText = Object.entries(changedVars).map(([key, value]) => \`\${key}: \${value};\`).join('\\n');
@@ -735,15 +760,17 @@ body.irnmn-modal-open {
       <div style="margin-bottom: 2rem; border: 1px dashed gray;">
         <irnmn-room-card
           room-code="D2A"
+          arrow-svg="\${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
           checkin-date-name="checkin"
           checkout-date-name="checkout"
           date-name="checkInOutDates"
+          badge-label="\${args.badgeLabel}"
           date-locale="en"
-          title="DELUXE SEA VIEW"
-          description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
+          title="\${args.titleText}"
+          description="\${args.description}"
           images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
           link-360="https://example.com/room-details"
-          extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
+          extras='\${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
           room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
           hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
           labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
@@ -762,4 +789,4 @@ body.irnmn-modal-open {
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
     \`;
-}`,...(x=(b=g.parameters)==null?void 0:b.docs)==null?void 0:x.source}}};const M=["LiveEditor"];export{g as LiveEditor,M as __namedExportsOrder,O as default};
+}`,...(x=(_=g.parameters)==null?void 0:_.docs)==null?void 0:x.source}}};const A=["LiveEditor"];export{g as LiveEditor,A as __namedExportsOrder,M as default};
