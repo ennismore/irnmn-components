@@ -407,7 +407,7 @@
     margin:0;
     display: block;
 }
-.room-card__extras__list {
+.room-card__extras .room-card__extras__list {
     line-height: 1.6;
     padding: 0;
     margin: 0;
@@ -690,7 +690,7 @@ body.irnmn-modal-open {
         font-size: calc( var(--room-card-content-font-size) * 1.15); /* 16px */
     }
 }
-.room-modal .room-card__extras__list {
+.room-modal .room-card__extras .room-card__extras__list {
     font-size: var(--room-modal-extras-font-size);
 }
 .room-modal .room-card__description {
