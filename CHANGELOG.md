@@ -9,8 +9,9 @@ All new releases are documented in this file. The semantic versioning should fol
 ------
 ## v1.2.15 [2025-07-17]
 ### update - location
-- update updateOtherComponents function
-- add replaceLangIDInUrl to replace {langID} to glitter url
+- Update function: updateOtherComponents
+- Add new function: replaceLangIDInUrl for replace {langID} to glitter url
+- {langID} is made for glitter booking engine only
 
 ------
 ## v1.2.11 [2025-05-29]
