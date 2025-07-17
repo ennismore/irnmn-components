@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-BcgS57Fh.js";import"./style-WNYlxJsi.js";const z=`:root {
+import{x as k}from"./iframe-BN56KljY.js";import"./style-CM_X_Ycl.js";const z=`:root {
     /* => Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
@@ -127,7 +127,7 @@ import{x as k}from"./iframe-BcgS57Fh.js";import"./style-WNYlxJsi.js";const z=`:r
     --room-card-extras-font-size: var(--room-card-global-font-size);
     --room-modal-extras-font-size: var(--room-modal-global-font-size);
 
-    --room-card-amenities-font-size: var(--room-card-global-font-size);
+    --room-card-amenities-font-size: var(--room-modal-global-font-size);
 
     --room-card-cta-font-size: var(--room-card-global-font-size);
     --room-modal-cta-font-size: var(--room-modal-global-font-size);
@@ -482,19 +482,20 @@ import{x as k}from"./iframe-BcgS57Fh.js";import"./style-WNYlxJsi.js";const z=`:r
     margin: 0;
     color: var(--room-card-amenities-color);
     border-top: 1px solid var(--room-card-divider-color);
-    font-size: var(--room-card-amenities-font-size);
 }
 
 .room-card__amenities-title {
     font-weight: bold;
     padding: 0;
     margin: 0;
+    font-size: var(--room-card-amenities-font-size);
 }
 .room-card__amenities-list {
     padding: 0;
     margin: 0;
     list-style: none;
     width: 100%;
+    font-size: var(--room-card-amenities-font-size);
 }
 .room-card__amenities ul > li {
     break-inside: avoid;
