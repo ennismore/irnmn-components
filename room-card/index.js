@@ -16,6 +16,7 @@ class IrnmnRoomCard extends HTMLElement {
             'room-amenities',
             'hotel-amenities',
             'link-360',
+            'arrow-svg',
         ];
     }
 
@@ -116,6 +117,16 @@ class IrnmnRoomCard extends HTMLElement {
         } catch {
             return {};
         }
+    }
+
+    get arrowSvg() {
+        return (
+            this.getAttribute('arrow-svg') ||
+            `
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none">
+            <path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>`
+        );
     }
 
     /**
@@ -233,14 +244,10 @@ class IrnmnRoomCard extends HTMLElement {
                 </div>
                 <div class="room-card__slider-navigation">
                     <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || 'See previous image'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="34" viewBox="0 0 18 34" fill="none">
-                            <path d="M16.0391 32L1.03906 17L16.0391 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                        ${this.arrowSvg}
                     </button>
                     <button class="room-card__slider-next" aria-label="${this.labels.nextSlide || 'See next image'}">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none">
-                            <path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
+                        ${this.arrowSvg}
                     </button>
                 </div>
                 <div class="room-card__slider-indicators">

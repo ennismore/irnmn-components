@@ -6,7 +6,47 @@ import '../slider/index.js';
 import '../popup/index.js';
 import '../room-card/style.css';
 import rawCss from '../room-card/style.css?raw';
-import allBrandsFonts from './fonts/all-brands-fonts.css?url';
+import allBrandsFonts from './custom/fonts/all-brands-fonts.css?url';
+
+// ---- Manual content controls (Title, Badge Label) ----
+const manualContentControls = {
+    titleText: {
+      name: 'Title',
+      control: 'text',
+      defaultValue: 'QUEEN DELUXE ROOM',
+      table: { category: 'CONTENT' },
+    },
+    extras: {
+        name: 'Extras',
+        control: 'text',
+        defaultValue: '1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur',
+        table: { category: 'CONTENT' },
+    },
+    description: {
+        name: 'Description',
+        control: 'text',
+        defaultValue: 'Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.',
+        table: { category: 'CONTENT' },
+    },
+    badgeLabel: {
+      name: 'Badge Label',
+      control: 'text',
+      defaultValue: 'limited availability',
+      table: { category: 'CONTENT' },
+    },
+    arrowDesign: {
+      name: 'Arrow design',
+      control: 'select',
+      options: ['mondrian', 'morgans'],
+      defaultValue: 'mondrian',
+      table: { category: 'CONTENT' },
+    },
+  };
+
+  const arrowSvgs = {
+    mondrian: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`,
+    morgans: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>`,
+};
 
 // ---- Parse CSS and prepare variable config ----
 const rawVarData: Record<string, any> = {}; // Hold parsed data before building final config
@@ -59,7 +99,7 @@ const resolveReference = (target: string, seen = new Set()): any => {
 };
 
 // ---- Second pass: build cssVarsConfig with logic-aware filtering ----
-const cssVarsConfig: Record<string, any> = {};
+const cssVarsConfig: Record<string, any> = { ...manualContentControls }; // Start with manual controls
 const varNames = Object.keys(rawVarData);
 
 for (const varName of varNames) {
@@ -116,7 +156,7 @@ for (const varName of varNames) {
 
   // Custom input
   cssVarsConfig[varName] = {
-    name: ` ↳ ${readableLabel}`,
+    name: ` 🟢 ${readableLabel}`,
     control,
     defaultValue: varData.isReference ? undefined : defaultValue,
     unit,
@@ -126,7 +166,7 @@ for (const varName of varNames) {
 
   // Reference dropdown
   cssVarsConfig[`__ref__${varName}`] = {
-    name: ` ↳ ${readableLabel} Ref`,
+    name: ` 🔗 ${readableLabel}`,
     control: { type: 'select' },
     options: control != 'text' ? compatibleRefs : varNames, // If text, show all vars
     defaultValue: varData.isReference ? varData.referenceTarget : compatibleRefs[0],
@@ -150,7 +190,7 @@ const applyCssVars = (args: Record<string, any>) => {
 
 // ---- Storybook Metadata ----
 export default {
-  title: 'Playground/Live Editor',
+  title: 'Playground/Room Card',
   argTypes: cssVarsConfig,
 };
 
@@ -183,15 +223,17 @@ const Template = (args: Record<string, any>) => {
       <div style="margin-bottom: 2rem; border: 1px dashed gray;">
         <irnmn-room-card
           room-code="D2A"
+          arrow-svg="${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
           checkin-date-name="checkin"
           checkout-date-name="checkout"
           date-name="checkInOutDates"
+          badge-label="${args.badgeLabel}"
           date-locale="en"
-          title="DELUXE SEA VIEW"
-          description="Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus."
+          title="${args.titleText}"
+          description="${args.description}"
           images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
           link-360="https://example.com/room-details"
-          extras='["1-2 Guests", "Queen Bed", "28 m²", "City View"]'
+          extras='${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
           room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
           hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
           labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'

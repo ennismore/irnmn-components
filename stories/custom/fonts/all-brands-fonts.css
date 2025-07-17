@@ -138,3 +138,70 @@
   src:url("https://use.typekit.net/af/d09bd7/00000000000000007735ede2/30/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i6&v=3") format("woff2"),url("https://use.typekit.net/af/d09bd7/00000000000000007735ede2/30/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i6&v=3") format("woff"),url("https://use.typekit.net/af/d09bd7/00000000000000007735ede2/30/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=i6&v=3") format("opentype");
   font-display:fallback;font-style:italic;font-weight:600;font-stretch:normal;
   }
+
+
+
+@font-face{
+    font-family: "LouizeDisplay";
+    src: url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.eot");
+    src: url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.eot?#iefix")format("embedded-opentype"),
+        url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.woff")format("woff"),
+        url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.woff2")format("woff2"),
+        url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.ttf")format("truetype"),
+        url("louizeDisplay/0dea6ec44c31ed3bf4f8dc082b06b45d.svg#LouizeDisplay")format("svg");
+    font-weight:normal;
+    font-style:normal;
+    font-display:swap;
+}
+
+@font-face {
+    font-family: "Klarheit Grotesk";
+    src: url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.eot");
+    src: url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.eot?#iefix") format("embedded-opentype"),
+         url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.woff2") format("woff2"),
+         url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.woff") format("woff"),
+         url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.ttf") format("truetype"),
+         url("Klarheit Grotesk Regular/3c14399019df63cb5c3bf794f74080ea.svg#KlarheitGrotesk") format("svg");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Klarheit Grotesk";
+    src: url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.eot");
+    src: url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.eot?#iefix") format("embedded-opentype"),
+         url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.woff2") format("woff2"),
+         url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.woff") format("woff"),
+         url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.ttf") format("truetype"),
+         url("Klarheit Grotesk Bold/4927ee4152784748e416feb088732b9d.svg#KlarheitGroteskBold") format("svg");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Klarheit Grotesk";
+    src: url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.eot");
+    src: url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.eot?#iefix") format("embedded-opentype"),
+         url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.woff2") format("woff2"),
+         url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.woff") format("woff"),
+         url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.ttf") format("truetype"),
+         url("Klarheit Grotesk Italic/2017fedd0c37e2fbec239cd84737be73.svg#KlarheitGroteskItalic") format("svg");
+    font-weight: 400;
+    font-style: italic;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: "Klarheit Grotesk";
+    src: url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.eot");
+    src: url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.eot?#iefix") format("embedded-opentype"),
+         url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.woff2") format("woff2"),
+         url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.woff") format("woff"),
+         url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.ttf") format("truetype"),
+         url("Klarheit Grotesk Bold Italic/c8371ee2d467c2c2347e64b483cc94c6.svg#KlarheitGroteskBoldItalic") format("svg");
+    font-weight: 700;
+    font-style: italic;
+    font-display: swap;
+}
