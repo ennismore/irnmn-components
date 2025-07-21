@@ -56,6 +56,13 @@ let currentCategory = 'Global';
 const lines = rawCss.split('\n');
 
 for (const line of lines) {
+
+// end loop if line match '---end-parsing---'
+  if (line.includes('end-parsing')) break;
+
+  // Skip empty lines
+  if (!line.trim()) continue;
+
   const categoryMatch = line.match(/\/\*\s*=>\s*(.+?)\s*\*\//);
   if (categoryMatch) {
     // Update current category if a new one is found
@@ -85,6 +92,7 @@ for (const line of lines) {
       referenceTarget,
       category: currentCategory,
     };
+    console.log(`Parsed variable: ${varName} = ${value} (Category: ${currentCategory})`);
   }
 }
 
