@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:root {
+import{x as k}from"./iframe-BY8u0WpD.js";import"./style-Drgn_Sh3.js";const z=`:root {
     /* => Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
@@ -11,9 +11,13 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
 
     /* => Room card */
     --room-card-background: #ffffff;
-    --room-card-padding: 0px;
+    --room-card-padding-top-bottom: 0px;
+    --room-card-padding-left-right: 0px;
     --room-card-font-family: Arial, sans-serif;
     --room-card-text-color: #000;
+    --room-card-content-gap: var(--space-2);
+    --room-card-content-padding-top-bottom: var(--space-3);
+    --room-card-content-padding-left-right: var(--space-2);
 
     /* => Slider */
     --room-card-slider-border-radius: 0px;
@@ -87,20 +91,24 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
 
     /* => Amenities */
     --room-card-amenities-color: var(--room-card-text-color);
-    --room-card-amenities-list-columns: 2;
-    --room-card-amenities-list-column-gap: var(--space-4);
     --room-card-amenities-list-padding-left: var(--space-3);
     --room-card-amenities-list-dot-size: var(--space-1);
     --room-card-amenities-list-dot-top: calc(var(--space-1) * 1.5);
+    --room-card-amenities-list-dot-radius: 0%;
+    --room-card-amenities-list-columns-gap: var(--space-4);
 
     /* => Modal */
     --room-modal-background:#ffffff;
-    --room-modal-width: 100%;
     --room-modal-max-width: 870px;
     --room-modal-backdrop: rgba(0, 0, 0, 0.25);
     --room-modal-close-color: var(--room-card-text-color);
     --room-modal-padding-top-bottom: var(--space-7);
     --room-modal-padding-left-right: var(--space-6);
+    --room-modal-content-padding-top: var(--space-5);
+    --room-modal-content-padding-left-right: 0px;
+    --room-modal-content-gap: var(--space-4);
+    --room-modal-close-buton-size: var(--space-3);
+    --room-modal-close-buton-pos-right: var(--room-modal-padding-left-right);
 
     /* => CTA */
     --room-card-cta-color: #fff;
@@ -112,6 +120,10 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
     --room-card-cta-radius: var(--space-1);
     --room-card-cta-padding-top-bottom: var(--space-2);
     --room-card-cta-padding-left-right: var(--space-3);
+    --room-card-cta-width: ; /* auto by default, can be set to a specific value */
+
+    --room-modal-cta-header-display: inline-block;
+    --room-modal-cta-normal-display: none;
 
     /* => Font sizes */
     --room-card-slider-360-font-size: 0.875rem;
@@ -134,30 +146,22 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
 
 }
 
-@media (max-width: 959px) {
-    :root {
-        /* => Spacing scale */
-        --space-1: 4px;
-        --space-2: 8px;
-        --space-3: 12px;
-        --space-4: 18px;
-        --space-5: 24px;
-        --space-6: 36px;
-        --space-7: 48px;
-        --space-8: 60px;
+/* ---end-parsing--- */
 
-        /* => Font sizes */
-        --room-modal-global-font-size: 0.875rem;
-    }
+irnmn-room-card{
+    container-name: roomCard;
+    container-type: size;
+    display: block;
 }
 
 .room-card {
     display: flex;
     flex-direction: column;
     background-color: var(--room-card-background);
-    padding: var(--room-card-padding);
+    padding: var(--room-card-padding-top-bottom) var(--room-card-padding-left-right);
     font-family: var(--room-card-font-family);
     color: var(--room-card-text-color);
+    width: 100%;
 }
 /* CAROUSEL */
 .room-card__slider {
@@ -379,11 +383,11 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
 
 /* ROOM CARD CONTENT */
 .room-card__content {
-    padding: var(--space-3) var(--space-2);
+    padding: var(--room-card-content-padding-top-bottom) var(--room-card-content-padding-left-right);
     font-size: var(--room-card-global-font-size);
     display: flex;
     flex-direction: column;
-    gap: var(--space-2);
+    gap: var(--room-card-content-gap);
 }
 .room-card__title {
     font-size: var(--room-card-title-font-size);
@@ -476,9 +480,9 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
     width: 100%;
     display: flex;
     flex-wrap: wrap;
-    gap: var(--space-4);
+    gap: var(--room-card-amenities-list-columns-gap);
     list-style: none;
-    padding: var(--space-4) 0 0 0;
+    padding: var(--room-card-amenities-list-columns-gap) 0 0 0;
     margin: 0;
     color: var(--room-card-amenities-color);
     border-top: 1px solid var(--room-card-divider-color);
@@ -505,25 +509,25 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
     position: relative;
 }
 
-/* Desktop styles for amenities */
-@media (min-width: 960px) {
-    .room-card__amenities-title {
-        flex: 1;
-    }
-    .room-card__amenities-list {
-        flex: 2;
-        columns: var(--room-card-amenities-list-columns);
-        -webkit-columns: var(--room-card-amenities-list-columns);
-        -moz-columns: var(--room-card-amenities-list-columns);
-        column-gap: var(--room-card-amenities-list-column-gap);
-        column-fill: balance;
-    }
+/* Columns styles for amenities */
+.room-card__amenities-title {
+    flex: 1;
 }
+.room-card__amenities-list {
+    flex: 1;
+    columns: 2;
+    -webkit-columns: 2;
+    -moz-columns: 2;
+    column-gap: var(--room-card-amenities-list-columns-gap);
+    column-fill: balance;
+}
+
 .room-card__amenities ul > li::before {
     content: "";
     height: var(--room-card-amenities-list-dot-size);
     width: var(--room-card-amenities-list-dot-size);
     background-color: var(--room-card-amenities-color);
+    border-radius: var(--room-card-amenities-list-dot-radius);
     position: absolute;
     left: 0;
     top: var(--room-card-amenities-list-dot-top);
@@ -543,11 +547,7 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
     border: var(--room-card-cta-border);
     cursor: pointer;
     transition: color 0.3s ease, background-color 0.3s ease, border 0.3s ease;
-
-    @media (max-width: 959px) {
-        display: block;
-        width: 100%;
-    }
+    width: var(--room-card-cta-width, auto);
 }
 .room-card__pricing-cta:hover {
     color: var(--room-card-cta-hover-color);
@@ -555,24 +555,25 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
     border: var(--room-card-cta-hover-border);
 }
 
-@media (min-width: 960px) {
+@container roomCard (width > 900px) {
 
     /* Styles for one-column layout */
-    .--one-column .room-card {
+    .room-card {
         display: flex;
         flex-direction: row;
         flex-wrap: nowrap;
         gap: var(--space-5);
     }
 
-    .--one-column .room-card__slider {
+    .room-card__slider {
         flex: 1 1 auto;
         min-width: 0;
         max-width: 100%;
         align-self: flex-start;
     }
 
-    .--one-column .room-card__content {
+    .room-card__content {
+        color: red !important;
         flex: 0 1 510px;
         max-width: 50%;
         min-width: 510px;
@@ -581,19 +582,9 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
         gap : var(--space-4);
     }
 
-    .--one-column .room-card__description {
+    .room-card__description {
         display: block;
     }
-
-}
-
-@media (max-width: 959px) {
-
-    .room-card__content {
-        padding: var(--space-3) var(--space-4);
-        gap: var(--space-3);
-    }
-
 }
 
 /* MODAL STYLES */
@@ -601,6 +592,12 @@ import{x as k}from"./iframe-ChYmL9Hk.js";import"./style-Dc4DDORU.js";const z=`:r
 /* Lock body scroll when modal is open */
 body.irnmn-modal-open {
     overflow: hidden;
+}
+
+.room-modal {
+    container-type: size;
+    container-name: roomModal;
+    display: block;
 }
 
 .room-modal .irnmn-modal {
@@ -633,31 +630,22 @@ body.irnmn-modal-open {
     background-color: var(--room-modal-background);
     font-family: var(--room-card-font-family);
     color: var(--room-card-text-color);
-    width: var(--room-modal-width);
+    width: 100%;
     max-width: var(--room-modal-max-width);
     padding: var(--room-modal-padding-top-bottom) var(--room-modal-padding-left-right) 0 var(--room-modal-padding-left-right);
-
-    @media (max-width: 959px) {
-        padding: var(--space-7) 0 0 0;
-    }
 }
 .room-modal .room-modal__inner{
     padding: 0 0 var(--room-modal-padding-top-bottom) 0;
     overflow: auto;
-    max-height: calc( 100vh - 2 * var(--room-modal-padding-left-right) - var(--room-modal-padding-top-bottom) );
-
-    @media (max-width: 959px) {
-        padding: 0 0 var(--space-3) 0;
-        max-height: calc( 100vh - var(--space-7) );
-    }
+    max-height: calc( 100dvh - 2 * var(--room-modal-padding-left-right) - 2 * var(--room-modal-padding-top-bottom) );
 }
 .room-modal .irnmn-modal__close {
     position: fixed;
     padding: 0;
-    top: calc( ( var(--room-modal-padding-top-bottom) - var(--space-3) ) / 2 );
-    right: var(--room-modal-padding-left-right);
-    height: var(--space-3);
-    width: var(--space-3);
+    top: calc( ( var(--room-modal-padding-top-bottom) - var(--room-modal-close-buton-size) ) / 2 );
+    right: var(--room-modal-close-buton-pos-right);
+    height: var(--room-modal-close-buton-size);
+    width: var(--room-modal-close-buton-size);
     overflow: hidden;
     text-indent: 200%;
     cursor: pointer;
@@ -665,30 +653,14 @@ body.irnmn-modal-open {
     background-color: transparent;
     background-size: contain;
     border: none;
-
-    @media (max-width: 959px) {
-        height: var(--space-4);
-        width: var(--space-4);
-        top: var(--space-4);
-        right: var(--space-4);
-    }
 }
 .room-modal .room-card__content{
-    padding: var(--space-5) 0 0 0;
-    gap: var(--space-4);
+    padding: var(--room-modal-content-padding-top) var(--room-modal-content-padding-left-right) 0 var(--room-modal-content-padding-left-right);
+    gap: var(--room-modal-content-gap);
     width: auto;
     max-width: none;
     min-width: 0;
     font-size: var(--room-modal-global-font-size);
-
-    @media (max-width: 959px) {
-        padding: var(--space-4);
-    }
-}
-.room-modal .room-card__extras{
-    @media (min-width: 960px) {
-        font-size: calc( var(--room-card-content-font-size) * 1.15); /* 16px */
-    }
 }
 .room-modal .room-card__extras .room-card__extras__list {
     font-size: var(--room-modal-extras-font-size);
@@ -698,29 +670,47 @@ body.irnmn-modal-open {
 }
 .room-modal .room-card__title {
     font-size: var(--room-modal-title-font-size);
+    justify-self: stretch;
 }
-.room-modal .room-modal__header{
-    @media (min-width: 960px) {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
-}
+
 .room-modal .room-card__pricing-cta {
     font-size: var(--room-modal-cta-font-size);
 }
+
+.room-modal .room-modal__header{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
 .room-modal .room-modal__header .room-card__pricing{
-    @media (max-width: 959px) {
-        display:none;
+    width: auto !important;
+    display: var(--room-modal-cta-header-display);
+}
+.room-modal .room-card__content > .room-card__pricing {
+    display: var(--room-modal-cta-normal-display);
+}
+
+/* Responsive styles for amenities */
+@container roomModal (width < 769px) {
+    .room-card__amenities {
+        flex-direction: column;
     }
 }
-.room-modal .room-card__content > .room-card__pricing{
-    @media (min-width: 960px) {
-        display:none;
+
+@container roomModal (width < 500px) {
+    .room-card__amenities {
+        flex-direction: column;
+    }
+
+    .room-card__amenities-list {
+        columns: 1;
+        -webkit-columns: 1;
+        -moz-columns: 1;
     }
 }
-`,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let u="Global";const T=z.split(`
-`);for(const o of T){const r=o.match(/\/\*\s*=>\s*(.+?)\s*\*\//);r&&(u=r[1].trim());const e=o.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(e){const a=`--${e[1]}`,i=e[2].trim();let t=!1,n="";const d=i.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(t=!0,n=d[1]),f[a]={name:a,rawValue:i,isReference:t,referenceTarget:n,category:u}}}const h=(o,r=new Set)=>{if(r.has(o))return{};r.add(o);const e=f[o];return e?e.isReference?h(e.referenceTarget,r):e:{}},c={...$},v=Object.keys(f);for(const o of v){const r=f[o],e=r.isReference?h(r.referenceTarget):{};let a="text",i=r.rawValue,t="";const n=r.isReference?e.rawValue:r.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?a="color":/^\d*\.?\d+px$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:i>100?1e3:100},t="px"):/^\d*\.?\d+rem$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:5,step:.125},t="rem"):/^\d*\.?\d+%$/.test(n)&&(i=parseFloat(n),a={type:"range",min:0,max:100},t="%");const d=o.replace("--","").replace("room-card","").replace(/-/g," ")+(t?` (${t})`:""),m=v.filter(p=>{if(p===o)return!1;const l=h(p);if(!l)return!1;const s=l.rawValue;return a==="color"?/^#[0-9a-f]{3,6}$/i.test(s):!!(t&&s.endsWith(t)||!t&&!/^#[0-9a-f]{3,6}$/i.test(s)&&!/px|rem|%/.test(s))});c[`__switch__${o}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:r.isReference?"Reference":"Custom",table:{category:r.category}},c[o]={name:` 🟢 ${d}`,control:a,defaultValue:r.isReference?void 0:i,unit:t,table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Custom"}},c[`__ref__${o}`]={name:` 🔗 ${d}`,control:{type:"select"},options:a!="text"?m:v,defaultValue:r.isReference?r.referenceTarget:m[0],table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Reference"}}}const R=o=>{var r;for(const e of v){const a=o[`__switch__${e}`],i=o[`__ref__${e}`],t=o[e],n=((r=c[e])==null?void 0:r.unit)??"",d=a==="Reference"?`var(${i})`:`${t}${n}`;document.documentElement.style.setProperty(e,d)}},M={title:"Playground/Room Card",argTypes:c},V=o=>{R(o);const r=L(o),e=Object.entries(r).map(([a,i])=>`${a}: ${i};`).join(`
+`,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let h="Global";const R=z.split(`
+`);for(const o of R){if(o.includes("end-parsing"))break;if(!o.trim())continue;const r=o.match(/\/\*\s*=>\s*(.+?)\s*\*\//);r&&(h=r[1].trim());const e=o.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(e){const a=`--${e[1]}`,i=e[2].trim();let t=!1,n="";const d=i.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(t=!0,n=d[1]),f[a]={name:a,rawValue:i,isReference:t,referenceTarget:n,category:h}}}const v=(o,r=new Set)=>{if(r.has(o))return{};r.add(o);const e=f[o];return e?e.isReference?v(e.referenceTarget,r):e:{}},c={...$},u=Object.keys(f);for(const o of u){const r=f[o],e=r.isReference?v(r.referenceTarget):{};let a="text",i=r.rawValue,t="";const n=r.isReference?e.rawValue:r.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?a="color":/^\d*\.?\d+px$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:i>100?1e3:100},t="px"):/^\d*\.?\d+rem$/.test(n)?(i=parseFloat(n),a={type:"range",min:0,max:5,step:.125},t="rem"):/^\d*\.?\d+%$/.test(n)&&(i=parseFloat(n),a={type:"range",min:0,max:100},t="%");const d=o.replace("--","").replace("room-card","").replace(/-/g," ")+(t?` (${t})`:""),m=u.filter(p=>{if(p===o)return!1;const l=v(p);if(!l)return!1;const s=l.rawValue;return a==="color"?/^#[0-9a-f]{3,6}$/i.test(s):!!(t&&s.endsWith(t)||!t&&!/^#[0-9a-f]{3,6}$/i.test(s)&&!/px|rem|%/.test(s))});c[`__switch__${o}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:r.isReference?"Reference":"Custom",table:{category:r.category}},c[o]={name:` 🟢 ${d}`,control:a,defaultValue:r.isReference?void 0:i,unit:t,table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Custom"}},c[`__ref__${o}`]={name:` 🔗 ${d}`,control:{type:"select"},options:a!="text"?m:u,defaultValue:r.isReference?r.referenceTarget:m[0],table:{category:r.category},if:{arg:`__switch__${o}`,eq:"Reference"}}}const T=o=>{var r;for(const e of u){const a=o[`__switch__${e}`],i=o[`__ref__${e}`],t=o[e],n=((r=c[e])==null?void 0:r.unit)??"",d=a==="Reference"?`var(${i})`:`${t}${n}`;document.documentElement.style.setProperty(e,d)}},N={title:"Playground/Room Card",argTypes:c},V=o=>{T(o);const r=L(o),e=Object.entries(r).map(([a,i])=>`${a}: ${i};`).join(`
 `);return E(C),setTimeout(()=>{const a=document.getElementById("show-css-btn"),i=document.getElementById("css-modal"),t=document.getElementById("css-preview");a&&i&&t&&(a.onclick=()=>{t.textContent=e||"/* Aucun changement */",i.showModal()})},0),k`
       <div style="margin-bottom: 2rem; border: 1px dashed gray;">
         <irnmn-room-card
@@ -753,7 +743,7 @@ body.irnmn-modal-open {
         <h3>🎨 CSS Overrides</h3>
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
-    `},L=o=>{var e,a,i,t;const r={};for(const n of Object.keys(f)){const d=o[`__switch__${n}`],m=o[`__ref__${n}`],p=o[n],l=((e=c[n])==null?void 0:e.unit)??"",s=(a=c[`__switch__${n}`])==null?void 0:a.defaultValue,w=(i=c[n])==null?void 0:i.defaultValue,y=(t=c[`__ref__${n}`])==null?void 0:t.defaultValue;d==="Reference"?(d!==s||m!==y)&&(r[n]=`var(${m})`):d==="Custom"&&(d!==s||`${p}${l}`!=`${w}${l}`)&&(r[n]=`${p}${l}`)}return r},E=o=>{if(document.querySelector(`link[href="${o}"]`))return;const r=document.createElement("link");r.rel="stylesheet",r.href=o,document.head.appendChild(r)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([o,r])=>[o,r.defaultValue]));var b,_,x;g.parameters={...g.parameters,docs:{...(b=g.parameters)==null?void 0:b.docs,source:{originalSource:`(args: Record<string, any>) => {
+    `},L=o=>{var e,a,i,t;const r={};for(const n of Object.keys(f)){const d=o[`__switch__${n}`],m=o[`__ref__${n}`],p=o[n],l=((e=c[n])==null?void 0:e.unit)??"",s=(a=c[`__switch__${n}`])==null?void 0:a.defaultValue,y=(i=c[n])==null?void 0:i.defaultValue,w=(t=c[`__ref__${n}`])==null?void 0:t.defaultValue;d==="Reference"?(d!==s||m!==w)&&(r[n]=`var(${m})`):d==="Custom"&&(d!==s||`${p}${l}`!=`${y}${l}`)&&(r[n]=`${p}${l}`)}return r},E=o=>{if(document.querySelector(`link[href="${o}"]`))return;const r=document.createElement("link");r.rel="stylesheet",r.href=o,document.head.appendChild(r)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([o,r])=>[o,r.defaultValue]));var b,_,x;g.parameters={...g.parameters,docs:{...(b=g.parameters)==null?void 0:b.docs,source:{originalSource:`(args: Record<string, any>) => {
   applyCssVars(args);
   const changedVars = getChangedVars(args);
   const cssText = Object.entries(changedVars).map(([key, value]) => \`\${key}: \${value};\`).join('\\n');
@@ -803,4 +793,4 @@ body.irnmn-modal-open {
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
     \`;
-}`,...(x=(_=g.parameters)==null?void 0:_.docs)==null?void 0:x.source}}};const A=["LiveEditor"];export{g as LiveEditor,A as __namedExportsOrder,M as default};
+}`,...(x=(_=g.parameters)==null?void 0:_.docs)==null?void 0:x.source}}};const A=["LiveEditor"];export{g as LiveEditor,A as __namedExportsOrder,N as default};
