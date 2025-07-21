@@ -92,7 +92,6 @@ for (const line of lines) {
       referenceTarget,
       category: currentCategory,
     };
-    console.log(`Parsed variable: ${varName} = ${value} (Category: ${currentCategory})`);
   }
 }
 
