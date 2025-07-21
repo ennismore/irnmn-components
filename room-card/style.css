@@ -135,6 +135,7 @@
     --room-modal-title-font-size: 1.5rem;
 
     --room-card-description-font-size: var(--room-card-global-font-size);
+    --room-modal-description-font-size: var(--room-modal-global-font-size);
 
     --room-card-extras-font-size: var(--room-card-global-font-size);
     --room-modal-extras-font-size: var(--room-modal-global-font-size);
@@ -667,6 +668,7 @@ irnmn-room-card .room-modal .room-card__extras .room-card__extras__list {
 }
 irnmn-room-card .room-modal .room-card__description {
     display: block;
+    font-size: var(--room-modal-description-font-size);
 }
 irnmn-room-card .room-modal .room-card__title {
     font-size: var(--room-modal-title-font-size);
