@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-B5YO_Sga.js";import"./style-B1ku6FHi.js";const z=`:root {
+import{x as k}from"./iframe-DwHrAhjS.js";import"./style-7tc0exte.js";const z=`:root {
     /* => Spacing scale */
     --space-1: 4px;
     --space-2: 8px;
@@ -135,6 +135,7 @@ import{x as k}from"./iframe-B5YO_Sga.js";import"./style-B1ku6FHi.js";const z=`:r
     --room-modal-title-font-size: 1.5rem;
 
     --room-card-description-font-size: var(--room-card-global-font-size);
+    --room-modal-description-font-size: var(--room-modal-global-font-size);
 
     --room-card-extras-font-size: var(--room-card-global-font-size);
     --room-modal-extras-font-size: var(--room-modal-global-font-size);
@@ -667,6 +668,7 @@ irnmn-room-card .room-modal .room-card__extras .room-card__extras__list {
 }
 irnmn-room-card .room-modal .room-card__description {
     display: block;
+    font-size: var(--room-modal-description-font-size);
 }
 irnmn-room-card .room-modal .room-card__title {
     font-size: var(--room-modal-title-font-size);
