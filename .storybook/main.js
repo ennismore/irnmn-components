@@ -14,6 +14,7 @@ const config = {
         name: "@storybook/web-components-vite",
         options: {}
     },
+    staticDirs: ['public'],
     viteFinal: async (config) => {
         // Ensure raw markdown imports are allowed (e.g. ?raw)
         config.assetsInclude = [

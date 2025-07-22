@@ -192,6 +192,7 @@ const applyCssVars = (args: Record<string, any>) => {
 
     const finalValue = mode === 'Reference' ? `var(${ref})` : `${val}${unit}`;
     document.documentElement.style.setProperty(varName, finalValue);
+    document.body.style.setProperty(varName, finalValue);
   }
 };
 
