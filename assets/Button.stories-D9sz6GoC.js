@@ -1,4 +1,4 @@
-import{B as b}from"./Button-d6h-hsLR.js";import"./iframe-DwHrAhjS.js";const{fn:_}=__STORYBOOK_MODULE_TEST__,O={title:"Example/Button",tags:["autodocs"],render:S=>b(S),argTypes:{backgroundColor:{control:"color"},size:{control:{type:"select"},options:["small","medium","large"]}},args:{onClick:_()}},r={args:{primary:!0,label:"Button"}},e={args:{label:"Button"}},a={args:{size:"large",label:"Button"}},s={args:{size:"small",label:"Button"}};var o,t,n;r.parameters={...r.parameters,docs:{...(o=r.parameters)==null?void 0:o.docs,source:{originalSource:`{
+import{B as b}from"./Button-Dh8XVr3N.js";import"./iframe-ewa0G7PL.js";const{fn:_}=__STORYBOOK_MODULE_TEST__,O={title:"Example/Button",tags:["autodocs"],render:S=>b(S),argTypes:{backgroundColor:{control:"color"},size:{control:{type:"select"},options:["small","medium","large"]}},args:{onClick:_()}},r={args:{primary:!0,label:"Button"}},e={args:{label:"Button"}},a={args:{size:"large",label:"Button"}},s={args:{size:"small",label:"Button"}};var o,t,n;r.parameters={...r.parameters,docs:{...(o=r.parameters)==null?void 0:o.docs,source:{originalSource:`{
   args: {
     primary: true,
     label: 'Button'
