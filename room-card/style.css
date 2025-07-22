@@ -121,7 +121,7 @@ body {
     --room-card-cta-radius: var(--space-1);
     --room-card-cta-padding-top-bottom: var(--space-2);
     --room-card-cta-padding-left-right: var(--space-3);
-    --room-card-cta-width: ; /* auto by default, can be set to a specific value */
+    --room-card-cta-width: 1%;
 
     --room-modal-cta-header-display: inline-block;
     --room-modal-cta-normal-display: none;
@@ -549,7 +549,8 @@ irnmn-room-card .room-card__pricing-cta{
     border: var(--room-card-cta-border);
     cursor: pointer;
     transition: color 0.3s ease, background-color 0.3s ease, border 0.3s ease;
-    width: var(--room-card-cta-width, auto);
+    width: auto;
+    min-width: var(--room-card-cta-width);
 }
 irnmn-room-card .room-card__pricing-cta:hover {
     color: var(--room-card-cta-hover-color);
