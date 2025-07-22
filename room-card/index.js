@@ -288,7 +288,7 @@ class IrnmnRoomCard extends HTMLElement {
     renderPricing() {
         return `
         <div class="room-card__pricing">
-            <button class="room-card__pricing-cta btn --book-button" aria-label="${this.labels.bookAria ? `${this.title} ${this.labels.bookAria}` : `${this.title} - Book this room`}">${this.labels.book || 'BOOK'}</button>
+            <button class="room-card__pricing-cta btn --book-button" aria-label="${this.labels.bookaria ? `${this.title} ${this.labels.bookaria}` : `${this.title} - Book this room`}">${this.labels.book || 'BOOK'}</button>
         </div>
         `;
     }
@@ -307,7 +307,7 @@ class IrnmnRoomCard extends HTMLElement {
                 </p>
                 ${
                     moreButton
-                        ? `<button aria-label="${this.labels.morearia || 'More info'}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
+                        ? `<button aria-label="${this.labels.morearia ? `${this.title} ${this.labels.morearia}` : `${this.title} - More info about this room`}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
                         : ''
                 }
             </div>
