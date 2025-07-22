@@ -1,4 +1,4 @@
-import{x as k}from"./iframe-JafF2F-m.js";import"./style-DPjDZYBG.js";const z=`:root,
+import{x as h}from"./iframe-CXgbo21Q.js";import"./style-DPjDZYBG.js";const z=`:root,
 body {
     /* => Spacing scale */
     --space-1: 4px;
@@ -713,27 +713,29 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
         -moz-columns: 1;
     }
 }
-`,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let h="Global";const R=z.split(`
-`);for(const r of R){if(r.includes("end-parsing"))break;if(!r.trim())continue;const o=r.match(/\/\*\s*=>\s*(.+?)\s*\*\//);o&&(h=o[1].trim());const a=r.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(a){const e=`--${a[1]}`,i=a[2].trim();let t=!1,n="";const d=i.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(t=!0,n=d[1]),f[e]={name:e,rawValue:i,isReference:t,referenceTarget:n,category:h}}}const u=(r,o=new Set)=>{if(o.has(r))return{};o.add(r);const a=f[r];return a?a.isReference?u(a.referenceTarget,o):a:{}},c={...$},v=Object.keys(f);for(const r of v){const o=f[r],a=o.isReference?u(o.referenceTarget):{};let e="text",i=o.rawValue,t="";const n=o.isReference?a.rawValue:o.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?e="color":/^\d*\.?\d+px$/.test(n)?(i=parseFloat(n),e={type:"range",min:0,max:i>100?1e3:100},t="px"):/^\d*\.?\d+rem$/.test(n)?(i=parseFloat(n),e={type:"range",min:0,max:5,step:.125},t="rem"):/^\d*\.?\d+%$/.test(n)&&(i=parseFloat(n),e={type:"range",min:0,max:100},t="%");const d=r.replace("--","").replace("room-card","").replace(/-/g," ")+(t?` (${t})`:""),l=v.filter(p=>{if(p===r)return!1;const s=u(p);if(!s)return!1;const m=s.rawValue;return e==="color"?/^#[0-9a-f]{3,6}$/i.test(m):!!(t&&m.endsWith(t)||!t&&!/^#[0-9a-f]{3,6}$/i.test(m)&&!/px|rem|%/.test(m))});c[`__switch__${r}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:o.isReference?"Reference":"Custom",table:{category:o.category}},c[r]={name:` 🟢 ${d}`,control:e,defaultValue:o.isReference?void 0:i,unit:t,table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Custom"}},c[`__ref__${r}`]={name:` 🔗 ${d}`,control:{type:"select"},options:e!="text"?l:v,defaultValue:o.isReference?o.referenceTarget:l[0],table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Reference"}}}const T=r=>{var o;for(const a of v){const e=r[`__switch__${a}`],i=r[`__ref__${a}`],t=r[a],n=((o=c[a])==null?void 0:o.unit)??"",d=e==="Reference"?`var(${i})`:`${t}${n}`;document.documentElement.style.setProperty(a,d),document.body.style.setProperty(a,d)}},N={title:"Playground/Room Card",argTypes:c},V=r=>{T(r);const o=L(r),a=Object.entries(o).map(([e,i])=>`${e}: ${i};`).join(`
-`);return E(C),setTimeout(()=>{const e=document.getElementById("show-css-btn"),i=document.getElementById("css-modal"),t=document.getElementById("css-preview");e&&i&&t&&(e.onclick=()=>{t.textContent=a||"/* Aucun changement */",i.showModal()})},0),k`
-      <div style="margin-bottom: 2rem; border: 1px dashed gray;">
-        <irnmn-room-card
-          room-code="D2A"
-          arrow-svg="${S[r.arrowDesign].replace(/"/g,"'")}"
-          checkin-date-name="checkin"
-          checkout-date-name="checkout"
-          date-name="checkInOutDates"
-          badge-label="${r.badgeLabel}"
-          date-locale="en"
-          title="${r.titleText}"
-          description="${r.description}"
-          images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
-          link-360="https://example.com/room-details"
-          extras='${JSON.stringify(r.extras.split(",").map(e=>e.trim()))}'
-          room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
-          hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
-          labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-        ></irnmn-room-card>
+`,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}},columns:{name:"Columns",control:"select",options:["1","2","3"],defaultValue:"1",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let b="Global";const T=z.split(`
+`);for(const r of T){if(r.includes("end-parsing"))break;if(!r.trim())continue;const o=r.match(/\/\*\s*=>\s*(.+?)\s*\*\//);o&&(b=o[1].trim());const a=r.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(a){const i=`--${a[1]}`,t=a[2].trim();let e=!1,n="";const d=t.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(e=!0,n=d[1]),f[i]={name:i,rawValue:t,isReference:e,referenceTarget:n,category:b}}}const v=(r,o=new Set)=>{if(o.has(r))return{};o.add(r);const a=f[r];return a?a.isReference?v(a.referenceTarget,o):a:{}},c={...$},u=Object.keys(f);for(const r of u){const o=f[r],a=o.isReference?v(o.referenceTarget):{};let i="text",t=o.rawValue,e="";const n=o.isReference?a.rawValue:o.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?i="color":/^\d*\.?\d+px$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:t>100?1e3:100},e="px"):/^\d*\.?\d+rem$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:5,step:.125},e="rem"):/^\d*\.?\d+%$/.test(n)&&(t=parseFloat(n),i={type:"range",min:0,max:100},e="%");const d=r.replace("--","").replace("room-card","").replace(/-/g," ")+(e?` (${e})`:""),l=u.filter(p=>{if(p===r)return!1;const s=v(p);if(!s)return!1;const m=s.rawValue;return i==="color"?/^#[0-9a-f]{3,6}$/i.test(m):!!(e&&m.endsWith(e)||!e&&!/^#[0-9a-f]{3,6}$/i.test(m)&&!/px|rem|%/.test(m))});c[`__switch__${r}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:o.isReference?"Reference":"Custom",table:{category:o.category}},c[r]={name:` 🟢 ${d}`,control:i,defaultValue:o.isReference?void 0:t,unit:e,table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Custom"}},c[`__ref__${r}`]={name:` 🔗 ${d}`,control:{type:"select"},options:i!="text"?l:u,defaultValue:o.isReference?o.referenceTarget:l[0],table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Reference"}}}const R=r=>{var o;for(const a of u){const i=r[`__switch__${a}`],t=r[`__ref__${a}`],e=r[a],n=((o=c[a])==null?void 0:o.unit)??"",d=i==="Reference"?`var(${t})`:`${e}${n}`;document.documentElement.style.setProperty(a,d),document.body.style.setProperty(a,d)}},M={title:"Playground/Room Card",argTypes:c},V=r=>{R(r);const o=E(r),a=Object.entries(o).map(([t,e])=>`${t}: ${e};`).join(`
+`);L(C),setTimeout(()=>{const t=document.getElementById("show-css-btn"),e=document.getElementById("css-modal"),n=document.getElementById("css-preview");t&&e&&n&&(t.onclick=()=>{n.textContent=a||"/* Aucun changement */",e.showModal()})},0);const i=parseInt(r.columns,10)||1;return h`
+      <div style="margin-bottom: 2rem; border: 1px dashed gray; display: grid; gap: var(--space-1); grid-template-columns: repeat(${i}, 1fr);">
+        ${Array.from({length:i}).map(()=>h`
+          <irnmn-room-card
+            room-code="D2A"
+            arrow-svg="${S[r.arrowDesign].replace(/"/g,"'")}"
+            checkin-date-name="checkin"
+            checkout-date-name="checkout"
+            date-name="checkInOutDates"
+            badge-label="${r.badgeLabel}"
+            date-locale="en"
+            title="${r.titleText}"
+            description="${r.description}"
+            images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
+            link-360="https://example.com/room-details"
+            extras='${JSON.stringify(r.extras.split(",").map(t=>t.trim()))}'
+            room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
+            hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
+            labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+          ></irnmn-room-card>
+        `)}
       </div>
 
       <button id="show-css-btn" style="margin-bottom: 1rem; padding: 0.5rem 1rem;">
@@ -747,7 +749,7 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
         <h3>🎨 CSS Overrides</h3>
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
-    `},L=r=>{var a,e,i,t;const o={};for(const n of Object.keys(f)){const d=r[`__switch__${n}`],l=r[`__ref__${n}`],p=r[n],s=((a=c[n])==null?void 0:a.unit)??"",m=(e=c[`__switch__${n}`])==null?void 0:e.defaultValue,y=(i=c[n])==null?void 0:i.defaultValue,w=(t=c[`__ref__${n}`])==null?void 0:t.defaultValue;d==="Reference"?(d!==m||l!==w)&&(o[n]=`var(${l})`):d==="Custom"&&(d!==m||`${p}${s}`!=`${y}${s}`)&&(o[n]=`${p}${s}`)}return o},E=r=>{if(document.querySelector(`link[href="${r}"]`))return;const o=document.createElement("link");o.rel="stylesheet",o.href=r,document.head.appendChild(o)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([r,o])=>[r,o.defaultValue]));var b,_,x;g.parameters={...g.parameters,docs:{...(b=g.parameters)==null?void 0:b.docs,source:{originalSource:`(args: Record<string, any>) => {
+    `},E=r=>{var a,i,t,e;const o={};for(const n of Object.keys(f)){const d=r[`__switch__${n}`],l=r[`__ref__${n}`],p=r[n],s=((a=c[n])==null?void 0:a.unit)??"",m=(i=c[`__switch__${n}`])==null?void 0:i.defaultValue,w=(t=c[n])==null?void 0:t.defaultValue,k=(e=c[`__ref__${n}`])==null?void 0:e.defaultValue;d==="Reference"?(d!==m||l!==k)&&(o[n]=`var(${l})`):d==="Custom"&&(d!==m||`${p}${s}`!=`${w}${s}`)&&(o[n]=`${p}${s}`)}return o},L=r=>{if(document.querySelector(`link[href="${r}"]`))return;const o=document.createElement("link");o.rel="stylesheet",o.href=r,document.head.appendChild(o)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([r,o])=>[r,o.defaultValue]));var _,x,y;g.parameters={...g.parameters,docs:{...(_=g.parameters)==null?void 0:_.docs,source:{originalSource:`(args: Record<string, any>) => {
   applyCssVars(args);
   const changedVars = getChangedVars(args);
   const cssText = Object.entries(changedVars).map(([key, value]) => \`\${key}: \${value};\`).join('\\n');
@@ -764,25 +766,30 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
       };
     }
   }, 0);
+  const columns = parseInt(args.columns, 10) || 1;
   return html\`
-      <div style="margin-bottom: 2rem; border: 1px dashed gray;">
-        <irnmn-room-card
-          room-code="D2A"
-          arrow-svg="\${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
-          checkin-date-name="checkin"
-          checkout-date-name="checkout"
-          date-name="checkInOutDates"
-          badge-label="\${args.badgeLabel}"
-          date-locale="en"
-          title="\${args.titleText}"
-          description="\${args.description}"
-          images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
-          link-360="https://example.com/room-details"
-          extras='\${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
-          room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
-          hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
-          labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-        ></irnmn-room-card>
+      <div style="margin-bottom: 2rem; border: 1px dashed gray; display: grid; gap: var(--space-1); grid-template-columns: repeat(\${columns}, 1fr);">
+        \${Array.from({
+    length: columns
+  }).map(() => html\`
+          <irnmn-room-card
+            room-code="D2A"
+            arrow-svg="\${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
+            checkin-date-name="checkin"
+            checkout-date-name="checkout"
+            date-name="checkInOutDates"
+            badge-label="\${args.badgeLabel}"
+            date-locale="en"
+            title="\${args.titleText}"
+            description="\${args.description}"
+            images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
+            link-360="https://example.com/room-details"
+            extras='\${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
+            room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
+            hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
+            labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+          ></irnmn-room-card>
+        \`)}
       </div>
 
       <button id="show-css-btn" style="margin-bottom: 1rem; padding: 0.5rem 1rem;">
@@ -797,4 +804,4 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
     \`;
-}`,...(x=(_=g.parameters)==null?void 0:_.docs)==null?void 0:x.source}}};const A=["LiveEditor"];export{g as LiveEditor,A as __namedExportsOrder,N as default};
+}`,...(y=(x=g.parameters)==null?void 0:x.docs)==null?void 0:y.source}}};const A=["LiveEditor"];export{g as LiveEditor,A as __namedExportsOrder,M as default};
