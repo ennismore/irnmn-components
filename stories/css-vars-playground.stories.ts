@@ -41,6 +41,13 @@ const manualContentControls = {
       defaultValue: 'mondrian',
       table: { category: 'CONTENT' },
     },
+    columns:{
+        name: 'Columns',
+        control: 'select',
+        options: ['1', '2', '3'],
+        defaultValue: '1',
+        table: { category: 'CONTENT' },
+    }
   };
 
   const arrowSvgs = {
@@ -227,25 +234,28 @@ const Template = (args: Record<string, any>) => {
         }
     }, 0);
 
+    const columns = parseInt(args.columns, 10) || 1;
     return html`
-      <div style="margin-bottom: 2rem; border: 1px dashed gray;">
-        <irnmn-room-card
-          room-code="D2A"
-          arrow-svg="${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
-          checkin-date-name="checkin"
-          checkout-date-name="checkout"
-          date-name="checkInOutDates"
-          badge-label="${args.badgeLabel}"
-          date-locale="en"
-          title="${args.titleText}"
-          description="${args.description}"
-          images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
-          link-360="https://example.com/room-details"
-          extras='${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
-          room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
-          hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
-          labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-        ></irnmn-room-card>
+      <div style="margin-bottom: 2rem; border: 1px dashed gray; display: grid; gap: var(--space-1); grid-template-columns: repeat(${columns}, 1fr);">
+        ${Array.from({ length: columns }).map(() => html`
+          <irnmn-room-card
+            room-code="D2A"
+            arrow-svg="${arrowSvgs[args.arrowDesign].replace(/"/g, "'")}"
+            checkin-date-name="checkin"
+            checkout-date-name="checkout"
+            date-name="checkInOutDates"
+            badge-label="${args.badgeLabel}"
+            date-locale="en"
+            title="${args.titleText}"
+            description="${args.description}"
+            images='[{"url":"https://picsum.photos/id/10/300/200","alt":"Room image 1"},{"url":"https://picsum.photos/id/89/300/200","alt":"Room image 2"},{"url":"https://picsum.photos/id/12/300/200","alt":"Room image 3"}]'
+            link-360="https://example.com/room-details"
+            extras='${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
+            room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
+            hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
+            labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+          ></irnmn-room-card>
+        `)}
       </div>
 
       <button id="show-css-btn" style="margin-bottom: 1rem; padding: 0.5rem 1rem;">
