@@ -307,7 +307,7 @@ class IrnmnRoomCard extends HTMLElement {
                 </p>
                 ${
                     moreButton
-                        ? `<button aria-label="${this.labels.more || 'More info'}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
+                        ? `<button aria-label="${this.labels.morearia || 'More info'}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
                         : ''
                 }
             </div>
