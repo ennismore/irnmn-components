@@ -1,4 +1,4 @@
-import{x as h}from"./iframe-BojHfGtl.js";import"./style-BWFVdlBj.js";const z=`:root,
+import{x as h}from"./iframe-DnlONLKH.js";import"./style-D3ZIrymG.js";const z=`:root,
 body {
     /* => Spacing scale */
     --space-1: 4px;
@@ -67,6 +67,7 @@ body {
     --room-card-title-font-weight: bold;
     --room-card-title-color: var(--room-card-text-color);
     --room-card-title-padding: 0;
+    --room-card-title-letter-spacing: 0rem;
 
     /* => Description */
     --room-card-description-color: var(--room-card-text-color);
@@ -131,6 +132,7 @@ body {
 
     --room-card-global-font-size: 0.875rem;
     --room-modal-global-font-size: 1rem;
+    --room-card-global-letter-spacing: 0rem;
 
     --room-card-title-font-size: 1.125rem;
     --room-modal-title-font-size: 1.5rem;
@@ -154,6 +156,10 @@ irnmn-room-card{
     container-name: roomCard;
     container-type: inline-size;
     display: block;
+}
+
+irnmn-room-card * {
+    letter-spacing: var(--room-card-global-letter-spacing);
 }
 
 irnmn-room-card .room-card {
@@ -395,6 +401,7 @@ irnmn-room-card .room-card__title {
     font-size: var(--room-card-title-font-size);
     font-family: var(--room-card-title-font-family);
     font-weight: var(--room-card-title-font-weight);
+    letter-spacing: var(--room-card-title-letter-spacing);
     color: var(--room-card-title-color);
     margin: 0;
     padding: var(--room-card-title-padding);
@@ -714,7 +721,7 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
     }
 }
 `,C=""+new URL("all-brands-fonts-DTwPnAS_.css",import.meta.url).href,$={titleText:{name:"Title",control:"text",defaultValue:"QUEEN DELUXE ROOM",table:{category:"CONTENT"}},extras:{name:"Extras",control:"text",defaultValue:"1-2 Guests,Queen Bed,28 m²,City View,lorem ipsum,dolor sit,amet consectetur",table:{category:"CONTENT"}},description:{name:"Description",control:"text",defaultValue:"Stay in the comfort and warmth with description dio porta dis augue parturient condimentum mi diam lacus, praesent varius ante sapien gravida vestibulum class cras integer risus.",table:{category:"CONTENT"}},badgeLabel:{name:"Badge Label",control:"text",defaultValue:"limited availability",table:{category:"CONTENT"}},arrowDesign:{name:"Arrow design",control:"select",options:["mondrian","morgans"],defaultValue:"mondrian",table:{category:"CONTENT"}},columns:{name:"Columns",control:"select",options:["1","2","3"],defaultValue:"1",table:{category:"CONTENT"}}},S={mondrian:'<svg xmlns="http://www.w3.org/2000/svg" width="18" height="32" viewBox="0 0 18 32" fill="none"><path d="M1.44922 31L16.4492 16L1.44922 1" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>',morgans:'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 5L20.5 12L13.5 19M3.5 12L20 12" stroke="currentColor" stroke-width="2"/></svg>'},f={};let b="Global";const T=z.split(`
-`);for(const r of T){if(r.includes("end-parsing"))break;if(!r.trim())continue;const o=r.match(/\/\*\s*=>\s*(.+?)\s*\*\//);o&&(b=o[1].trim());const a=r.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(a){const i=`--${a[1]}`,t=a[2].trim();let e=!1,n="";const d=t.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(e=!0,n=d[1]),f[i]={name:i,rawValue:t,isReference:e,referenceTarget:n,category:b}}}const v=(r,o=new Set)=>{if(o.has(r))return{};o.add(r);const a=f[r];return a?a.isReference?v(a.referenceTarget,o):a:{}},c={...$},u=Object.keys(f);for(const r of u){const o=f[r],a=o.isReference?v(o.referenceTarget):{};let i="text",t=o.rawValue,e="";const n=o.isReference?a.rawValue:o.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?i="color":/^\d*\.?\d+px$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:t>100?1e3:100},e="px"):/^\d*\.?\d+rem$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:5,step:.125},e="rem"):/^\d*\.?\d+%$/.test(n)&&(t=parseFloat(n),i={type:"range",min:0,max:100},e="%");const d=r.replace("--","").replace("room-card","").replace(/-/g," ")+(e?` (${e})`:""),l=u.filter(p=>{if(p===r)return!1;const s=v(p);if(!s)return!1;const m=s.rawValue;return i==="color"?/^#[0-9a-f]{3,6}$/i.test(m):!!(e&&m.endsWith(e)||!e&&!/^#[0-9a-f]{3,6}$/i.test(m)&&!/px|rem|%/.test(m))});c[`__switch__${r}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:o.isReference?"Reference":"Custom",table:{category:o.category}},c[r]={name:` 🟢 ${d}`,control:i,defaultValue:o.isReference?void 0:t,unit:e,table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Custom"}},c[`__ref__${r}`]={name:` 🔗 ${d}`,control:{type:"select"},options:i!="text"?l:u,defaultValue:o.isReference?o.referenceTarget:l[0],table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Reference"}}}const R=r=>{var o;for(const a of u){const i=r[`__switch__${a}`],t=r[`__ref__${a}`],e=r[a],n=((o=c[a])==null?void 0:o.unit)??"",d=i==="Reference"?`var(${t})`:`${e}${n}`;document.documentElement.style.setProperty(a,d),document.body.style.setProperty(a,d)}},M={title:"Playground/Room Card",argTypes:c},V=r=>{R(r);const o=E(r),a=Object.entries(o).map(([t,e])=>`${t}: ${e};`).join(`
+`);for(const r of T){if(r.includes("end-parsing"))break;if(!r.trim())continue;const o=r.match(/\/\*\s*=>\s*(.+?)\s*\*\//);o&&(b=o[1].trim());const a=r.match(/--([a-zA-Z0-9-_]+)\s*:\s*(.+?);/);if(a){const i=`--${a[1]}`,t=a[2].trim();let e=!1,n="";const d=t.match(/^var\((--[a-zA-Z0-9-_]+)\)$/);d&&(e=!0,n=d[1]),f[i]={name:i,rawValue:t,isReference:e,referenceTarget:n,category:b}}}const v=(r,o=new Set)=>{if(o.has(r))return{};o.add(r);const a=f[r];return a?a.isReference?v(a.referenceTarget,o):a:{}},c={...$},u=Object.keys(f);for(const r of u){const o=f[r],a=o.isReference?v(o.referenceTarget):{};let i="text",t=o.rawValue,e="";const n=o.isReference?a.rawValue:o.rawValue;/^#[0-9a-f]{3,6}$/i.test(n)||/^rgba?\(\s*\d+\s*,\s*\d+\s*,\s*\d+(?:\s*,\s*(?:\d*\.?\d+)\s*)?\)$/i.test(n)?i="color":/^\d*\.?\d+px$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:t>100?1e3:100},e="px"):/^\d*\.?\d+rem$/.test(n)?(t=parseFloat(n),i={type:"range",min:0,max:5,step:r.includes("letter-spacing")?.01:.125},e="rem"):/^\d*\.?\d+%$/.test(n)&&(t=parseFloat(n),i={type:"range",min:0,max:100},e="%");const d=r.replace("--","").replace("room-card","").replace(/-/g," ")+(e?` (${e})`:""),p=u.filter(s=>{if(s===r)return!1;const l=v(s);if(!l)return!1;const m=l.rawValue;return i==="color"?/^#[0-9a-f]{3,6}$/i.test(m):!!(e&&m.endsWith(e)||!e&&!/^#[0-9a-f]{3,6}$/i.test(m)&&!/px|rem|%/.test(m))});c[`__switch__${r}`]={name:`${d} Mode`,control:{type:"inline-radio"},options:["Custom","Reference"],defaultValue:o.isReference?"Reference":"Custom",table:{category:o.category}},c[r]={name:` 🟢 ${d}`,control:i,defaultValue:o.isReference?void 0:t,unit:e,table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Custom"}},c[`__ref__${r}`]={name:` 🔗 ${d}`,control:{type:"select"},options:i!="text"?p:u,defaultValue:o.isReference?o.referenceTarget:p[0],table:{category:o.category},if:{arg:`__switch__${r}`,eq:"Reference"}}}const R=r=>{var o;for(const a of u){const i=r[`__switch__${a}`],t=r[`__ref__${a}`],e=r[a],n=((o=c[a])==null?void 0:o.unit)??"",d=i==="Reference"?`var(${t})`:`${e}${n}`;document.documentElement.style.setProperty(a,d),document.body.style.setProperty(a,d)}},M={title:"Playground/Room Card",argTypes:c},V=r=>{R(r);const o=E(r),a=Object.entries(o).map(([t,e])=>`${t}: ${e};`).join(`
 `);L(C),setTimeout(()=>{const t=document.getElementById("show-css-btn"),e=document.getElementById("css-modal"),n=document.getElementById("css-preview");t&&e&&n&&(t.onclick=()=>{n.textContent=a||"/* Aucun changement */",e.showModal()})},0);const i=parseInt(r.columns,10)||1;return h`
       <div style="margin-bottom: 2rem; border: 1px dashed gray; display: grid; gap: var(--space-1); grid-template-columns: repeat(${i}, 1fr);">
         ${Array.from({length:i}).map(()=>h`
@@ -749,7 +756,7 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
         <h3>🎨 CSS Overrides</h3>
         <pre><code id="css-preview" style="background: #f4f4f4; padding: 1rem; border-radius: 5px; display: block;"></code></pre>
       </dialog>
-    `},E=r=>{var a,i,t,e;const o={};for(const n of Object.keys(f)){const d=r[`__switch__${n}`],l=r[`__ref__${n}`],p=r[n],s=((a=c[n])==null?void 0:a.unit)??"",m=(i=c[`__switch__${n}`])==null?void 0:i.defaultValue,w=(t=c[n])==null?void 0:t.defaultValue,k=(e=c[`__ref__${n}`])==null?void 0:e.defaultValue;d==="Reference"?(d!==m||l!==k)&&(o[n]=`var(${l})`):d==="Custom"&&(d!==m||`${p}${s}`!=`${w}${s}`)&&(o[n]=`${p}${s}`)}return o},L=r=>{if(document.querySelector(`link[href="${r}"]`))return;const o=document.createElement("link");o.rel="stylesheet",o.href=r,document.head.appendChild(o)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([r,o])=>[r,o.defaultValue]));var _,x,y;g.parameters={...g.parameters,docs:{...(_=g.parameters)==null?void 0:_.docs,source:{originalSource:`(args: Record<string, any>) => {
+    `},E=r=>{var a,i,t,e;const o={};for(const n of Object.keys(f)){const d=r[`__switch__${n}`],p=r[`__ref__${n}`],s=r[n],l=((a=c[n])==null?void 0:a.unit)??"",m=(i=c[`__switch__${n}`])==null?void 0:i.defaultValue,w=(t=c[n])==null?void 0:t.defaultValue,k=(e=c[`__ref__${n}`])==null?void 0:e.defaultValue;d==="Reference"?(d!==m||p!==k)&&(o[n]=`var(${p})`):d==="Custom"&&(d!==m||`${s}${l}`!=`${w}${l}`)&&(o[n]=`${s}${l}`)}return o},L=r=>{if(document.querySelector(`link[href="${r}"]`))return;const o=document.createElement("link");o.rel="stylesheet",o.href=r,document.head.appendChild(o)},g=V.bind({});g.args=Object.fromEntries(Object.entries(c).map(([r,o])=>[r,o.defaultValue]));var _,x,y;g.parameters={...g.parameters,docs:{...(_=g.parameters)==null?void 0:_.docs,source:{originalSource:`(args: Record<string, any>) => {
   applyCssVars(args);
   const changedVars = getChangedVars(args);
   const cssText = Object.entries(changedVars).map(([key, value]) => \`\${key}: \${value};\`).join('\\n');
