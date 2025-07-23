@@ -67,6 +67,7 @@ body {
     --room-card-title-font-weight: bold;
     --room-card-title-color: var(--room-card-text-color);
     --room-card-title-padding: 0;
+    --room-card-title-letter-spacing: 0rem;
 
     /* => Description */
     --room-card-description-color: var(--room-card-text-color);
@@ -131,6 +132,7 @@ body {
 
     --room-card-global-font-size: 0.875rem;
     --room-modal-global-font-size: 1rem;
+    --room-card-global-letter-spacing: 0rem;
 
     --room-card-title-font-size: 1.125rem;
     --room-modal-title-font-size: 1.5rem;
@@ -154,6 +156,10 @@ irnmn-room-card{
     container-name: roomCard;
     container-type: inline-size;
     display: block;
+}
+
+irnmn-room-card * {
+    letter-spacing: var(--room-card-global-letter-spacing);
 }
 
 irnmn-room-card .room-card {
@@ -395,6 +401,7 @@ irnmn-room-card .room-card__title {
     font-size: var(--room-card-title-font-size);
     font-family: var(--room-card-title-font-family);
     font-weight: var(--room-card-title-font-weight);
+    letter-spacing: var(--room-card-title-letter-spacing);
     color: var(--room-card-title-color);
     margin: 0;
     padding: var(--room-card-title-padding);
