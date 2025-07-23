@@ -137,7 +137,9 @@ for (const varName of varNames) {
     unit = 'px';
   } else if (/^\d*\.?\d+rem$/.test(value)) {
     defaultValue = parseFloat(value);
-    control = { type: 'range', min: 0, max: 5, step: 0.125 };
+    // Set step depending on variable name
+    let step = varName.includes('letter-spacing') ? 0.01 : 0.125;
+    control = { type: 'range', min: 0, max: 5, step };
     unit = 'rem';
   } else if (/^\d*\.?\d+%$/.test(value)) {
     defaultValue = parseFloat(value);
