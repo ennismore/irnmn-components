@@ -236,7 +236,7 @@ class IrnmnRoomCard extends HTMLElement {
                             if (typeof img === 'string') {
                                 return `<div class="room-card__slider-slide"><figure><img src="${img}" alt="Room image"></figure></div>`;
                             } else if (img && typeof img === 'object') {
-                                return `<div class="room-card__slider-slide"><figure><img src="${img.url}" alt="${img.alt || 'Room image'}"></figure></div>`;
+                                return `<div class="room-card__slider-slide"><figure><img src="${img.url}" srcset="${img.srcset}" sizes="${img.sizes}" alt="${img.alt || 'Room image'}"></figure></div>`;
                             }
                             return '';
                         })
