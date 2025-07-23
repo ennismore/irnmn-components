@@ -10,7 +10,7 @@ var g=Object.defineProperty;var v=(d,s,e)=>s in d?g(d,s,{enumerable:!0,configura
                 "NEXT_BUTTON": ".room-card__slider-next"
             }'>
                 <div class="room-card__slider-container">
-                    ${this.images.map(s=>typeof s=="string"?`<div class="room-card__slider-slide"><figure><img src="${s}" alt="Room image"></figure></div>`:s&&typeof s=="object"?`<div class="room-card__slider-slide"><figure><img src="${s.url}" alt="${s.alt||"Room image"}"></figure></div>`:"").join("")}
+                    ${this.images.map(s=>typeof s=="string"?`<div class="room-card__slider-slide"><figure><img src="${s}" alt="Room image"></figure></div>`:s&&typeof s=="object"?`<div class="room-card__slider-slide"><figure><img src="${s.url}" srcset="${s.srcset}" sizes="${s.sizes}" alt="${s.alt||"Room image"}"></figure></div>`:"").join("")}
                 </div>
                 <div class="room-card__slider-navigation">
                     <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide||"See previous image"}">
