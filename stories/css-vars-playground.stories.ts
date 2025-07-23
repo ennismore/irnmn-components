@@ -34,6 +34,12 @@ const manualContentControls = {
       defaultValue: 'limited availability',
       table: { category: 'CONTENT' },
     },
+    bookLabel: {
+        name: 'Book button Label',
+        control: 'text',
+        defaultValue: 'BOOK',
+        table: { category: 'CONTENT' },
+    },
     arrowDesign: {
       name: 'Arrow design',
       control: 'select',
@@ -255,7 +261,7 @@ const Template = (args: Record<string, any>) => {
             extras='${JSON.stringify(args.extras.split(",").map((s: string) => s.trim()))}'
             room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
             hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
-            labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
+            labels='{"book" : "${args.bookLabel}" ,"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
           ></irnmn-room-card>
         `)}
       </div>
