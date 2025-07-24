@@ -1,4 +1,4 @@
-import{x as b}from"./iframe-_-FW5suC.js";import"./style-CNZhMeZb.js";const z=`:root,
+import{x as b}from"./iframe-D0lGrTHv.js";import"./style-DXA9LxPY.js";const z=`:root,
 body {
     /* => Spacing scale */
     --space-1: 4px;
