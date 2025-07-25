@@ -28,6 +28,9 @@ class IrnmnRoomCard extends HTMLElement {
         super();
         // Unique id for this room card, useful for accessibility and modal identification
         this.uniqueId = `card-${Math.random().toString(36).substr(2, 9)}`;
+        this.eventCache = new Map(); // for deduplication
+        const urlParams = new URLSearchParams(window.location.search);
+        this.debug = urlParams.get('debugTracking');
     }
 
     /**
@@ -120,6 +123,10 @@ class IrnmnRoomCard extends HTMLElement {
         }
     }
 
+    get columnLayout() {
+        return this.getAttribute('columns') || 'unknown';
+    }
+
     get arrowSvg() {
         return (
             this.getAttribute('arrow-svg') ||
@@ -151,11 +158,84 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     /**
+     * Pushes standardized tracking event to dataLayer
+     */
+    pushTrackingEvent(interactionType, elementType = 'roomCard') {
+        const roomInfo = this.title;
+        const columnLayout = this.columnLayout;
+        const eventKey = `${interactionType}:${elementType}:${roomInfo}`;
+        const now = Date.now();
+
+        if (!interactionType || !roomInfo || !columnLayout) {
+            if (this.debug)
+                console.warn('[RoomCard] Missing data for tracking', {
+                    interactionType,
+                    roomInfo,
+                    columnLayout,
+                });
+            return;
+        }
+
+        // prevent duplicates within 500ms
+        const last = this.eventCache.get(eventKey);
+        if (last && now - last < 500) return;
+        this.eventCache.set(eventKey, now);
+
+        const payload = {
+            event: 'room_suite',
+            interactionType,
+            elementType,
+            columnLayout,
+            roomInfo,
+        };
+
+        if (this.debug)
+            console.debug('[RoomCard] Pushing to dataLayer:', payload);
+
+        if (window.dataLayer && Array.isArray(window.dataLayer)) {
+            window.dataLayer.push(payload);
+        } else if (this.debug) {
+            console.warn('[RoomCard] dataLayer not available', payload);
+        }
+    }
+
+    /**
      * Adds event listeners for modal expansion and slider refresh.
      * @private
      */
     addListeners() {
+        /* ANALYTIC TRACKING */
         const expandButtons = this.querySelectorAll('.expand-room-modal');
+        expandButtons.forEach((btn) =>
+            btn.addEventListener('click', () =>
+                this.pushTrackingEvent('moreInfo', 'roomCard'),
+            ),
+        );
+
+        const bookButtons = this.querySelectorAll('.--book-button');
+        bookButtons.forEach((btn) =>
+            btn.addEventListener('click', () =>
+                this.pushTrackingEvent('book', 'roomCard'),
+            ),
+        );
+
+        const navButtons = this.querySelectorAll(
+            '.room-card__slider-prev, .room-card__slider-next',
+        );
+        navButtons.forEach((btn) =>
+            btn.addEventListener('click', () =>
+                this.pushTrackingEvent('carouselClick', 'roomCard'),
+            ),
+        );
+
+        const tourLink = this.querySelector('.room-card__slider-360');
+        if (tourLink) {
+            tourLink.addEventListener('click', () =>
+                this.pushTrackingEvent('360Tour', 'roomCard'),
+            );
+        }
+
+        /* MODAL OPENING */
         const sliderFigures = this.querySelectorAll('irnmn-slider figure');
         const modal = this.querySelector('.room-modal');
         if ((!expandButtons.length && !sliderFigures.length) || !modal) return;
