@@ -50,7 +50,9 @@ class IRNMNSlider extends HTMLElement {
      * @returns {string} - The transition string
      */
     get transition() {
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const prefersReducedMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        ).matches;
         if (prefersReducedMotion) {
             return '0.001s ease'; // Disable transition for reduced motion users (very quick transition effect to simulate no transition)
         }
