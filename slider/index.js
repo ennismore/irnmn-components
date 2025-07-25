@@ -73,6 +73,21 @@ class IRNMNSlider extends HTMLElement {
         if (this.debug) {
             console.info('[IRNMNSlider] IntersectionObserver set up.');
         }
+
+        // Add aria-live region for accessibility
+        this.ariaLiveRegion = document.createElement('div');
+        this.ariaLiveRegion.setAttribute('aria-live', 'polite');
+        this.ariaLiveRegion.setAttribute('aria-atomic', 'true');
+        this.ariaLiveRegion.classList.add('visually-hidden');
+        Object.assign(this.ariaLiveRegion.style, {
+            position: 'absolute',
+            height: '1px',
+            width: '1px',
+            overflow: 'hidden',
+            clip: 'rect(1px, 1px, 1px, 1px)',
+            whiteSpace: 'nowrap',
+        });
+        this.appendChild(this.ariaLiveRegion);
     }
 
     /**
@@ -113,6 +128,17 @@ class IRNMNSlider extends HTMLElement {
             'Slideshow with multiple slides',
         );
         swipeContainer.setAttribute('tabindex', '0');
+        swipeContainer.setAttribute('aria-roledescription', 'carousel');
+
+        const prevBtn = this.querySelector(this.CLASSNAMES.PREV_BUTTON);
+        const nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
+
+        if (prevBtn && !prevBtn.hasAttribute('aria-label')) {
+            prevBtn.setAttribute('aria-label', 'Previous slide');
+        }
+        if (nextBtn && !nextBtn.hasAttribute('aria-label')) {
+            nextBtn.setAttribute('aria-label', 'Next slide');
+        }
 
         const totalSlides = this.slides.length;
 
@@ -144,7 +170,8 @@ class IRNMNSlider extends HTMLElement {
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
         this.addEventListeners(swipeContainer, totalSlides);
-        this.updateSlidesAttributes(swipeContainer, 1); // Start with the first slide as active
+        this.initSlidesAttributes();
+        this.updateSlidesAttributes(1); // Start with the first slide as active
 
         // Debug: Log initialization complete
         if (this.debug) {
@@ -218,7 +245,9 @@ class IRNMNSlider extends HTMLElement {
      */
     cloneSlides(swipeContainer) {
         // Remove any existing clones to avoid duplicates
-        swipeContainer.querySelectorAll('.clone-slide').forEach(clone => clone.remove());
+        swipeContainer
+            .querySelectorAll('.clone-slide')
+            .forEach((clone) => clone.remove());
 
         // Clone first and last slides for infinite loop
         const firstSlide = this.slides[0];
@@ -357,7 +386,11 @@ class IRNMNSlider extends HTMLElement {
         this.addListener(swipeContainer, 'transitionend', resetPosition);
 
         this.addListener(swipeContainer, 'keydown', (e) => {
-            if (!this.dataset.sliderInitialized || !this.contains(document.activeElement)) return;
+            if (
+                !this.dataset.sliderInitialized ||
+                !this.contains(document.activeElement)
+            )
+                return;
 
             switch (e.key) {
                 case 'ArrowRight':
@@ -434,19 +467,37 @@ class IRNMNSlider extends HTMLElement {
         }
     }
 
+    initSlidesAttributes() {
+        const totalSlides = this.querySelectorAll(`${this.CLASSNAMES.SLIDES}:not([data-clone])`).length;
+
+        this.slides.forEach((slide, i) => {
+            const isClone = slide.dataset.clone === 'true';
+
+            if (isClone) {
+                slide.setAttribute('aria-hidden', 'true');
+                slide.setAttribute('tabindex', '-1');
+                slide.removeAttribute('role');
+                slide.removeAttribute('aria-roledescription');
+                slide.removeAttribute('aria-label');
+            } else {
+                slide.setAttribute('role', 'group');
+                slide.setAttribute('aria-roledescription', 'slide');
+                slide.setAttribute('aria-label', `Slide ${i} of ${totalSlides}`);
+            }
+        });
+    }
 
     /**
      * Updates accessibility attributes and active state for each slide.
      */
-    updateSlidesAttributes(swipeContainer, displayedSlideIndex) {
-        // Update the tabindex for accessibility for each slide + focus on the current slide
+    updateSlidesAttributes(displayedSlideIndex) {
         this.slides.forEach((slide, i) => {
-            const isActive = displayedSlideIndex === i;
+            const isClone = slide.dataset.clone === 'true';
+            if (isClone) return;
+
+            const isActive = i === displayedSlideIndex;
             slide.setAttribute('tabindex', isActive ? '0' : '-1');
             slide.classList.toggle('active-slide', isActive);
-            if (isActive) {
-                //slide.focus();
-            }
         });
     }
 
@@ -471,10 +522,7 @@ class IRNMNSlider extends HTMLElement {
                 break;
         }
 
-        this.updateSlidesAttributes(
-            swipeContainer,
-            displayedSlideIndex,
-        );
+        this.updateSlidesAttributes(displayedSlideIndex);
 
         const currentSlideElem = this.querySelector(
             this.CLASSNAMES.CURRENT_SLIDE,
@@ -482,6 +530,13 @@ class IRNMNSlider extends HTMLElement {
         if (currentSlideElem) {
             currentSlideElem.textContent = displayedSlideIndex;
         }
+
+        // Accessibility: announce the current slide
+        if (this.ariaLiveRegion) {
+            const announcement = `Slide ${displayedSlideIndex} of ${totalSlides}`;
+            this.ariaLiveRegion.textContent = announcement;
+        }
+
         // Dispatch a custom event when the slide changes
         const slideChangeEvent = new CustomEvent('slideChange', {
             detail: {
