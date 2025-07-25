@@ -17,7 +17,7 @@ const meta: Meta<IRNMNSlider> = {
     },
     render: (args) => {
         return html`
-        <irnmn-slider selectors='{
+        <irnmn-slider debug selectors='{
             "SWIPE_CONTAINER": ".slider-container",
             "SLIDES": ".slider-slide",
             "NAVIGATION": ".slider-navigation",

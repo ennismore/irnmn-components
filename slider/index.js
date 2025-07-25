@@ -8,6 +8,10 @@ class IRNMNSlider extends HTMLElement {
     constructor() {
         super();
         this.CLASSNAMES = this.selectors;
+        // Debug: Log constructor initialization
+        if (this.debug) {
+            console.info('[IRNMNSlider] Constructor called, CLASSNAMES:', this.CLASSNAMES);
+        }
     }
 
     /**
@@ -32,6 +36,10 @@ class IRNMNSlider extends HTMLElement {
         return classnames;
     }
 
+    get debug() {
+        return this.hasAttribute('debug');
+    }
+
     /**
      * Get the transition value from the attribute or fallback
      *
@@ -46,6 +54,9 @@ class IRNMNSlider extends HTMLElement {
         const observer = new IntersectionObserver(
             ([entry], obs) => {
                 if (entry.isIntersecting) {
+                    if (this.debug) {
+                        console.info('[IRNMNSlider] Element is visible, initializing slider...');
+                    }
                     this.initSlider();
                     obs.disconnect();
                 }
@@ -53,6 +64,10 @@ class IRNMNSlider extends HTMLElement {
             { root: null, threshold: 0 },
         );
         observer.observe(this);
+        // Debug: Log when observer is set up
+        if (this.debug) {
+            console.info('[IRNMNSlider] IntersectionObserver set up.');
+        }
     }
 
     /**
@@ -65,6 +80,10 @@ class IRNMNSlider extends HTMLElement {
             element.removeEventListener(event, handler);
         });
         this.eventListeners = [];
+        // Debug: Log cleanup
+        if (this.debug) {
+            console.info('[IRNMNSlider] Event listeners cleaned up.');
+        }
     }
 
     initSlider() {
@@ -95,11 +114,17 @@ class IRNMNSlider extends HTMLElement {
          * Handle single slide case
          */
         if (totalSlides === 1) {
+            if (this.debug) {
+                console.info('[IRNMNSlider] Only one slide detected, rendering single slide.');
+            }
             this.renderSingleSlide(this.slides[0]);
             return;
         }
 
         if (this.dataset.sliderInitialized === 'true') {
+            if (this.debug) {
+                console.info('[IRNMNSlider] Slider already initialized, skipping.');
+            }
             return;
         }
         this.dataset.sliderInitialized = 'true';
@@ -109,6 +134,11 @@ class IRNMNSlider extends HTMLElement {
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
         this.addEventListeners(swipeContainer, totalSlides);
+
+        // Debug: Log initialization complete
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slider initialization complete.');
+        }
     }
 
     /**
@@ -130,32 +160,12 @@ class IRNMNSlider extends HTMLElement {
                 // Recalculate offsets and center the current slide
                 this.calculateSlideOffsets(swipeContainer);
                 this.centerSlide(swipeContainer);
+
+                // Debug: Log resize event
+                if (this.debug) {
+                    console.info('[IRNMNSlider] Window resized, recalculated offsets and centered slide.');
+                }
             }, 150);
-        };
-
-        window.addEventListener('resize', onResize);
-
-        // Track the resize listener for cleanup
-        this.eventListeners.push({
-            element: window,
-            event: 'resize',
-            handler: onResize,
-        });
-    }
-
-    /**
-     * Sets up the resize event listener to recalculate offsets
-     * and center the current slide when the window is resized.
-     *
-     * @returns {void}
-     */
-    setupResizeListener(swipeContainer) {
-        const onResize = () => {
-            if (!swipeContainer) return;
-
-            // Recalculate offsets and center the current slide
-            this.calculateSlideOffsets(swipeContainer);
-            this.centerSlide(swipeContainer);
         };
 
         window.addEventListener('resize', onResize);
@@ -181,6 +191,11 @@ class IRNMNSlider extends HTMLElement {
         this.querySelector(this.CLASSNAMES.PREV_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.NEXT_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.CONTROLS)?.remove();
+
+        // Debug: Log single slide rendering
+        if (this.debug) {
+            console.info('[IRNMNSlider] Navigation and controls removed for single slide.');
+        }
     }
 
     /**
@@ -196,6 +211,11 @@ class IRNMNSlider extends HTMLElement {
         this.slides = Array.from(
             swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
+
+        // Debug: Log cloning
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slides cloned for infinite loop. Total slides (with clones):', this.slides.length);
+        }
     }
 
     /**
@@ -213,6 +233,11 @@ class IRNMNSlider extends HTMLElement {
             cumulativeOffset += slide.offsetWidth;
             this.slideOffsets.push(cumulativeOffset);
         });
+
+        // Debug: Log offsets calculation
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slide offsets calculated:', this.slideOffsets);
+        }
     }
 
     /**
@@ -228,6 +253,10 @@ class IRNMNSlider extends HTMLElement {
         if (totalSlidesElem) {
             totalSlidesElem.textContent = totalSlides;
         }
+        // Debug: Log total slides update
+        if (this.debug) {
+            console.info('[IRNMNSlider] Total slides updated:', totalSlides);
+        }
     }
 
     /**
@@ -240,6 +269,11 @@ class IRNMNSlider extends HTMLElement {
         this.currentSlide = 1;
         swipeContainer.style.transition = 'none';
         this.centerSlide(swipeContainer);
+
+        // Debug: Log position initialization
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slider position initialized to slide:', this.currentSlide);
+        }
     }
 
     /**
@@ -282,6 +316,11 @@ class IRNMNSlider extends HTMLElement {
         );
 
         this.addListener(swipeContainer, 'transitionend', resetPosition);
+
+        // Debug: Log event listeners added
+        if (this.debug) {
+            console.info('[IRNMNSlider] Navigation and drag event listeners added.');
+        }
     }
 
     /**
@@ -313,6 +352,11 @@ class IRNMNSlider extends HTMLElement {
         const offset = this.slideOffsets[this.currentSlide];
         const slideWidth = this.slides[this.currentSlide].offsetWidth;
         swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px))`;
+
+        // Debug: Log centering
+        if (this.debug) {
+            console.info('[IRNMNSlider] Centered slide:', this.currentSlide, 'Offset:', offset, 'Width:', slideWidth);
+        }
     }
 
     /**
@@ -352,6 +396,16 @@ class IRNMNSlider extends HTMLElement {
             },
         });
         swipeContainer.dispatchEvent(slideChangeEvent);
+
+        // Debug: Log slide update
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slide updated:', {
+                currentSlide: this.currentSlide,
+                displayedSlideIndex,
+                totalSlides,
+                clonedSlidesCount,
+            });
+        }
     }
 
     /**
@@ -367,25 +421,41 @@ class IRNMNSlider extends HTMLElement {
         this.centerSlide(swipeContainer);
         this.classList.remove('transitioning-prev');
         this.classList.remove('transitioning-next');
+
+        // Debug: Log position reset
+        if (this.debug) {
+            console.info('[IRNMNSlider] Position reset after transition. Current slide:', this.currentSlide);
+        }
     }
 
     /**
      * Move to the next slide
      */
     moveToNextSlide(updateSlides, clonedSlidesCount) {
+        if (this.classList.contains('transitioning-next') || this.classList.contains('transitioning-prev')) return;
+        this.classList.add('transitioning-next');
         this.currentSlide = (this.currentSlide + 1) % clonedSlidesCount;
         updateSlides();
-        this.classList.add('transitioning-next');
+
+        // Debug: Log next slide
+        if (this.debug) {
+            console.info('[IRNMNSlider] Moved to next slide:', this.currentSlide);
+        }
     }
 
     /**
      * Move to the previous slide
      */
     moveToPrevSlide(updateSlides, clonedSlidesCount) {
-        this.currentSlide =
-            (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
-        updateSlides();
+        if (this.classList.contains('transitioning-next') || this.classList.contains('transitioning-prev')) return;
         this.classList.add('transitioning-prev');
+        this.currentSlide = (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
+        updateSlides();
+
+        // Debug: Log previous slide
+        if (this.debug) {
+            console.info('[IRNMNSlider] Moved to previous slide:', this.currentSlide);
+        }
     }
 
     /**
@@ -407,6 +477,11 @@ class IRNMNSlider extends HTMLElement {
             startX = e.touches ? e.touches[0].clientX : e.clientX;
             isDragging = true;
             swipeContainer.style.transition = 'none';
+
+            // Debug: Log drag start
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch start:', startX);
+            }
         };
 
         const touchMove = (e) => {
@@ -415,6 +490,11 @@ class IRNMNSlider extends HTMLElement {
             const offset = this.slideOffsets[this.currentSlide];
             const slideWidth = this.slides[this.currentSlide].offsetWidth;
             swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px + ${currentX}px))`;
+
+            // Debug: Log drag move
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch move:', currentX);
+            }
         };
 
         const touchEnd = () => {
@@ -425,6 +505,11 @@ class IRNMNSlider extends HTMLElement {
             else updateSlides();
             currentX = 0;
             isDragging = false;
+
+            // Debug: Log drag end
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch end.');
+            }
         };
 
         this.addListener(swipeContainer, 'touchstart', touchStart);
@@ -434,6 +519,11 @@ class IRNMNSlider extends HTMLElement {
         this.addListener(swipeContainer, 'mousemove', touchMove);
         this.addListener(swipeContainer, 'mouseup', touchEnd);
         this.addListener(swipeContainer, 'mouseleave', touchEnd);
+
+        // Debug: Log drag and drop setup
+        if (this.debug) {
+            console.info('[IRNMNSlider] Drag and drop/touch listeners set up.');
+        }
     }
 
     refresh() {
@@ -446,6 +536,11 @@ class IRNMNSlider extends HTMLElement {
         }
         this.calculateSlideOffsets(swipeContainer);
         this.centerSlide(swipeContainer);
+
+        // Debug: Log refresh
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slider refreshed.');
+        }
     }
 }
 
