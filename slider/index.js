@@ -122,6 +122,10 @@ class IRNMNSlider extends HTMLElement {
             console.error('Swipe container not found');
             return;
         }
+        // Ensure the swipe container has a unique ID
+        if (!swipeContainer.id) {
+            swipeContainer.id = `slider-container-${Math.floor(Math.random() * 1000000)}`;
+        }
         this.setupResizeListener(swipeContainer);
 
         // Initialize slides
@@ -131,10 +135,12 @@ class IRNMNSlider extends HTMLElement {
 
         // Accessbility attributes
         swipeContainer.setAttribute('role', 'region');
-        swipeContainer.setAttribute(
-            'aria-label',
-            'Slideshow with multiple slides',
-        );
+        if (!swipeContainer.hasAttribute('aria-label') && !swipeContainer.hasAttribute('aria-labelledby')) {
+            swipeContainer.setAttribute(
+                'aria-label',
+                'Slideshow with multiple slides',
+            );
+        }
         swipeContainer.setAttribute('tabindex', '0');
         swipeContainer.setAttribute('aria-roledescription', 'carousel');
 
@@ -143,9 +149,11 @@ class IRNMNSlider extends HTMLElement {
 
         if (prevBtn && !prevBtn.hasAttribute('aria-label')) {
             prevBtn.setAttribute('aria-label', 'Previous slide');
+            prevBtn.setAttribute('aria-controls', swipeContainer.id);
         }
         if (nextBtn && !nextBtn.hasAttribute('aria-label')) {
             nextBtn.setAttribute('aria-label', 'Next slide');
+            nextBtn.setAttribute('aria-controls', swipeContainer.id);
         }
 
         const totalSlides = this.slides.length;
@@ -492,10 +500,12 @@ class IRNMNSlider extends HTMLElement {
             } else {
                 slide.setAttribute('role', 'group');
                 slide.setAttribute('aria-roledescription', 'slide');
-                slide.setAttribute(
-                    'aria-label',
-                    `Slide ${i} of ${totalSlides}`,
-                );
+                if (!slide.hasAttribute('aria-label')) {
+                    slide.setAttribute(
+                        'aria-label',
+                        `Slide ${i} of ${totalSlides}`,
+                    );
+                }
             }
         });
     }
