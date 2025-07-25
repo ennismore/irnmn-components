@@ -44,12 +44,18 @@ class IRNMNSlider extends HTMLElement {
     }
 
     /**
-     * Get the transition value from the attribute or fallback
+     * Get the transition value from the attribute or fallback.
+     * Automatically disables transition for users who prefer reduced motion.
      *
      * @returns {string} - The transition string
      */
     get transition() {
-        return this.getAttribute('transition') || '0.3s ease';
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (prefersReducedMotion) {
+            return '0.001s ease'; // Disable transition for reduced motion users (very quick transition effect to simulate no transition)
+        }
+        const attr = this.getAttribute('transition');
+        return typeof attr === 'string' && attr.trim() ? attr : '0.3s ease';
     }
 
     connectedCallback() {
