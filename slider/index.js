@@ -135,7 +135,10 @@ class IRNMNSlider extends HTMLElement {
 
         // Accessbility attributes
         swipeContainer.setAttribute('role', 'region');
-        if (!swipeContainer.hasAttribute('aria-label') && !swipeContainer.hasAttribute('aria-labelledby')) {
+        if (
+            !swipeContainer.hasAttribute('aria-label') &&
+            !swipeContainer.hasAttribute('aria-labelledby')
+        ) {
             swipeContainer.setAttribute(
                 'aria-label',
                 'Slideshow with multiple slides',
