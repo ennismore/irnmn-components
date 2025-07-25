@@ -600,10 +600,21 @@ class IRNMNSlider extends HTMLElement {
         this.classList.remove('transitioning-prev');
         this.classList.remove('transitioning-next');
 
-        //accessibility: set focus on the current slide (after transition end)
-        const currentSlideElem = this.slides[this.currentSlide];
-        if (currentSlideElem) {
-            currentSlideElem.focus();
+        // Ensure focus is returned to the current slide
+        const focusedElement = document.activeElement;
+        // If focus is on the slide itself or anywhere within a slide (including its children), send focus back to the current slide
+        if (
+            focusedElement &&
+            this.slides.some(
+                slide =>
+                    slide === focusedElement ||
+                    slide.contains(focusedElement)
+            )
+        ) {
+            const currentSlideElem = this.slides[this.currentSlide];
+            if (currentSlideElem) {
+                currentSlideElem.focus();
+            }
         }
 
         // Debug: Log position reset
