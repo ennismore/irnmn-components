@@ -10,7 +10,10 @@ class IRNMNSlider extends HTMLElement {
         this.CLASSNAMES = this.selectors;
         // Debug: Log constructor initialization
         if (this.debug) {
-            console.info('[IRNMNSlider] Constructor called, CLASSNAMES:', this.CLASSNAMES);
+            console.info(
+                '[IRNMNSlider] Constructor called, CLASSNAMES:',
+                this.CLASSNAMES,
+            );
         }
     }
 
@@ -55,7 +58,9 @@ class IRNMNSlider extends HTMLElement {
             ([entry], obs) => {
                 if (entry.isIntersecting) {
                     if (this.debug) {
-                        console.info('[IRNMNSlider] Element is visible, initializing slider...');
+                        console.info(
+                            '[IRNMNSlider] Element is visible, initializing slider...',
+                        );
                     }
                     this.initSlider();
                     obs.disconnect();
@@ -115,7 +120,9 @@ class IRNMNSlider extends HTMLElement {
          */
         if (totalSlides === 1) {
             if (this.debug) {
-                console.info('[IRNMNSlider] Only one slide detected, rendering single slide.');
+                console.info(
+                    '[IRNMNSlider] Only one slide detected, rendering single slide.',
+                );
             }
             this.renderSingleSlide(this.slides[0]);
             return;
@@ -123,7 +130,9 @@ class IRNMNSlider extends HTMLElement {
 
         if (this.dataset.sliderInitialized === 'true') {
             if (this.debug) {
-                console.info('[IRNMNSlider] Slider already initialized, skipping.');
+                console.info(
+                    '[IRNMNSlider] Slider already initialized, skipping.',
+                );
             }
             return;
         }
@@ -163,7 +172,9 @@ class IRNMNSlider extends HTMLElement {
 
                 // Debug: Log resize event
                 if (this.debug) {
-                    console.info('[IRNMNSlider] Window resized, recalculated offsets and centered slide.');
+                    console.info(
+                        '[IRNMNSlider] Window resized, recalculated offsets and centered slide.',
+                    );
                 }
             }, 150);
         };
@@ -194,7 +205,9 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log single slide rendering
         if (this.debug) {
-            console.info('[IRNMNSlider] Navigation and controls removed for single slide.');
+            console.info(
+                '[IRNMNSlider] Navigation and controls removed for single slide.',
+            );
         }
     }
 
@@ -214,7 +227,10 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log cloning
         if (this.debug) {
-            console.info('[IRNMNSlider] Slides cloned for infinite loop. Total slides (with clones):', this.slides.length);
+            console.info(
+                '[IRNMNSlider] Slides cloned for infinite loop. Total slides (with clones):',
+                this.slides.length,
+            );
         }
     }
 
@@ -236,7 +252,10 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log offsets calculation
         if (this.debug) {
-            console.info('[IRNMNSlider] Slide offsets calculated:', this.slideOffsets);
+            console.info(
+                '[IRNMNSlider] Slide offsets calculated:',
+                this.slideOffsets,
+            );
         }
     }
 
@@ -272,7 +291,10 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log position initialization
         if (this.debug) {
-            console.info('[IRNMNSlider] Slider position initialized to slide:', this.currentSlide);
+            console.info(
+                '[IRNMNSlider] Slider position initialized to slide:',
+                this.currentSlide,
+            );
         }
     }
 
@@ -319,7 +341,9 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log event listeners added
         if (this.debug) {
-            console.info('[IRNMNSlider] Navigation and drag event listeners added.');
+            console.info(
+                '[IRNMNSlider] Navigation and drag event listeners added.',
+            );
         }
     }
 
@@ -355,7 +379,14 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log centering
         if (this.debug) {
-            console.info('[IRNMNSlider] Centered slide:', this.currentSlide, 'Offset:', offset, 'Width:', slideWidth);
+            console.info(
+                '[IRNMNSlider] Centered slide:',
+                this.currentSlide,
+                'Offset:',
+                offset,
+                'Width:',
+                slideWidth,
+            );
         }
     }
 
@@ -424,7 +455,10 @@ class IRNMNSlider extends HTMLElement {
 
         // Debug: Log position reset
         if (this.debug) {
-            console.info('[IRNMNSlider] Position reset after transition. Current slide:', this.currentSlide);
+            console.info(
+                '[IRNMNSlider] Position reset after transition. Current slide:',
+                this.currentSlide,
+            );
         }
     }
 
@@ -432,14 +466,21 @@ class IRNMNSlider extends HTMLElement {
      * Move to the next slide
      */
     moveToNextSlide(updateSlides, clonedSlidesCount) {
-        if (this.classList.contains('transitioning-next') || this.classList.contains('transitioning-prev')) return;
+        if (
+            this.classList.contains('transitioning-next') ||
+            this.classList.contains('transitioning-prev')
+        )
+            return;
         this.classList.add('transitioning-next');
         this.currentSlide = (this.currentSlide + 1) % clonedSlidesCount;
         updateSlides();
 
         // Debug: Log next slide
         if (this.debug) {
-            console.info('[IRNMNSlider] Moved to next slide:', this.currentSlide);
+            console.info(
+                '[IRNMNSlider] Moved to next slide:',
+                this.currentSlide,
+            );
         }
     }
 
@@ -447,14 +488,22 @@ class IRNMNSlider extends HTMLElement {
      * Move to the previous slide
      */
     moveToPrevSlide(updateSlides, clonedSlidesCount) {
-        if (this.classList.contains('transitioning-next') || this.classList.contains('transitioning-prev')) return;
+        if (
+            this.classList.contains('transitioning-next') ||
+            this.classList.contains('transitioning-prev')
+        )
+            return;
         this.classList.add('transitioning-prev');
-        this.currentSlide = (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
+        this.currentSlide =
+            (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
         updateSlides();
 
         // Debug: Log previous slide
         if (this.debug) {
-            console.info('[IRNMNSlider] Moved to previous slide:', this.currentSlide);
+            console.info(
+                '[IRNMNSlider] Moved to previous slide:',
+                this.currentSlide,
+            );
         }
     }
 
