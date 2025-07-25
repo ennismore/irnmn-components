@@ -263,7 +263,6 @@ const Template = (args: Record<string, any>) => {
             hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
             labels='{"book" : "${args.bookLabel}" ,"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
             columns="${args.columns}"
-            debug="true"
             ></irnmn-room-card>
         `)}
       </div>
