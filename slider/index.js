@@ -41,7 +41,6 @@ class IRNMNSlider extends HTMLElement {
         return classnames;
     }
 
-
     /**
      * Get the transition value from the attribute or fallback.
      * Automatically disables transition for users who prefer reduced motion.
