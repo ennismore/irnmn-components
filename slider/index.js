@@ -112,6 +112,7 @@ class IRNMNSlider extends HTMLElement {
             'aria-label',
             'Slideshow with multiple slides',
         );
+        swipeContainer.setAttribute('tabindex', '0');
 
         const totalSlides = this.slides.length;
 
@@ -143,6 +144,7 @@ class IRNMNSlider extends HTMLElement {
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
         this.addEventListeners(swipeContainer, totalSlides);
+        this.updateSlidesAttributes(swipeContainer, 1); // Start with the first slide as active
 
         // Debug: Log initialization complete
         if (this.debug) {
@@ -215,10 +217,25 @@ class IRNMNSlider extends HTMLElement {
      * Clone first and last slides to enable looping
      */
     cloneSlides(swipeContainer) {
-        const firstClone = this.slides[0].cloneNode(true);
-        const lastClone = this.slides[this.slides.length - 1].cloneNode(true);
-        swipeContainer.appendChild(firstClone); // Add the first clone at the end
-        swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
+        // Remove any existing clones to avoid duplicates
+        swipeContainer.querySelectorAll('.clone-slide').forEach(clone => clone.remove());
+
+        // Clone first and last slides for infinite loop
+        const firstSlide = this.slides[0];
+        const lastSlide = this.slides[this.slides.length - 1];
+
+        if (firstSlide && lastSlide) {
+            const firstClone = firstSlide.cloneNode(true);
+            const lastClone = lastSlide.cloneNode(true);
+
+            firstClone.dataset.clone = 'true';
+            lastClone.dataset.clone = 'true';
+            firstClone.classList.add('clone-slide');
+            lastClone.classList.add('clone-slide');
+
+            swipeContainer.appendChild(firstClone); // Add first clone at the end
+            swipeContainer.insertBefore(lastClone, firstSlide); // Add last clone at the beginning
+        }
 
         // Update the slides property to include the clones
         this.slides = Array.from(
@@ -339,10 +356,37 @@ class IRNMNSlider extends HTMLElement {
 
         this.addListener(swipeContainer, 'transitionend', resetPosition);
 
+        this.addListener(swipeContainer, 'keydown', (e) => {
+            if (!this.dataset.sliderInitialized || !this.contains(document.activeElement)) return;
+
+            switch (e.key) {
+                case 'ArrowRight':
+                case 'Right':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                case 'Left':
+                    e.preventDefault();
+                    prevSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.currentSlide = 1;
+                    updateSlides();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.currentSlide = totalSlides;
+                    updateSlides();
+                    break;
+            }
+        });
+
         // Debug: Log event listeners added
         if (this.debug) {
             console.info(
-                '[IRNMNSlider] Navigation and drag event listeners added.',
+                '[IRNMNSlider] Navigation, drag and keyboard event listeners added.',
             );
         }
     }
@@ -390,6 +434,22 @@ class IRNMNSlider extends HTMLElement {
         }
     }
 
+
+    /**
+     * Updates accessibility attributes and active state for each slide.
+     */
+    updateSlidesAttributes(swipeContainer, displayedSlideIndex) {
+        // Update the tabindex for accessibility for each slide + focus on the current slide
+        this.slides.forEach((slide, i) => {
+            const isActive = displayedSlideIndex === i;
+            slide.setAttribute('tabindex', isActive ? '0' : '-1');
+            slide.classList.toggle('active-slide', isActive);
+            if (isActive) {
+                //slide.focus();
+            }
+        });
+    }
+
     /**
      * Update slides position and pagination
      */
@@ -410,6 +470,12 @@ class IRNMNSlider extends HTMLElement {
                 displayedSlideIndex = this.currentSlide;
                 break;
         }
+
+        this.updateSlidesAttributes(
+            swipeContainer,
+            displayedSlideIndex,
+        );
+
         const currentSlideElem = this.querySelector(
             this.CLASSNAMES.CURRENT_SLIDE,
         );
@@ -452,6 +518,12 @@ class IRNMNSlider extends HTMLElement {
         this.centerSlide(swipeContainer);
         this.classList.remove('transitioning-prev');
         this.classList.remove('transitioning-next');
+
+        //accessibility: set focus on the current slide (after transition end)
+        const currentSlideElem = this.slides[this.currentSlide];
+        if (currentSlideElem) {
+            currentSlideElem.focus();
+        }
 
         // Debug: Log position reset
         if (this.debug) {
