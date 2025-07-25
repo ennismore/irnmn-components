@@ -8,6 +8,8 @@ class IRNMNSlider extends HTMLElement {
     constructor() {
         super();
         this.CLASSNAMES = this.selectors;
+        const urlParams = new URLSearchParams(window.location.search);
+        this.debug = urlParams.get('debugTracking');
         // Debug: Log constructor initialization
         if (this.debug) {
             console.info(
@@ -39,9 +41,6 @@ class IRNMNSlider extends HTMLElement {
         return classnames;
     }
 
-    get debug() {
-        return this.hasAttribute('debug');
-    }
 
     /**
      * Get the transition value from the attribute or fallback.
@@ -606,9 +605,8 @@ class IRNMNSlider extends HTMLElement {
         if (
             focusedElement &&
             this.slides.some(
-                slide =>
-                    slide === focusedElement ||
-                    slide.contains(focusedElement)
+                (slide) =>
+                    slide === focusedElement || slide.contains(focusedElement),
             )
         ) {
             const currentSlideElem = this.slides[this.currentSlide];
