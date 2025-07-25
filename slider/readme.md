@@ -34,7 +34,43 @@ The `IRNMNSlider` web component is a dynamic, accessible, and responsive slider 
 - Adds an `aria-live` region for announcing slide changes.
 - Sets ARIA roles and labels for slides and navigation.
 - Keyboard navigation: supports Arrow keys, Home/End, and focus management.
-- Cloned slides are hidden from assistive technologies.
+- Cloned slides are hidden from assistive technologies to ensure a clean experience for screen reader users.
+- While the component provides fallback ARIA labels, it is best practice to set meaningful ARIA attributes directly in your HTML for proper localization and translation. For example:
+
+```html
+<irnmn-slider debug selectors='{
+    "SWIPE_CONTAINER": ".slider-container",
+    "SLIDES": ".slider-slide",
+    "NAVIGATION": ".slider-navigation",
+    "PREV_BUTTON": ".slider-prev",
+    "NEXT_BUTTON": ".slider-next",
+    "CURRENT_SLIDE": ".current-slide",
+    "TOTAL_SLIDES": ".total-slides"
+}'>
+    <div class="slider-container" aria-label="My Deluxe room image slider with 4 slides">
+        <div class="slider-slide" aria-label="First slide of four">
+            <img src="..." alt="Image description" />
+        </div>
+        <div class="slider-slide" aria-label="Second slide of four">
+            <img src="..." alt="Image description" />
+        </div>
+        <div class="slider-slide" aria-label="Third slide of four">
+            <img src="..." alt="Image description" />
+        </div>
+        <div class="slider-slide" aria-label="Fourth slide of four">
+            <img src="..." alt="Image description" />
+        </div>
+    </div>
+    <div class="slider-navigation">
+        <button class="slider-prev" aria-label="Go to previous slide">Previous</button>
+        <span>
+            <span class="current-slide">1</span> /
+            <span class="total-slides">4</span>
+        </span>
+        <button class="slider-next" aria-label="Go to next slide">Next</button>
+    </div>
+</irnmn-slider>
+```
 
 ---
 
@@ -126,22 +162,6 @@ Dispatches a `slideChange` event on slide change with details about the current 
 - **Responsive:** Adjusts slide widths and offsets on resize.
 - **Custom Events:** Dispatches `slideChange` event on slide change.
 - **Debugging:** Add `?debugTracking=true` to the URL for console logs.
-
----
-
-## Example Selectors
-
-```json
-{
-    "SWIPE_CONTAINER": "wp-block-custom21c-gallery--images",
-    "SLIDES": "wp-block-custom21c-gallery--image",
-    "NAVIGATION": "slideshow-navigation",
-    "PREV_BUTTON": "prev",
-    "NEXT_BUTTON": "next",
-    "CURRENT_SLIDE": "current-slide",
-    "TOTAL_SLIDES": "total-slides"
-}
-```
 
 ---
 
