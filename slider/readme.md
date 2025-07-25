@@ -80,13 +80,13 @@ Here’s an example of how to use the `IRNMNSlider` component in your HTML:
 
 ```html
 <irnmn-slider selectors='{
-    "SWIPE_CONTAINER": "slider-container",
-    "SLIDES": "slider-slide",
-    "NAVIGATION": "slider-navigation",
-    "PREV_BUTTON": "slider-prev",
-    "NEXT_BUTTON": "slider-next",
-    "CURRENT_SLIDE": "current-slide",
-    "TOTAL_SLIDES": "total-slides"
+    "SWIPE_CONTAINER": ".slider-container",
+    "SLIDES": ".slider-slide",
+    "NAVIGATION": ".slider-navigation",
+    "PREV_BUTTON": ".slider-prev",
+    "NEXT_BUTTON": ".slider-next",
+    "CURRENT_SLIDE": ".current-slide",
+    "TOTAL_SLIDES": ".total-slides"
 }'>
     <div class="slider-container">
         <div class="slider-slide">Slide 1</div>
@@ -96,7 +96,7 @@ Here’s an example of how to use the `IRNMNSlider` component in your HTML:
     <div class="slider-navigation">
         <button class="slider-prev">Previous</button>
         <span>
-            <span class="current-slide">1</span> / 
+            <span class="current-slide">1</span> /
             <span class="total-slides">3</span>
         </span>
         <button class="slider-next">Next</button>

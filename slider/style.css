@@ -1,0 +1,33 @@
+
+irnmn-slider{
+    overflow: hidden;
+    width: 100%;
+    display: block;
+    position: relative;
+    padding-bottom: 50px;
+}
+
+irnmn-slider .slider-container {
+    display: flex;
+    transition: transform 0.3s ease;
+    width: 100%;
+}
+
+irnmn-slider .slider-slide {
+    flex-shrink: 0;
+    margin: 0;
+    width: 100%; /* Each slide takes full container width */
+    height: 100px; /* Fixed height for the slider */
+    cursor: grab;
+    padding: 0;
+}
+
+irnmn-slider .slider-navigation {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+}
