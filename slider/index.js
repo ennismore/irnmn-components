@@ -468,7 +468,9 @@ class IRNMNSlider extends HTMLElement {
     }
 
     initSlidesAttributes() {
-        const totalSlides = this.querySelectorAll(`${this.CLASSNAMES.SLIDES}:not([data-clone])`).length;
+        const totalSlides = this.querySelectorAll(
+            `${this.CLASSNAMES.SLIDES}:not([data-clone])`,
+        ).length;
 
         this.slides.forEach((slide, i) => {
             const isClone = slide.dataset.clone === 'true';
@@ -482,7 +484,10 @@ class IRNMNSlider extends HTMLElement {
             } else {
                 slide.setAttribute('role', 'group');
                 slide.setAttribute('aria-roledescription', 'slide');
-                slide.setAttribute('aria-label', `Slide ${i} of ${totalSlides}`);
+                slide.setAttribute(
+                    'aria-label',
+                    `Slide ${i} of ${totalSlides}`,
+                );
             }
         });
     }
