@@ -8,6 +8,15 @@ class IRNMNSlider extends HTMLElement {
     constructor() {
         super();
         this.CLASSNAMES = this.selectors;
+        const urlParams = new URLSearchParams(window.location.search);
+        this.debug = urlParams.get('debugTracking');
+        // Debug: Log constructor initialization
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Constructor called, CLASSNAMES:',
+                this.CLASSNAMES,
+            );
+        }
     }
 
     /**
@@ -33,12 +42,20 @@ class IRNMNSlider extends HTMLElement {
     }
 
     /**
-     * Get the transition value from the attribute or fallback
+     * Get the transition value from the attribute or fallback.
+     * Automatically disables transition for users who prefer reduced motion.
      *
      * @returns {string} - The transition string
      */
     get transition() {
-        return this.getAttribute('transition') || '0.3s ease';
+        const prefersReducedMotion = window.matchMedia(
+            '(prefers-reduced-motion: reduce)',
+        ).matches;
+        if (prefersReducedMotion) {
+            return '0.001s ease'; // Disable transition for reduced motion users (very quick transition effect to simulate no transition)
+        }
+        const attr = this.getAttribute('transition');
+        return typeof attr === 'string' && attr.trim() ? attr : '0.3s ease';
     }
 
     connectedCallback() {
@@ -46,6 +63,11 @@ class IRNMNSlider extends HTMLElement {
         const observer = new IntersectionObserver(
             ([entry], obs) => {
                 if (entry.isIntersecting) {
+                    if (this.debug) {
+                        console.info(
+                            '[IRNMNSlider] Element is visible, initializing slider...',
+                        );
+                    }
                     this.initSlider();
                     obs.disconnect();
                 }
@@ -53,6 +75,25 @@ class IRNMNSlider extends HTMLElement {
             { root: null, threshold: 0 },
         );
         observer.observe(this);
+        // Debug: Log when observer is set up
+        if (this.debug) {
+            console.info('[IRNMNSlider] IntersectionObserver set up.');
+        }
+
+        // Add aria-live region for accessibility
+        this.ariaLiveRegion = document.createElement('div');
+        this.ariaLiveRegion.setAttribute('aria-live', 'polite');
+        this.ariaLiveRegion.setAttribute('aria-atomic', 'true');
+        this.ariaLiveRegion.classList.add('visually-hidden');
+        Object.assign(this.ariaLiveRegion.style, {
+            position: 'absolute',
+            height: '1px',
+            width: '1px',
+            overflow: 'hidden',
+            clip: 'rect(1px, 1px, 1px, 1px)',
+            whiteSpace: 'nowrap',
+        });
+        this.appendChild(this.ariaLiveRegion);
     }
 
     /**
@@ -65,6 +106,10 @@ class IRNMNSlider extends HTMLElement {
             element.removeEventListener(event, handler);
         });
         this.eventListeners = [];
+        // Debug: Log cleanup
+        if (this.debug) {
+            console.info('[IRNMNSlider] Event listeners cleaned up.');
+        }
     }
 
     initSlider() {
@@ -75,6 +120,10 @@ class IRNMNSlider extends HTMLElement {
             console.error('Swipe container not found');
             return;
         }
+        // Ensure the swipe container has a unique ID
+        if (!swipeContainer.id) {
+            swipeContainer.id = `slider-container-${Math.floor(Math.random() * 1000000)}`;
+        }
         this.setupResizeListener(swipeContainer);
 
         // Initialize slides
@@ -84,10 +133,29 @@ class IRNMNSlider extends HTMLElement {
 
         // Accessbility attributes
         swipeContainer.setAttribute('role', 'region');
-        swipeContainer.setAttribute(
-            'aria-label',
-            'Slideshow with multiple slides',
-        );
+        if (
+            !swipeContainer.hasAttribute('aria-label') &&
+            !swipeContainer.hasAttribute('aria-labelledby')
+        ) {
+            swipeContainer.setAttribute(
+                'aria-label',
+                'Slideshow with multiple slides',
+            );
+        }
+        swipeContainer.setAttribute('tabindex', '0');
+        swipeContainer.setAttribute('aria-roledescription', 'carousel');
+
+        const prevBtn = this.querySelector(this.CLASSNAMES.PREV_BUTTON);
+        const nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
+
+        if (prevBtn && !prevBtn.hasAttribute('aria-label')) {
+            prevBtn.setAttribute('aria-label', 'Previous slide');
+            prevBtn.setAttribute('aria-controls', swipeContainer.id);
+        }
+        if (nextBtn && !nextBtn.hasAttribute('aria-label')) {
+            nextBtn.setAttribute('aria-label', 'Next slide');
+            nextBtn.setAttribute('aria-controls', swipeContainer.id);
+        }
 
         const totalSlides = this.slides.length;
 
@@ -95,11 +163,21 @@ class IRNMNSlider extends HTMLElement {
          * Handle single slide case
          */
         if (totalSlides === 1) {
+            if (this.debug) {
+                console.info(
+                    '[IRNMNSlider] Only one slide detected, rendering single slide.',
+                );
+            }
             this.renderSingleSlide(this.slides[0]);
             return;
         }
 
         if (this.dataset.sliderInitialized === 'true') {
+            if (this.debug) {
+                console.info(
+                    '[IRNMNSlider] Slider already initialized, skipping.',
+                );
+            }
             return;
         }
         this.dataset.sliderInitialized = 'true';
@@ -109,6 +187,13 @@ class IRNMNSlider extends HTMLElement {
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
         this.addEventListeners(swipeContainer, totalSlides);
+        this.initSlidesAttributes();
+        this.updateSlidesAttributes(1); // Start with the first slide as active
+
+        // Debug: Log initialization complete
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slider initialization complete.');
+        }
     }
 
     /**
@@ -130,32 +215,14 @@ class IRNMNSlider extends HTMLElement {
                 // Recalculate offsets and center the current slide
                 this.calculateSlideOffsets(swipeContainer);
                 this.centerSlide(swipeContainer);
+
+                // Debug: Log resize event
+                if (this.debug) {
+                    console.info(
+                        '[IRNMNSlider] Window resized, recalculated offsets and centered slide.',
+                    );
+                }
             }, 150);
-        };
-
-        window.addEventListener('resize', onResize);
-
-        // Track the resize listener for cleanup
-        this.eventListeners.push({
-            element: window,
-            event: 'resize',
-            handler: onResize,
-        });
-    }
-
-    /**
-     * Sets up the resize event listener to recalculate offsets
-     * and center the current slide when the window is resized.
-     *
-     * @returns {void}
-     */
-    setupResizeListener(swipeContainer) {
-        const onResize = () => {
-            if (!swipeContainer) return;
-
-            // Recalculate offsets and center the current slide
-            this.calculateSlideOffsets(swipeContainer);
-            this.centerSlide(swipeContainer);
         };
 
         window.addEventListener('resize', onResize);
@@ -181,21 +248,53 @@ class IRNMNSlider extends HTMLElement {
         this.querySelector(this.CLASSNAMES.PREV_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.NEXT_BUTTON)?.remove();
         this.querySelector(this.CLASSNAMES.CONTROLS)?.remove();
+
+        // Debug: Log single slide rendering
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Navigation and controls removed for single slide.',
+            );
+        }
     }
 
     /**
      * Clone first and last slides to enable looping
      */
     cloneSlides(swipeContainer) {
-        const firstClone = this.slides[0].cloneNode(true);
-        const lastClone = this.slides[this.slides.length - 1].cloneNode(true);
-        swipeContainer.appendChild(firstClone); // Add the first clone at the end
-        swipeContainer.insertBefore(lastClone, this.slides[0]); // Add the last clone at the beginning
+        // Remove any existing clones to avoid duplicates
+        swipeContainer
+            .querySelectorAll('.clone-slide')
+            .forEach((clone) => clone.remove());
+
+        // Clone first and last slides for infinite loop
+        const firstSlide = this.slides[0];
+        const lastSlide = this.slides[this.slides.length - 1];
+
+        if (firstSlide && lastSlide) {
+            const firstClone = firstSlide.cloneNode(true);
+            const lastClone = lastSlide.cloneNode(true);
+
+            firstClone.dataset.clone = 'true';
+            lastClone.dataset.clone = 'true';
+            firstClone.classList.add('clone-slide');
+            lastClone.classList.add('clone-slide');
+
+            swipeContainer.appendChild(firstClone); // Add first clone at the end
+            swipeContainer.insertBefore(lastClone, firstSlide); // Add last clone at the beginning
+        }
 
         // Update the slides property to include the clones
         this.slides = Array.from(
             swipeContainer.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
+
+        // Debug: Log cloning
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Slides cloned for infinite loop. Total slides (with clones):',
+                this.slides.length,
+            );
+        }
     }
 
     /**
@@ -213,6 +312,14 @@ class IRNMNSlider extends HTMLElement {
             cumulativeOffset += slide.offsetWidth;
             this.slideOffsets.push(cumulativeOffset);
         });
+
+        // Debug: Log offsets calculation
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Slide offsets calculated:',
+                this.slideOffsets,
+            );
+        }
     }
 
     /**
@@ -228,6 +335,10 @@ class IRNMNSlider extends HTMLElement {
         if (totalSlidesElem) {
             totalSlidesElem.textContent = totalSlides;
         }
+        // Debug: Log total slides update
+        if (this.debug) {
+            console.info('[IRNMNSlider] Total slides updated:', totalSlides);
+        }
     }
 
     /**
@@ -240,6 +351,14 @@ class IRNMNSlider extends HTMLElement {
         this.currentSlide = 1;
         swipeContainer.style.transition = 'none';
         this.centerSlide(swipeContainer);
+
+        // Debug: Log position initialization
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Slider position initialized to slide:',
+                this.currentSlide,
+            );
+        }
     }
 
     /**
@@ -282,6 +401,44 @@ class IRNMNSlider extends HTMLElement {
         );
 
         this.addListener(swipeContainer, 'transitionend', resetPosition);
+
+        this.addListener(swipeContainer, 'keydown', (e) => {
+            if (
+                !this.dataset.sliderInitialized ||
+                !this.contains(document.activeElement)
+            )
+                return;
+
+            switch (e.key) {
+                case 'ArrowRight':
+                case 'Right':
+                    e.preventDefault();
+                    nextSlide();
+                    break;
+                case 'ArrowLeft':
+                case 'Left':
+                    e.preventDefault();
+                    prevSlide();
+                    break;
+                case 'Home':
+                    e.preventDefault();
+                    this.currentSlide = 1;
+                    updateSlides();
+                    break;
+                case 'End':
+                    e.preventDefault();
+                    this.currentSlide = totalSlides;
+                    updateSlides();
+                    break;
+            }
+        });
+
+        // Debug: Log event listeners added
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Navigation, drag and keyboard event listeners added.',
+            );
+        }
     }
 
     /**
@@ -313,6 +470,59 @@ class IRNMNSlider extends HTMLElement {
         const offset = this.slideOffsets[this.currentSlide];
         const slideWidth = this.slides[this.currentSlide].offsetWidth;
         swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px))`;
+
+        // Debug: Log centering
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Centered slide:',
+                this.currentSlide,
+                'Offset:',
+                offset,
+                'Width:',
+                slideWidth,
+            );
+        }
+    }
+
+    initSlidesAttributes() {
+        const totalSlides = this.querySelectorAll(
+            `${this.CLASSNAMES.SLIDES}:not([data-clone])`,
+        ).length;
+
+        this.slides.forEach((slide, i) => {
+            const isClone = slide.dataset.clone === 'true';
+
+            if (isClone) {
+                slide.setAttribute('aria-hidden', 'true');
+                slide.setAttribute('tabindex', '-1');
+                slide.removeAttribute('role');
+                slide.removeAttribute('aria-roledescription');
+                slide.removeAttribute('aria-label');
+            } else {
+                slide.setAttribute('role', 'group');
+                slide.setAttribute('aria-roledescription', 'slide');
+                if (!slide.hasAttribute('aria-label')) {
+                    slide.setAttribute(
+                        'aria-label',
+                        `Slide ${i} of ${totalSlides}`,
+                    );
+                }
+            }
+        });
+    }
+
+    /**
+     * Updates accessibility attributes and active state for each slide.
+     */
+    updateSlidesAttributes(displayedSlideIndex) {
+        this.slides.forEach((slide, i) => {
+            const isClone = slide.dataset.clone === 'true';
+            if (isClone) return;
+
+            const isActive = i === displayedSlideIndex;
+            slide.setAttribute('tabindex', isActive ? '0' : '-1');
+            slide.classList.toggle('active-slide', isActive);
+        });
     }
 
     /**
@@ -335,12 +545,22 @@ class IRNMNSlider extends HTMLElement {
                 displayedSlideIndex = this.currentSlide;
                 break;
         }
+
+        this.updateSlidesAttributes(displayedSlideIndex);
+
         const currentSlideElem = this.querySelector(
             this.CLASSNAMES.CURRENT_SLIDE,
         );
         if (currentSlideElem) {
             currentSlideElem.textContent = displayedSlideIndex;
         }
+
+        // Accessibility: announce the current slide
+        if (this.ariaLiveRegion) {
+            const announcement = `Slide ${displayedSlideIndex} of ${totalSlides}`;
+            this.ariaLiveRegion.textContent = announcement;
+        }
+
         // Dispatch a custom event when the slide changes
         const slideChangeEvent = new CustomEvent('slideChange', {
             detail: {
@@ -352,6 +572,16 @@ class IRNMNSlider extends HTMLElement {
             },
         });
         swipeContainer.dispatchEvent(slideChangeEvent);
+
+        // Debug: Log slide update
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slide updated:', {
+                currentSlide: this.currentSlide,
+                displayedSlideIndex,
+                totalSlides,
+                clonedSlidesCount,
+            });
+        }
     }
 
     /**
@@ -367,25 +597,75 @@ class IRNMNSlider extends HTMLElement {
         this.centerSlide(swipeContainer);
         this.classList.remove('transitioning-prev');
         this.classList.remove('transitioning-next');
+
+        // Ensure focus is returned to the current slide
+        const focusedElement = document.activeElement;
+        // If focus is on the slide itself or anywhere within a slide (including its children), send focus back to the current slide
+        if (
+            focusedElement &&
+            this.slides.some(
+                (slide) =>
+                    slide === focusedElement || slide.contains(focusedElement),
+            )
+        ) {
+            const currentSlideElem = this.slides[this.currentSlide];
+            if (currentSlideElem) {
+                currentSlideElem.focus();
+            }
+        }
+
+        // Debug: Log position reset
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Position reset after transition. Current slide:',
+                this.currentSlide,
+            );
+        }
     }
 
     /**
      * Move to the next slide
      */
     moveToNextSlide(updateSlides, clonedSlidesCount) {
+        if (
+            this.classList.contains('transitioning-next') ||
+            this.classList.contains('transitioning-prev')
+        )
+            return;
+        this.classList.add('transitioning-next');
         this.currentSlide = (this.currentSlide + 1) % clonedSlidesCount;
         updateSlides();
-        this.classList.add('transitioning-next');
+
+        // Debug: Log next slide
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Moved to next slide:',
+                this.currentSlide,
+            );
+        }
     }
 
     /**
      * Move to the previous slide
      */
     moveToPrevSlide(updateSlides, clonedSlidesCount) {
+        if (
+            this.classList.contains('transitioning-next') ||
+            this.classList.contains('transitioning-prev')
+        )
+            return;
+        this.classList.add('transitioning-prev');
         this.currentSlide =
             (this.currentSlide - 1 + clonedSlidesCount) % clonedSlidesCount;
         updateSlides();
-        this.classList.add('transitioning-prev');
+
+        // Debug: Log previous slide
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Moved to previous slide:',
+                this.currentSlide,
+            );
+        }
     }
 
     /**
@@ -407,6 +687,11 @@ class IRNMNSlider extends HTMLElement {
             startX = e.touches ? e.touches[0].clientX : e.clientX;
             isDragging = true;
             swipeContainer.style.transition = 'none';
+
+            // Debug: Log drag start
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch start:', startX);
+            }
         };
 
         const touchMove = (e) => {
@@ -415,6 +700,11 @@ class IRNMNSlider extends HTMLElement {
             const offset = this.slideOffsets[this.currentSlide];
             const slideWidth = this.slides[this.currentSlide].offsetWidth;
             swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px + ${currentX}px))`;
+
+            // Debug: Log drag move
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch move:', currentX);
+            }
         };
 
         const touchEnd = () => {
@@ -425,6 +715,11 @@ class IRNMNSlider extends HTMLElement {
             else updateSlides();
             currentX = 0;
             isDragging = false;
+
+            // Debug: Log drag end
+            if (this.debug) {
+                console.info('[IRNMNSlider] Drag/touch end.');
+            }
         };
 
         this.addListener(swipeContainer, 'touchstart', touchStart);
@@ -434,6 +729,11 @@ class IRNMNSlider extends HTMLElement {
         this.addListener(swipeContainer, 'mousemove', touchMove);
         this.addListener(swipeContainer, 'mouseup', touchEnd);
         this.addListener(swipeContainer, 'mouseleave', touchEnd);
+
+        // Debug: Log drag and drop setup
+        if (this.debug) {
+            console.info('[IRNMNSlider] Drag and drop/touch listeners set up.');
+        }
     }
 
     refresh() {
@@ -446,6 +746,11 @@ class IRNMNSlider extends HTMLElement {
         }
         this.calculateSlideOffsets(swipeContainer);
         this.centerSlide(swipeContainer);
+
+        // Debug: Log refresh
+        if (this.debug) {
+            console.info('[IRNMNSlider] Slider refreshed.');
+        }
     }
 }
 
