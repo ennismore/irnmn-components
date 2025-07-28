@@ -1,4 +1,4 @@
-import{x as b}from"./iframe-D0lGrTHv.js";import"./style-DXA9LxPY.js";const z=`:root,
+import{x as b}from"./iframe-DDwhF2cR.js";import"./style-B8yNEVb5.js";const z=`:root,
 body {
     /* => Spacing scale */
     --space-1: 4px;
@@ -741,7 +741,8 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
             room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
             hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
             labels='{"book" : "${r.bookLabel}" ,"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-          ></irnmn-room-card>
+            columns="${r.columns}"
+            ></irnmn-room-card>
         `)}
       </div>
 
@@ -795,7 +796,8 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
             room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
             hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
             labels='{"book" : "\${args.bookLabel}" ,"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-          ></irnmn-room-card>
+            columns="\${args.columns}"
+            ></irnmn-room-card>
         \`)}
       </div>
 
