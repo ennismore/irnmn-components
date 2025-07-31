@@ -337,17 +337,22 @@ class IrnmnRoomCard extends HTMLElement {
                         ${this.arrowSvg}
                     </button>
                 </div>
-                <div class="room-card__slider-indicators" aria-hidden="true">
-                    <ul aria-hidden="true">
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                    </ul>
-                </div>
+                ${
+                    this.images.length > 1
+                        ? `
+                    <div class="room-card__slider-indicators" aria-hidden="true">
+                        <ul aria-hidden="true">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div> `
+                        : ''
+                }
                 ${
                     this.link360
                         ? `
