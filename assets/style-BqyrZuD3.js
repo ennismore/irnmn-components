@@ -20,17 +20,18 @@ var g=Object.defineProperty;var v=(h,i,e)=>i in h?g(h,i,{enumerable:!0,configura
                         ${this.arrowSvg}
                     </button>
                 </div>
-                <div class="room-card__slider-indicators" aria-hidden="true">
-                    <ul aria-hidden="true">
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                        <li></li>
-                    </ul>
-                </div>
+                ${this.images.length>1?`
+                    <div class="room-card__slider-indicators" aria-hidden="true">
+                        <ul aria-hidden="true">
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                    </div> `:""}
                 ${this.link360?`
                     <a href="${this.link360}" target="_blank" class="room-card__slider-360" aria-label="${this.labels.view360||"View 360 tour"}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
