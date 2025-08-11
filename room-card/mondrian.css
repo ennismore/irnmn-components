@@ -50,5 +50,7 @@
 
         --room-modal-cta-header-display: none;
         --room-modal-cta-normal-display: block;
+
+        --room-modal-spacing-top-bottom : 0px;
     }
 }

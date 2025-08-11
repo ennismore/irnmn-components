@@ -111,6 +111,7 @@ body {
     --room-modal-content-gap: var(--space-4);
     --room-modal-close-buton-size: var(--space-3);
     --room-modal-close-buton-pos-right: var(--room-modal-padding-left-right);
+    --room-modal-spacing-top-bottom: var(--space-4);
 
     /* => CTA */
     --room-card-cta-color: #fff;
@@ -604,7 +605,7 @@ body.irnmn-modal-open {
     overflow: hidden;
 }
 
-irnmn-room-card .room-modal {
+irnmn-room-card .room-modal .irnmn-modal .irnmn-modal__container {
     container-type: inline-size;
     container-name: roomModal;
     display: block;
@@ -647,7 +648,7 @@ irnmn-room-card .room-modal .irnmn-modal__container {
 irnmn-room-card .room-modal .room-modal__inner{
     padding: 0 0 var(--room-modal-padding-top-bottom) 0;
     overflow: auto;
-    max-height: calc( 100dvh - 2 * var(--room-modal-padding-left-right) - 2 * var(--room-modal-padding-top-bottom) );
+    max-height: calc( 100dvh - 2 * var(--room-modal-spacing-top-bottom) - 2 * var(--room-modal-padding-top-bottom) );
 }
 irnmn-room-card .room-modal .irnmn-modal__close {
     position: fixed;
