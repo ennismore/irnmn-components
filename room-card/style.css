@@ -101,7 +101,7 @@ body {
 
     /* => Modal */
     --room-modal-background:#ffffff;
-    --room-modal-max-width: 870px;
+    --room-modal-max-width: 800px;
     --room-modal-backdrop: rgba(0, 0, 0, 0.25);
     --room-modal-close-color: var(--room-card-text-color);
     --room-modal-padding-top-bottom: var(--space-7);
