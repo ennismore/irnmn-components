@@ -38,7 +38,7 @@ The `IRNMNSlider` web component is a dynamic, accessible, and responsive slider 
 - While the component provides fallback ARIA labels, it is best practice to set meaningful ARIA attributes directly in your HTML for proper localization and translation. For example:
 
 ```html
-<irnmn-slider debug selectors='{
+<irnmn-slider selectors='{
     "SWIPE_CONTAINER": ".slider-container",
     "SLIDES": ".slider-slide",
     "NAVIGATION": ".slider-navigation",
@@ -161,14 +161,14 @@ Dispatches a `slideChange` event on slide change with details about the current 
 - **Accessibility:** ARIA roles, live region, focus handling, clones hidden from screen readers.
 - **Responsive:** Adjusts slide widths and offsets on resize.
 - **Custom Events:** Dispatches `slideChange` event on slide change.
-- **Debugging:** Add `?debugTracking=true` to the URL for console logs.
+- **Debugging:** Add `?debugSlider=true` to the URL for console logs.
 
 ---
 
 ## Notes
 
 - If only one slide is present, navigation controls are removed and the slide is centered.
-- For debugging, add `?debugTracking=true` to the URL to enable console logs.
+- For debugging, add `?debugSlider=true` to the URL to enable console logs.
 - To refresh the slider after dynamic content changes, call the `refresh()` method.
 - All event listeners are cleaned up automatically when the component is removed from the DOM.
 

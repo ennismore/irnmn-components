@@ -9,7 +9,7 @@ class IRNMNSlider extends HTMLElement {
         super();
         this.CLASSNAMES = this.selectors;
         const urlParams = new URLSearchParams(window.location.search);
-        this.debug = urlParams.get('debugTracking');
+        this.debug = urlParams.get('debugSlider');
         // Debug: Log constructor initialization
         if (this.debug) {
             console.info(

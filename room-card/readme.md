@@ -73,6 +73,29 @@ A custom web component for displaying hotel room information, images, amenities,
 
 - Requires the `<irnmn-slider>` and `<irnmn-modal>` custom elements.
 
+### Analytics & Debuging
+
+## Analytics & Debugging
+
+The `irnmn-room-card` component includes built-in analytics tracking for key user interactions:
+
+- **Tracked Events:**
+    - Opening the modal ("More info" button or clicking a slider image)
+    - Clicking the "Book" button
+    - Navigating the image slider (previous/next)
+    - Clicking the 360° tour link
+
+- **How it works:**
+    Each interaction triggers a standardized event pushed to `window.dataLayer` (if available), with details such as interaction type, room info, and layout. Duplicate events are deduplicated within 500ms to avoid noise.
+
+- **Debug Mode:**
+    Add `?debugTracking=1` to the URL to enable debug logging in the browser console. This will log tracking payloads and warnings if required data or `dataLayer` is missing.
+
+- **Accessibility:**
+    Each card instance uses a unique ID for modal accessibility and event tracking.
+
+No external analytics dependencies are required; all tracking is handled natively within the component.
+
 ## Styling
 
 Styling is handled via CSS and CSS variables. See the CSS section for details.
