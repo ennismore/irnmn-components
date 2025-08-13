@@ -648,7 +648,7 @@ irnmn-room-card .room-modal .irnmn-modal__container {
 irnmn-room-card .room-modal .room-modal__inner{
     padding: 0 0 var(--room-modal-padding-top-bottom) 0;
     overflow: auto;
-    max-height: calc( 100dvh - 2 * var(--room-modal-spacing-top-bottom) - 2 * var(--room-modal-padding-top-bottom) );
+    max-height: calc( 100dvh - 2 * var(--room-modal-spacing-top-bottom) - var(--room-modal-padding-top-bottom) );
 }
 irnmn-room-card .room-modal .irnmn-modal__close {
     position: fixed;
