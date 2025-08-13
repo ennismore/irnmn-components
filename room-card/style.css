@@ -704,7 +704,7 @@ irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
 }
 
 /* Responsive styles for amenities */
-@container roomModal (width < 769px) {
+@container roomModal (width < 700px) {
     irnmn-room-card .room-card__amenities {
         flex-direction: column;
     }
