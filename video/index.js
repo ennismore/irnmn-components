@@ -3,7 +3,7 @@ import Hls from './vendor/hls.light.min.js';
 
 class IrnmnVideo extends HTMLElement {
     static get observedAttributes() {
-        return ['src'];
+        return ['src', 'width', 'height'];
     }
 
     constructor() {
@@ -17,6 +17,14 @@ class IrnmnVideo extends HTMLElement {
         this.setupButton();
     }
 
+    get videoWidth() {
+        return this.getAttribute('width');
+    }
+
+    get videoHeight() {
+        return this.getAttribute('height');
+    }
+    
     /**
      * Handles changes to observed attributes and triggers necessary updates.
      *
@@ -54,6 +62,8 @@ class IrnmnVideo extends HTMLElement {
                 ${this.getAttribute('video-loop') === 'true' ? 'loop' : ''}
                 ${this.hasAttribute('video-muted') ? 'muted' : ''}
                 ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
+                width="${this.videoWidth || ''}"
+                height="${this.videoHeight || ''}"
                 poster="${this.getAttribute('poster') || ''}"
                 src="${this.getAttribute('src') || ''}" 
             >
