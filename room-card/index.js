@@ -31,6 +31,11 @@ class IrnmnRoomCard extends HTMLElement {
         this.eventCache = new Map(); // for deduplication
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.get('debugTracking');
+
+        // --- lifecycle + listener management ---
+        this._listeners = null;   // AbortController to remove all listeners on re-bind
+        this._scheduled = false;  // prevents stacking multiple binds in a single frame
+        this._isConnected = false; // track connection state to avoid binding while detached
     }
 
     /**
@@ -137,15 +142,54 @@ class IrnmnRoomCard extends HTMLElement {
         );
     }
 
+    // --- Scheduler to bind listeners after render ---
+    /**
+     * Schedule a single (debounced) listener binding after the current render.
+     * Uses microtask + frame delays to ensure DOM is ready.
+     */
+    async scheduleBind() {
+        if (this._scheduled) return;
+        this._scheduled = true;
+
+        // Wait a microtask for innerHTML render to commit
+        await Promise.resolve();
+        // Wait a frame for layout/paint and for child elements to upgrade
+        await new Promise(requestAnimationFrame);
+
+        // Guarantee child custom elements are upgraded
+        await Promise.all([
+            customElements.whenDefined('irnmn-modal'),
+            customElements.whenDefined('irnmn-slider'),
+        ]);
+
+        this._scheduled = false;
+
+        // Abort previous listeners before reattaching to prevent duplicates
+        if (this._listeners) this._listeners.abort();
+        this._listeners = new AbortController(); // See AbortController documentation : https://developer.mozilla.org/en-US/docs/Web/API/AbortController
+        const { signal } = this._listeners;
+
+        // Only bind if still connected (could have been detached meanwhile)
+        if (this._isConnected) {
+            this.addListeners(signal);
+        }
+    }
+
     /**
      * Lifecycle method called when the element is added to the DOM.
      * Renders the component and adds event listeners.
      */
     connectedCallback() {
+        this._isConnected = true;
         this.render();
-        setTimeout(() => {
-            this.addListeners();
-        }, 100);
+        // Schedule binding of listeners
+        this.scheduleBind();
+    }
+
+    // --- Proper cleanup when removed from DOM ---
+    disconnectedCallback() {
+        this._isConnected = false;
+        if (this._listeners) this._listeners.abort();
     }
 
     /**
@@ -154,10 +198,11 @@ class IrnmnRoomCard extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         // Only re-render if the value actually changed
         if (oldValue !== newValue) {
+            // Avoid doing DOM work if not connected yet
+            if (!this.isConnected) return;
             this.render();
-            setTimeout(() => {
-                this.addListeners();
-            }, 100);
+            // Schedule binding of listeners
+            this.scheduleBind();
         }
     }
 
@@ -204,22 +249,26 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     /**
-     * Adds event listeners for modal expansion and slider refresh.
+     * Adds event listeners for analytic tracking.
      * @private
+     * @param {AbortSignal} [signal] - optional AbortSignal for clean removal.
      */
-    addListeners() {
-        /* ANALYTIC TRACKING */
+    addTrackingListeners(signal) {
         const expandButtons = this.querySelectorAll('.expand-room-modal');
         expandButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('moreInfo', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('moreInfo', 'roomCard'),
+                { signal },
             ),
         );
 
         const bookButtons = this.querySelectorAll('.--book-button');
         bookButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('book', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('book', 'roomCard'),
+                { signal },
             ),
         );
 
@@ -227,56 +276,81 @@ class IrnmnRoomCard extends HTMLElement {
             '.room-card__slider-prev, .room-card__slider-next',
         );
         navButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('carouselClick', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('carouselClick', 'roomCard'),
+                { signal },
             ),
         );
 
         const tourLinks = this.querySelectorAll('.room-card__slider-360');
         if (tourLinks.length) {
             tourLinks.forEach((tourLink) =>
-                tourLink.addEventListener('click', () => {
-                    this.pushTrackingEvent('360Tour', 'roomCard');
-                }),
+                tourLink.addEventListener(
+                    'click',
+                    () => {
+                        this.pushTrackingEvent('360Tour', 'roomCard');
+                    },
+                    { signal },
+                ),
             );
         }
+    }
 
-        /* MODAL OPENING */
+    /**
+     * Adds event listeners for modal expansion and slider refresh.
+     * @private
+     * @param {AbortSignal} [signal] - optional AbortSignal for clean removal.
+     */
+    addComponentListeners(signal) {
+        const expandButtons = this.querySelectorAll('.expand-room-modal');
         const sliderFigures = this.querySelectorAll('irnmn-slider figure');
         const modal = this.querySelector('.room-modal');
         if ((!expandButtons.length && !sliderFigures.length) || !modal) return;
 
         // Helper for click vs drag detection
-        function addClickOnlyListener(element, handler) {
+        function addClickOnlyListener(element, handler, signal) {
             let isDragging = false;
             let startX = 0;
             let startY = 0;
             let threshold = 10; // px
 
-            element.addEventListener('pointerdown', (e) => {
-                isDragging = false;
-                startX = e.clientX;
-                startY = e.clientY;
-            });
+            element.addEventListener(
+                'pointerdown',
+                (e) => {
+                    isDragging = false;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                },
+                { signal },
+            );
 
-            element.addEventListener('pointermove', (e) => {
-                if (
-                    Math.abs(e.clientX - startX) > threshold ||
-                    Math.abs(e.clientY - startY) > threshold
-                ) {
-                    isDragging = true;
-                }
-            });
+            element.addEventListener(
+                'pointermove',
+                (e) => {
+                    if (
+                        Math.abs(e.clientX - startX) > threshold ||
+                        Math.abs(e.clientY - startY) > threshold
+                    ) {
+                        isDragging = true;
+                    }
+                },
+                { signal },
+            );
 
-            element.addEventListener('pointerup', (e) => {
-                if (!isDragging) {
-                    handler(e);
-                }
-            });
+            element.addEventListener(
+                'pointerup',
+                (e) => {
+                    if (!isDragging) {
+                        handler(e);
+                    }
+                },
+                { signal },
+            );
 
             element.addEventListener('dragstart', () => {
                 isDragging = true;
-            });
+            }, { signal });
         }
 
         // DRY: open modal, refresh slider, set up modal book button close
@@ -284,23 +358,33 @@ class IrnmnRoomCard extends HTMLElement {
             modal.open();
             const modalBookButtons = modal.querySelectorAll('.--book-button');
             modalBookButtons.forEach((button) => {
-                button.removeEventListener('click', button._modalCloseHandler);
+                if (button._modalCloseHandler) {
+                    button.removeEventListener('click', button._modalCloseHandler);
+                }
                 button._modalCloseHandler = function () {
                     modal.close();
                 };
-                button.addEventListener('click', button._modalCloseHandler);
+                button.addEventListener('click', button._modalCloseHandler, { signal });
             });
         }
 
         expandButtons.forEach((expandButton) => {
-            expandButton.addEventListener('click', () =>
-                openModalAndSetup(modal),
-            );
+            expandButton.addEventListener('click', () => openModalAndSetup(modal), { signal });
         });
 
         sliderFigures.forEach((figure) => {
-            addClickOnlyListener(figure, () => openModalAndSetup(modal));
+            addClickOnlyListener(figure, () => openModalAndSetup(modal), signal);
         });
+    }
+
+    /**
+     * Adds all event listeners.
+     * @private
+     * @param {AbortSignal} [signal]
+     */
+    addListeners(signal) {
+        this.addTrackingListeners(signal);
+        this.addComponentListeners(signal);
     }
 
     /**
@@ -319,21 +403,21 @@ class IrnmnRoomCard extends HTMLElement {
             }'>
                 <div class="room-card__slider-container" aria-polite="true" aria-label="${this.labels.slideraria || 'Room images'}">
                     ${this.images
-                        .map((img) => {
-                            if (typeof img === 'string') {
-                                return `<div class="room-card__slider-slide"><figure><img src="${img}" alt="Room image"></figure></div>`;
-                            } else if (img && typeof img === 'object') {
-                                const srcsetAttr = img.srcset
-                                    ? ` srcset="${img.srcset}"`
-                                    : '';
-                                const sizesAttr = img.sizes
-                                    ? ` sizes="${img.sizes}"`
-                                    : '';
-                                return `<div class="room-card__slider-slide"><figure><img src="${img.url}" ${srcsetAttr} ${sizesAttr} alt="${img.alt || 'Room image'}"></figure></div>`;
-                            }
-                            return '';
-                        })
-                        .join('')}
+                .map((img) => {
+                    if (typeof img === 'string') {
+                        return `<div class="room-card__slider-slide"><figure><img src="${img}" alt="Room image"></figure></div>`;
+                    } else if (img && typeof img === 'object') {
+                        const srcsetAttr = img.srcset
+                            ? ` srcset="${img.srcset}"`
+                            : '';
+                        const sizesAttr = img.sizes
+                            ? ` sizes="${img.sizes}"`
+                            : '';
+                        return `<div class="room-card__slider-slide"><figure><img src="${img.url}" ${srcsetAttr} ${sizesAttr} alt="${img.alt || 'Room image'}"></figure></div>`;
+                    }
+                    return '';
+                })
+                .join('')}
                 </div>
                 <div class="room-card__slider-navigation">
                     <button class="room-card__slider-prev" aria-label="${this.labels.prevSlide || 'See previous image'}">
@@ -343,9 +427,8 @@ class IrnmnRoomCard extends HTMLElement {
                         ${this.arrowSvg}
                     </button>
                 </div>
-                ${
-                    this.images.length > 1
-                        ? `
+                ${this.images.length > 1
+                ? `
                     <div class="room-card__slider-indicators" aria-hidden="true">
                         <ul aria-hidden="true">
                             <li></li>
@@ -357,11 +440,10 @@ class IrnmnRoomCard extends HTMLElement {
                             <li></li>
                         </ul>
                     </div> `
-                        : ''
-                }
-                ${
-                    this.link360
-                        ? `
+                : ''
+            }
+                ${this.link360
+                ? `
                     <a href="${this.link360}" target="_blank" class="room-card__slider-360" aria-label="${this.labels.view360aria || '360° View of this room in new tab'}">
                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="16" viewBox="0 0 14 16" fill="none">
                         <path d="M10.9016 6.58242V2.85742C10.9016 2.45742 10.6766 2.10742 10.3266 1.95742L7.42656 0.607422C7.15156 0.482422 6.85156 0.482422 6.57656 0.607422L3.67656 1.95742C3.32656 2.13242 3.10156 2.48242 3.10156 2.85742V6.58242C3.10156 6.93242 3.30156 7.28242 3.60156 7.45742L6.50156 9.13242C6.65156 9.23242 6.82656 9.25742 7.00156 9.25742C7.17656 9.25742 7.35156 9.20742 7.50156 9.13242L10.4016 7.45742C10.7266 7.28242 10.9016 6.95742 10.9016 6.58242ZM6.80156 1.05742C6.85156 1.03242 6.92656 1.00742 7.00156 1.00742C7.07656 1.00742 7.15156 1.03242 7.20156 1.05742L10.0766 2.38242L7.00156 3.80742L3.92656 2.38242L6.80156 1.05742ZM3.85156 7.03242C3.70156 6.93242 3.60156 6.78242 3.60156 6.60742V2.85742C3.60156 2.83242 3.60156 2.80742 3.60156 2.78242L6.75156 4.23242V8.68242L3.85156 7.03242ZM10.1516 7.03242L7.25156 8.70742V4.23242L10.4016 2.78242C10.4016 2.80742 10.4016 2.83242 10.4016 2.85742V6.58242C10.4016 6.75742 10.3266 6.93242 10.1516 7.03242Z" fill="white" style="fill:white;fill-opacity:1;"/>
@@ -372,8 +454,8 @@ class IrnmnRoomCard extends HTMLElement {
                         ${this.labels.view360 || '360 tour'}
                     </a>
                 `
-                        : ''
-                }
+                : ''
+            }
                 ${this.badgeLabel ? `<span class="room-card__badge">${this.badgeLabel}</span>` : ''}
             </irnmn-slider> `;
     }
@@ -403,11 +485,10 @@ class IrnmnRoomCard extends HTMLElement {
                 <p class="room-card__extras__list" role="list">
                     ${this.extras.map((extra) => `<span role="listitem">${extra}</span>`).join('')}
                 </p>
-                ${
-                    moreButton
-                        ? `<button aria-label="${this.labels.more ? `${this.title} ${this.labels.more}` : `${this.title} More info`}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
-                        : ''
-                }
+                ${moreButton
+                ? `<button aria-label="${this.labels.more ? `${this.title} ${this.labels.more}` : `${this.title} More info`}" class="btn btn-secondary expand-room-modal">${this.labels.more || 'More info'}</button>`
+                : ''
+            }
             </div>
         `;
     }
