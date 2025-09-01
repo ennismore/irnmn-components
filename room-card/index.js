@@ -31,6 +31,11 @@ class IrnmnRoomCard extends HTMLElement {
         this.eventCache = new Map(); // for deduplication
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.get('debugTracking');
+
+        // --- lifecycle + listener management ---
+        this._listeners = null; // AbortController to remove all listeners on re-bind
+        this._scheduled = false; // prevents stacking multiple binds in a single frame
+        this._isConnected = false; // track connection state to avoid binding while detached
     }
 
     /**
@@ -137,15 +142,54 @@ class IrnmnRoomCard extends HTMLElement {
         );
     }
 
+    // --- Scheduler to bind listeners after render ---
+    /**
+     * Schedule a single (debounced) listener binding after the current render.
+     * Uses microtask + frame delays to ensure DOM is ready.
+     */
+    async scheduleBind() {
+        if (this._scheduled) return;
+        this._scheduled = true;
+
+        // Wait a microtask for innerHTML render to commit
+        await Promise.resolve();
+        // Wait a frame for layout/paint and for child elements to upgrade
+        await new Promise(requestAnimationFrame);
+
+        // Guarantee child custom elements are upgraded
+        await Promise.all([
+            customElements.whenDefined('irnmn-modal'),
+            customElements.whenDefined('irnmn-slider'),
+        ]);
+
+        this._scheduled = false;
+
+        // Abort previous listeners before reattaching to prevent duplicates
+        if (this._listeners) this._listeners.abort();
+        this._listeners = new AbortController(); // See AbortController documentation : https://developer.mozilla.org/en-US/docs/Web/API/AbortController
+        const { signal } = this._listeners;
+
+        // Only bind if still connected (could have been detached meanwhile)
+        if (this._isConnected) {
+            this.addListeners(signal);
+        }
+    }
+
     /**
      * Lifecycle method called when the element is added to the DOM.
      * Renders the component and adds event listeners.
      */
     connectedCallback() {
+        this._isConnected = true;
         this.render();
-        setTimeout(() => {
-            this.addListeners();
-        }, 100);
+        // Schedule binding of listeners
+        this.scheduleBind();
+    }
+
+    // --- Proper cleanup when removed from DOM ---
+    disconnectedCallback() {
+        this._isConnected = false;
+        if (this._listeners) this._listeners.abort();
     }
 
     /**
@@ -154,10 +198,11 @@ class IrnmnRoomCard extends HTMLElement {
     attributeChangedCallback(name, oldValue, newValue) {
         // Only re-render if the value actually changed
         if (oldValue !== newValue) {
+            // Avoid doing DOM work if not connected yet
+            if (!this._isConnected) return;
             this.render();
-            setTimeout(() => {
-                this.addListeners();
-            }, 100);
+            // Schedule binding of listeners
+            this.scheduleBind();
         }
     }
 
@@ -204,22 +249,26 @@ class IrnmnRoomCard extends HTMLElement {
     }
 
     /**
-     * Adds event listeners for modal expansion and slider refresh.
+     * Adds event listeners for analytic tracking.
      * @private
+     * @param {AbortSignal} [signal] - optional AbortSignal for clean removal.
      */
-    addListeners() {
-        /* ANALYTIC TRACKING */
+    addTrackingListeners(signal) {
         const expandButtons = this.querySelectorAll('.expand-room-modal');
         expandButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('moreInfo', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('moreInfo', 'roomCard'),
+                { signal },
             ),
         );
 
         const bookButtons = this.querySelectorAll('.--book-button');
         bookButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('book', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('book', 'roomCard'),
+                { signal },
             ),
         );
 
@@ -227,56 +276,85 @@ class IrnmnRoomCard extends HTMLElement {
             '.room-card__slider-prev, .room-card__slider-next',
         );
         navButtons.forEach((btn) =>
-            btn.addEventListener('click', () =>
-                this.pushTrackingEvent('carouselClick', 'roomCard'),
+            btn.addEventListener(
+                'click',
+                () => this.pushTrackingEvent('carouselClick', 'roomCard'),
+                { signal },
             ),
         );
 
         const tourLinks = this.querySelectorAll('.room-card__slider-360');
         if (tourLinks.length) {
             tourLinks.forEach((tourLink) =>
-                tourLink.addEventListener('click', () => {
-                    this.pushTrackingEvent('360Tour', 'roomCard');
-                }),
+                tourLink.addEventListener(
+                    'click',
+                    () => {
+                        this.pushTrackingEvent('360Tour', 'roomCard');
+                    },
+                    { signal },
+                ),
             );
         }
+    }
 
-        /* MODAL OPENING */
+    /**
+     * Adds event listeners for modal expansion and slider refresh.
+     * @private
+     * @param {AbortSignal} [signal] - optional AbortSignal for clean removal.
+     */
+    addComponentListeners(signal) {
+        const expandButtons = this.querySelectorAll('.expand-room-modal');
         const sliderFigures = this.querySelectorAll('irnmn-slider figure');
         const modal = this.querySelector('.room-modal');
         if ((!expandButtons.length && !sliderFigures.length) || !modal) return;
 
         // Helper for click vs drag detection
-        function addClickOnlyListener(element, handler) {
+        function addClickOnlyListener(element, handler, signal) {
             let isDragging = false;
             let startX = 0;
             let startY = 0;
             let threshold = 10; // px
 
-            element.addEventListener('pointerdown', (e) => {
-                isDragging = false;
-                startX = e.clientX;
-                startY = e.clientY;
-            });
+            element.addEventListener(
+                'pointerdown',
+                (e) => {
+                    isDragging = false;
+                    startX = e.clientX;
+                    startY = e.clientY;
+                },
+                { signal },
+            );
 
-            element.addEventListener('pointermove', (e) => {
-                if (
-                    Math.abs(e.clientX - startX) > threshold ||
-                    Math.abs(e.clientY - startY) > threshold
-                ) {
+            element.addEventListener(
+                'pointermove',
+                (e) => {
+                    if (
+                        Math.abs(e.clientX - startX) > threshold ||
+                        Math.abs(e.clientY - startY) > threshold
+                    ) {
+                        isDragging = true;
+                    }
+                },
+                { signal },
+            );
+
+            element.addEventListener(
+                'pointerup',
+                (e) => {
+                    if (!isDragging) {
+                        handler(e);
+                    }
+                },
+                { signal },
+            );
+
+            element.addEventListener(
+                'dragstart',
+                () => {
                     isDragging = true;
-                }
-            });
-
-            element.addEventListener('pointerup', (e) => {
-                if (!isDragging) {
-                    handler(e);
-                }
-            });
-
-            element.addEventListener('dragstart', () => {
-                isDragging = true;
-            });
+                },
+                { signal },
+            );
         }
 
         // DRY: open modal, refresh slider, set up modal book button close
@@ -284,23 +362,46 @@ class IrnmnRoomCard extends HTMLElement {
             modal.open();
             const modalBookButtons = modal.querySelectorAll('.--book-button');
             modalBookButtons.forEach((button) => {
-                button.removeEventListener('click', button._modalCloseHandler);
+                if (button._modalCloseHandler) {
+                    button.removeEventListener(
+                        'click',
+                        button._modalCloseHandler,
+                    );
+                }
                 button._modalCloseHandler = function () {
                     modal.close();
                 };
-                button.addEventListener('click', button._modalCloseHandler);
+                button.addEventListener('click', button._modalCloseHandler, {
+                    signal,
+                });
             });
         }
 
         expandButtons.forEach((expandButton) => {
-            expandButton.addEventListener('click', () =>
-                openModalAndSetup(modal),
+            expandButton.addEventListener(
+                'click',
+                () => openModalAndSetup(modal),
+                { signal },
             );
         });
 
         sliderFigures.forEach((figure) => {
-            addClickOnlyListener(figure, () => openModalAndSetup(modal));
+            addClickOnlyListener(
+                figure,
+                () => openModalAndSetup(modal),
+                signal,
+            );
         });
+    }
+
+    /**
+     * Adds all event listeners.
+     * @private
+     * @param {AbortSignal} [signal]
+     */
+    addListeners(signal) {
+        this.addTrackingListeners(signal);
+        this.addComponentListeners(signal);
     }
 
     /**
