@@ -140,11 +140,18 @@ class IRNMNBookingModal extends IRNMNPopup {
 
         // Check if the modal can be shown and log warnings/errors for each case
         if (!this.hasModal) {
-            console.warn('[Booking Modal Warning]: has-modal attribute is not enabled.');
+            console.warn(
+                '[Booking Modal Warning]: has-modal attribute is not enabled.',
+            );
             return;
         }
-        if (this.formNeedValidation && this.form.getAttribute('valid') === null) {
-            console.warn('[Booking Modal Warning]: Form validation required and form is not valid.');
+        if (
+            this.formNeedValidation &&
+            this.form.getAttribute('valid') === null
+        ) {
+            console.warn(
+                '[Booking Modal Warning]: Form validation required and form is not valid.',
+            );
             return;
         }
         if (!modal) {
@@ -152,11 +159,16 @@ class IRNMNBookingModal extends IRNMNPopup {
             return;
         }
         if (this.content === null || this.content.trim() === '') {
-            console.error('[Booking Modal Error]: Modal content is missing : null or empty', this.content);
+            console.error(
+                '[Booking Modal Error]: Modal content is missing : null or empty',
+                this.content,
+            );
             return;
         }
         if (!this.hasContinueButton) {
-            console.error('[Booking Modal Error]: Continue button not found in modal.');
+            console.error(
+                '[Booking Modal Error]: Continue button not found in modal.',
+            );
             return;
         }
 
