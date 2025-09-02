@@ -107,6 +107,7 @@ class IRNMNBookingModal extends IRNMNPopup {
         const modal = this.querySelector('.irnmn-modal');
         if (!modal) return;
 
+        // target all wordpress buttons within the modal and use the last one as continue button to allow user to proceed
         const wpButtons = modal.querySelectorAll('.wp-block-button a');
         const continueButton = wpButtons[wpButtons.length - 1] || false;
 
