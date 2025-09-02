@@ -15,7 +15,6 @@ class IRNMNBookingModal extends IRNMNPopup {
      */
     constructor() {
         super();
-        this.timerInterval = null; // Stores the reference to the timer interval for clearing it later
     }
 
     /**
@@ -26,14 +25,6 @@ class IRNMNBookingModal extends IRNMNPopup {
         return this.getAttribute('form-id') || null;
     }
 
-    /**
-     * Retrieves and validates the timer value from the component's attributes.
-     * @returns {number|false} The timer value as a positive integer or false if invalid.
-     */
-    get timer() {
-        const timer = parseInt(this.getAttribute('modal-timer'), 10);
-        return isNaN(timer) || timer <= 0 ? false : timer;
-    }
 
     /**
      * Retrieves whether the modal should be shown based on the 'has-modal' attribute.
@@ -85,7 +76,7 @@ class IRNMNBookingModal extends IRNMNPopup {
 
     /**
      * Called when the element is removed from the DOM.
-     * Ensures event listeners and timers are properly cleared.
+     * Ensures event listeners are properly removed.
      */
     disconnectedCallback() {
         if (this.form) {
@@ -94,7 +85,6 @@ class IRNMNBookingModal extends IRNMNPopup {
                 this.handleBookingModal.bind(this),
             );
         }
-        this.stopTimer();
         super.disconnectedCallback();
     }
 
@@ -103,7 +93,6 @@ class IRNMNBookingModal extends IRNMNPopup {
         return [
             ...(super.observedAttributes || []),
             'has-modal',
-            'modal-timer',
             'form-id',
             'form-need-validation',
         ];
@@ -163,41 +152,11 @@ class IRNMNBookingModal extends IRNMNPopup {
         e.preventDefault();
         const modal = this.querySelector('.irnmn-modal');
         if (modal) this.showModal(modal);
-
-        if (this.timer) this.startTimer();
     }
 
-    /**
-     * Starts a countdown timer which triggers form submission upon completion.
-     */
-    startTimer() {
-        const timerElement = this.querySelector('.modal-timer');
-
-        let timeLeft = this.timer;
-        this.timerInterval = setInterval(() => {
-            timeLeft -= 1;
-            if (timerElement) timerElement.textContent = timeLeft;
-
-            if (timeLeft <= 0) {
-                this.stopTimer();
-                this.form.submit();
-            }
-        }, 1000);
-    }
-
-    /**
-     * Stops the countdown timer and clears the interval reference.
-     */
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-    }
 
     closeModal() {
         super.closeModal();
-        this.stopTimer();
     }
 }
 if (!customElements.get('irnmn-booking-modal')) {
