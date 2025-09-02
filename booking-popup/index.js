@@ -25,7 +25,6 @@ class IRNMNBookingModal extends IRNMNPopup {
         return this.getAttribute('form-id') || null;
     }
 
-
     /**
      * Retrieves whether the modal should be shown based on the 'has-modal' attribute.
      * @returns {boolean} True if the modal is enabled, false otherwise.
@@ -153,7 +152,6 @@ class IRNMNBookingModal extends IRNMNPopup {
         const modal = this.querySelector('.irnmn-modal');
         if (modal) this.showModal(modal);
     }
-
 
     closeModal() {
         super.closeModal();
