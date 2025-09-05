@@ -1,4 +1,4 @@
-import{x as b}from"./iframe-84dQy5DJ.js";import"./style-B7LbORtq.js";const z=`:root,
+import{x as b}from"./iframe-MvnP6cK2.js";import"./style-CiT32aNG.js";const z=`:root,
 body {
     /* => Spacing scale */
     --space-1: 4px;
@@ -524,7 +524,7 @@ irnmn-room-card .room-card__amenities-title {
     flex: 1;
 }
 irnmn-room-card .room-card__amenities-list {
-    flex: 1;
+    flex: 2;
     columns: 2;
     -webkit-columns: 2;
     -moz-columns: 2;
@@ -595,6 +595,10 @@ irnmn-room-card .room-card__pricing-cta:hover {
 
     irnmn-room-card .room-card__description {
         display: block;
+    }
+
+    irnmn-room-card .room-card__pricing {
+        text-align: left;
     }
 }
 
