@@ -144,7 +144,7 @@ class IrnmnSelect extends HTMLElement {
                             : ``
                     }
                     <div class="${CLASS_NAMES.header} ${this.selectedOption !== null ? CLASS_NAMES.header + '--selected' : ''}" tabindex="0" role="combobox" aria-expanded="${this.isOpen}" aria-haspopup="listbox" ${this.labelId ? `aria-labelledby="${this.labelId}"` : ''}>
-                        ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.headingText}
+                        ${this.selectedOption !== null ? this.options[this.selectedOption].name : this.placeholder}
                     </div>
                     <ul class="${CLASS_NAMES.list} ${this.isOpen ? CLASS_NAMES.listOpen : ''}" role="listbox">
                     ${
