@@ -304,22 +304,44 @@ class IRNMNSlider extends HTMLElement {
      *
      * @returns {void}
      */
-    calculateSlideOffsets() {
-        this.slideOffsets = [0];
-        let cumulativeOffset = 0;
-
+    calculateSlideOffsets(swipeContainer) {
+        // positions and centers relative to container
+        this.slideLefts = [];
+        this.slideCenters = [];
+        const r = swipeContainer.getBoundingClientRect(); // force layout once
         this.slides.forEach((slide) => {
-            cumulativeOffset += slide.offsetWidth;
-            this.slideOffsets.push(cumulativeOffset);
+            const left = slide.offsetLeft; // includes margin and flex gap
+            const width = slide.getBoundingClientRect().width; // fractional px
+            this.slideLefts.push(left);
+            this.slideCenters.push(left + width / 2);
         });
+    }
 
-        // Debug: Log offsets calculation
-        if (this.debug) {
-            console.info(
-                '[IRNMNSlider] Slide offsets calculated:',
-                this.slideOffsets,
-            );
-        }
+    /**
+     * Calculate the X position to center the current slide
+     *
+     * @param {HTMLElement} swipeContainer - The swipe container element
+     * @returns {number} - The X position to center the current slide
+     */
+    _centerXForCurrent(swipeContainer) {
+        const containerWidth = swipeContainer.getBoundingClientRect().width;
+        const center = this.slideCenters[this.currentSlide];
+        let x = center - containerWidth / 2; // how far we need to scroll left
+        // snap to device pixel to avoid half-pixel seams
+        const dpr = window.devicePixelRatio || 1;
+        x = Math.round(x * dpr) / dpr;
+        return x;
+    }
+
+    /**
+     * Center the current slide in the viewport
+     *
+     * @param {HTMLElement} swipeContainer - The swipe container element
+     * @returns {void}
+     */
+    centerSlide(swipeContainer) {
+        const x = this._centerXForCurrent(swipeContainer);
+        swipeContainer.style.transform = `translate3d(${-x}px, 0, 0)`;
     }
 
     /**
@@ -455,32 +477,6 @@ class IRNMNSlider extends HTMLElement {
         if (element) {
             element.addEventListener(event, handler);
             this.eventListeners.push({ element, event, handler });
-        }
-    }
-
-    /**
-     * Centers the currently active slide in the viewport.
-     * Calculates the translation value based on the current slide's offset and width,
-     * ensuring that the slide is perfectly centered horizontally.
-     *
-     * @param {HTMLElement} swipeContainer - The container element holding all the slides
-     * @returns {void}
-     */
-    centerSlide(swipeContainer) {
-        const offset = this.slideOffsets[this.currentSlide];
-        const slideWidth = this.slides[this.currentSlide].offsetWidth;
-        swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px))`;
-
-        // Debug: Log centering
-        if (this.debug) {
-            console.info(
-                '[IRNMNSlider] Centered slide:',
-                this.currentSlide,
-                'Offset:',
-                offset,
-                'Width:',
-                slideWidth,
-            );
         }
     }
 
@@ -679,47 +675,32 @@ class IRNMNSlider extends HTMLElement {
      * @returns {void}
      */
     setupDragAndDrop(swipeContainer, nextSlide, prevSlide, updateSlides) {
-        let startX = 0;
-        let currentX = 0;
-        let isDragging = false;
+        let startX = 0,
+            delta = 0,
+            isDragging = false,
+            baseX = 0;
 
         const touchStart = (e) => {
             startX = e.touches ? e.touches[0].clientX : e.clientX;
             isDragging = true;
             swipeContainer.style.transition = 'none';
-
-            // Debug: Log drag start
-            if (this.debug) {
-                console.info('[IRNMNSlider] Drag/touch start:', startX);
-            }
+            baseX = this._centerXForCurrent(swipeContainer); // current target
         };
 
         const touchMove = (e) => {
             if (!isDragging) return;
-            currentX = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
-            const offset = this.slideOffsets[this.currentSlide];
-            const slideWidth = this.slides[this.currentSlide].offsetWidth;
-            swipeContainer.style.transform = `translateX(calc(-${offset}px + 50% - ${slideWidth / 2}px + ${currentX}px))`;
-
-            // Debug: Log drag move
-            if (this.debug) {
-                console.info('[IRNMNSlider] Drag/touch move:', currentX);
-            }
+            delta = (e.touches ? e.touches[0].clientX : e.clientX) - startX;
+            swipeContainer.style.transform = `translate3d(${-(baseX - delta)}px,0,0)`;
         };
 
         const touchEnd = () => {
             if (!isDragging) return;
             swipeContainer.style.transition = this.transition;
-            if (currentX > 50) prevSlide();
-            else if (currentX < -50) nextSlide();
+            if (delta > 50) prevSlide();
+            else if (delta < -50) nextSlide();
             else updateSlides();
-            currentX = 0;
+            delta = 0;
             isDragging = false;
-
-            // Debug: Log drag end
-            if (this.debug) {
-                console.info('[IRNMNSlider] Drag/touch end.');
-            }
         };
 
         this.addListener(swipeContainer, 'touchstart', touchStart);
