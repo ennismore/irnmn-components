@@ -313,7 +313,8 @@ class IRNMNSlider extends HTMLElement {
             const left = slide.offsetLeft; // includes margin and flex gap
             const width = slide.getBoundingClientRect().width; // fractional px
             const marginRight = parseFloat(getComputedStyle(slide).marginRight);
-            const slideWidth = width + (isNaN(marginRight) ? 0 : marginRight);
+            const marginLeft = parseFloat(getComputedStyle(slide).marginLeft);
+            const slideWidth = width + (isNaN(marginRight) ? 0 : marginRight) + (isNaN(marginLeft) ? 0 : marginLeft);
             this.slideLefts.push(left);
             this.slideCenters.push(left + slideWidth / 2);
         });
