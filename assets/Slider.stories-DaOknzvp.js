@@ -1,4 +1,4 @@
-import{x as t}from"./iframe-MvnP6cK2.js";const a=`# IRNMNSlider Component
+import{x as t}from"./iframe-C9MRF5DU.js";const a=`# IRNMNSlider Component
 
 **Version:** 1.0
 
@@ -182,19 +182,40 @@ Dispatches a \`slideChange\` event on slide change with details about the curren
             "CURRENT_SLIDE": ".current-slide",
             "TOTAL_SLIDES": ".total-slides"
         }'>
-            <div class="slider-container">
-                <div class="slider-slide" style="background-color:yellow; justify-content:center; display:flex; align-items:center;"><b>SLIDE #1</b></div>
-                <div class="slider-slide" style="background-color:red; justify-content:center; display:flex; align-items:center;"><b>SLIDE #2</b></div>
-                <div class="slider-slide" style="background-color:blue; justify-content:center; display:flex; align-items:center;"><b>SLIDE #3</b></div>
-                <div class="slider-slide" style="background-color:green; justify-content:center; display:flex; align-items:center;"><b>SLIDE #4</b></div>
+            <div class="slider-container" aria-label="My Deluxe room image slider with 5 slides">
+                <div class="slider-slide" arial-label="First slide of five">
+                    <figure>
+                    <img src="https://picsum.photos/id/10/300/200" alt="my image description"/>
+                    </figure>
+                </div>
+                <div class="slider-slide" arial-label="Second slide of five">
+                    <figure>
+                    <img src="https://picsum.photos/id/20/300/200" alt="my image description"/>
+                    </figure>
+                </div>
+                <div class="slider-slide" arial-label="Third slide of five">
+                    <figure>
+                    <img src="https://picsum.photos/id/30/300/200" alt="my image description"/>
+                    </figure>
+                </div>
+                <div class="slider-slide" arial-label="Fourth slide of five">
+                    <figure>
+                    <img src="https://picsum.photos/id/40/300/200" alt="my image description"/>
+                    </figure>
+                </div>
+                <div class="slider-slide" arial-label="Fifth slide of five">
+                    <figure>
+                    <img src="https://picsum.photos/id/50/300/200" alt="my image description"/>
+                    </figure>
+                </div>
             </div>
             <div class="slider-navigation">
-                <button class="slider-prev">Previous</button>
-                <span>
-                    <span class="current-slide">1</span> /
-                    <span class="total-slides">3</span>
-                </span>
-                <button class="slider-next">Next</button>
+            <button class="slider-prev" arial-label="Go to previous slide">Previous</button>
+            <span>
+                <span class="current-slide">1</span> /
+                <span class="total-slides">3</span>
+            </span>
+            <button class="slider-next" aria-label="Go to next slide">Next</button>
             </div>
         </irnmn-slider>
-        `},e={};var n,s,i;e.parameters={...e.parameters,docs:{...(n=e.parameters)==null?void 0:n.docs,source:{originalSource:"{}",...(i=(s=e.parameters)==null?void 0:s.docs)==null?void 0:i.source}}};const o=["Default"];export{e as Default,o as __namedExportsOrder,d as default};
+        `},e={};var s,n,i;e.parameters={...e.parameters,docs:{...(s=e.parameters)==null?void 0:s.docs,source:{originalSource:"{}",...(i=(n=e.parameters)==null?void 0:n.docs)==null?void 0:i.source}}};const o=["Default"];export{e as Default,o as __namedExportsOrder,d as default};
