@@ -28,7 +28,7 @@ class IRNMNLocation extends HTMLElement {
         if (name === 'show-error' && oldValue !== newValue) {
             this.renderErrorMessage();
         }
-        if(name === 'default' && oldValue !== newValue) {
+        if (name === 'default' && oldValue !== newValue) {
             // This is probably not the most ideal solution, but not sure how else to propagate
             // 'default' change to irnmn-select
             this.render();
