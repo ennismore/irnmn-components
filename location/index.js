@@ -370,6 +370,11 @@ class IRNMNLocation extends HTMLElement {
                     }
                 }
 
+                // Special handling for formTarget to set the form's target attribute
+                if (attrName === 'formTarget' && attributeValue) {
+                    this.parentForm.target = attributeValue;
+                }
+
                 const formattedAttrName = attrName
                     .replace(/([A-Z])/g, '-$1')
                     .toLowerCase();
