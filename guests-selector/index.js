@@ -239,15 +239,16 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     /**
-     * Get the label max guests.
+     * Get the label for max guests if enabled
      * @return {String} Label or nothing for max guests.
      */
     getMaxGuestsLabel() {
-        const enableMaxGuestsLabel = this.getAttribute('enable-max-guests-label');
-        console.log("enableMaxGuestsLabel", enableMaxGuestsLabel);
+        const enableMaxGuestsLabel = this.getAttribute(
+            'enable-max-guests-label',
+        );
         return enableMaxGuestsLabel == 'true'
-                    ? `(max ${this.maxTotalGuests} ${this.labels.guests})`
-                    : ``;
+            ? `(max ${this.maxTotalGuests} ${this.labels.guests})`
+            : ``;
     }
 
     render() {

@@ -57,7 +57,7 @@ class IRNMNRoomsSelector extends HTMLElement {
             'max-child-age',
             'enable-children',
             'enable-children-ages',
-            'enable-max-guests-label'
+            'enable-max-guests-label',
         ];
     }
 
@@ -201,14 +201,15 @@ class IRNMNRoomsSelector extends HTMLElement {
         return { ...defaultLabels, ...customLabels };
     }
 
-
     /**
      *
      * @returns {bool} Whether the max guest labels are enabled 'true/false' or '1' (for PHP)
      */
     getEnableMaxGuestsLabel() {
-        const enableMaxGuestsLabel = this.getAttribute('enable-max-guests-label')
-        return (enableMaxGuestsLabel == "true" || enableMaxGuestsLabel == "1");
+        const enableMaxGuestsLabel = this.getAttribute(
+            'enable-max-guests-label',
+        );
+        return enableMaxGuestsLabel == 'true' || enableMaxGuestsLabel == '1';
     }
 
     /**
