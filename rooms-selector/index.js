@@ -44,6 +44,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
+        this.enableMaxGuestsLabel = this.getEnableMaxGuestsLabel();
     }
 
     static get observedAttributes() {
@@ -56,6 +57,7 @@ class IRNMNRoomsSelector extends HTMLElement {
             'max-child-age',
             'enable-children',
             'enable-children-ages',
+            'enable-max-guests-label',
         ];
     }
 
@@ -200,6 +202,17 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     /**
+     *
+     * @returns {bool} Whether the max guest labels are enabled 'true/false' or '1' (for PHP)
+     */
+    getEnableMaxGuestsLabel() {
+        const enableMaxGuestsLabel = this.getAttribute(
+            'enable-max-guests-label',
+        );
+        return enableMaxGuestsLabel == 'true' || enableMaxGuestsLabel == '1';
+    }
+
+    /**
      * Renders the rooms selector component.
      *
      * This method sets the inner HTML of the component to include a label, a select dropdown for room count,
@@ -328,7 +341,8 @@ class IRNMNRoomsSelector extends HTMLElement {
                 max-child-age="${this.maxChildAge}"
                 enable-children="${this.enableChildren}"
                 enable-children-ages="${this.enableChildrenAges}"
-                >
+                enable-max-guests-label="${this.enableMaxGuestsLabel}"
+            >
             </irnmn-guests-selector>
         `;
 
