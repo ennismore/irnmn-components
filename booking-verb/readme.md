@@ -11,6 +11,7 @@ The following attributes can be added to the `IRNMNBookingVerb` element to custo
 | `start-date-name`  | The name attribute for the check-in date input field.                       | `startDate`   |
 | `end-date-name`    | The name attribute for the check-out date input field.                      | `endDate`     |
 | `hotel-codes`      | A JSON string representing an array of supported hotel codes.               | `[]`          |
+| `primary-lang-id`  | The ID code associated with the current language of the site.               | `en`          |
 
 ## Methods
 The following methods are exposed by the component for internal logic and can be extended if needed:
@@ -30,5 +31,6 @@ Here's an example of how to use the `IRNMNBookingVerb` component in your HTML:
     form-id="bookingForm"
     start-date-name="checkin"
     end-date-name="checkout"
+    primary-lang-id="en"
     hotel-codes='["C383", "C384", "C385"]'>
 </irnmn-booking-verb>
