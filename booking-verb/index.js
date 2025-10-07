@@ -42,6 +42,21 @@ class IRNMNBookingVerb extends HTMLElement {
 		return this.getAttribute('client-id') || 'sbe';
 	}
 
+    get primaryLangId() {
+        // Priority: explicit attribute → Weglot → <html lang="">
+        if (this.getAttribute('primary-lang-id')) {
+            return this.getAttribute('primary-lang-id');
+        }
+
+        // Detect Weglot if available
+        if (typeof Weglot !== 'undefined' && Weglot.getCurrentLang) {
+            return Weglot.getCurrentLang();
+        }
+
+        // Fallback to HTML lang or default to 'en'
+        return document.documentElement.lang || 'en';
+    }
+
     /**
      * Handle form submission for the Verb booking engine only.
      *
@@ -100,14 +115,11 @@ class IRNMNBookingVerb extends HTMLElement {
 			adults: totalAdults,
 			children: totalChildren,
 			clientId: this.clientId,
+            primaryLangId: this.primaryLangId,
 		});
 
 		if (promoCode) params.append('promoCode', promoCode);
 
-		const targetUrl = `https://book.ennismore.com/book/?${params.toString()}`;
-
-		// Redirect instead of form submission (Verb expects GET)
-		window.location.href = targetUrl;
     }
 
     /**
