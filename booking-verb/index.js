@@ -1,4 +1,4 @@
-import { createHiddenInput, handleExternalUrl } from '../utils/components.js';
+import { createHiddenInput } from '../utils/components.js';
 
 class IRNMNBookingVerb extends HTMLElement {
     constructor() {
@@ -93,9 +93,6 @@ class IRNMNBookingVerb extends HTMLElement {
 		const formattedCheckin = this.formatDateISO(checkin);
 		const formattedCheckout = this.formatDateISO(checkout);
 
-		// Keep compatibility with your handleExternalUrl util
-		handleExternalUrl(this.form);
-
 		// === Add hidden inputs ===
 		createHiddenInput(this.form, 'hotelCode', hotelCode);
 		createHiddenInput(this.form, 'startDate', formattedCheckin);
@@ -119,6 +116,11 @@ class IRNMNBookingVerb extends HTMLElement {
 		});
 
 		if (promoCode) params.append('promoCode', promoCode);
+
+        const targetUrl = `https://book.ennismore.com/book/?${params.toString()}`;
+
+		// Redirect instead of form submission (Verb expects GET)
+		window.location.href = targetUrl;
 
     }
 
