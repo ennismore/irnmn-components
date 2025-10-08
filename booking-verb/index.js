@@ -1,4 +1,4 @@
-import { createHiddenInput, handleExternalUrl } from '../utils/components.js';
+import { createHiddenInput } from '../utils/components.js';
 
 class IRNMNBookingVerb extends HTMLElement {
     constructor() {
@@ -92,9 +92,6 @@ class IRNMNBookingVerb extends HTMLElement {
         // === Format dates ===
 		const formattedCheckin = this.formatDateISO(checkin);
 		const formattedCheckout = this.formatDateISO(checkout);
-
-		// Keep compatibility with your handleExternalUrl util
-		handleExternalUrl(this.form);
 
 		// === Add hidden inputs ===
 		createHiddenInput(this.form, 'hotelCode', hotelCode);
