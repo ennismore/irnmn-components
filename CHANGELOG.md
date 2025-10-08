@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.11 [2025-10-08]
+### update - booking-verb
+- New component for verb booking engine
+
+------
 ## v1.2.15 [2025-07-17]
 ### update - location
 - Update function: updateOtherComponents
