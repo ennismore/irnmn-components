@@ -82,6 +82,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.childrenNumber = this.getChildrenNumber();
         this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
+        this.maxGuestsLabel = this.getMaxGuestsLabel();
     }
 
     updateState() {
@@ -237,11 +238,24 @@ class IRNMNGuestsSelector extends HTMLElement {
         return this.getAttribute('child-age-label') || 'Child age';
     }
 
+    /**
+     * Get the label for max guests if enabled
+     * @return {String} Label or nothing for max guests.
+     */
+    getMaxGuestsLabel() {
+        const enableMaxGuestsLabel = this.getAttribute(
+            'enable-max-guests-label',
+        );
+        return enableMaxGuestsLabel == 'true'
+            ? `(max ${this.maxTotalGuests} ${this.labels.guests})`
+            : ``;
+    }
+
     render() {
         this.innerHTML = `
             <div class="${CLASS_NAMES.roomContainer}">
                 <div class="${CLASS_NAMES.roomHeader}">
-                    <span class="${CLASS_NAMES.roomLabel}">${this.label} (max ${this.maxTotalGuests} ${this.labels.guests})</span>
+                    <span class="${CLASS_NAMES.roomLabel}">${this.label} ${this.maxGuestsLabel}</span>
                     <button type="button" class="${CLASS_NAMES.removeRoomBtn}">${this.labels.remove}</button>
                 </div>
                 <div class="${CLASS_NAMES.guestControls}">
