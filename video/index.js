@@ -108,7 +108,6 @@ class IrnmnVideo extends HTMLElement {
     }
 }
 
-if (!customElements.get('irnmn-text')) {
+if (!customElements.get('irnmn-video')) {
     customElements.define('irnmn-video', IrnmnVideo);
 }
-
