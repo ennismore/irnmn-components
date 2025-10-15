@@ -55,7 +55,7 @@ class IrnmnVideo extends HTMLElement {
                 ${this.hasAttribute('video-muted') ? 'muted' : ''}
                 ${this.getAttribute('cross-origin') ? `crossorigin="${this.getAttribute('cross-origin')}"` : ''}
                 poster="${this.getAttribute('poster') || ''}"
-                src="${this.getAttribute('src') || ''}" 
+                src="${this.getAttribute('src') || ''}"
             >
             </video>
             <slot></slot>
@@ -108,4 +108,7 @@ class IrnmnVideo extends HTMLElement {
     }
 }
 
-customElements.define('irnmn-video', IrnmnVideo);
+if (!customElements.get('irnmn-text')) {
+    customElements.define('irnmn-video', IrnmnVideo);
+}
+

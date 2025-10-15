@@ -92,5 +92,7 @@ export default class IRNMNText extends HTMLElement {
         }
     }
 }
+if (!customElements.get('irnmn-text')) {
+    customElements.define('irnmn-text', IRNMNText);
+}
 
-customElements.define('irnmn-text', IRNMNText);
