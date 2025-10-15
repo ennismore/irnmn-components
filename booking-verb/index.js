@@ -1,4 +1,4 @@
-import { createHiddenInput } from '../utils/components.js';
+import { createHiddenInput, handleExternalUrl } from '../utils/components.js';
 
 class IRNMNBookingVerb extends HTMLElement {
     constructor() {
@@ -93,6 +93,26 @@ class IRNMNBookingVerb extends HTMLElement {
 		const formattedCheckin = this.formatDateISO(checkin);
 		const formattedCheckout = this.formatDateISO(checkout);
 
+		// === Tracking parameters ===
+		const trackingParams = ['gad_source', 'gclid', 'gad_campaignid'];
+
+		// Check sessionStorage for tracking params and add them to the form if found
+		trackingParams.forEach(param => {
+			let value = sessionStorage.getItem(param);
+			if (value) {
+				// Save back to sessionStorage for persistence
+				sessionStorage.setItem(param, value);
+
+				// If the hidden input exists, update its value; otherwise create it
+				const existingInput = this.form.querySelector(`input[name="${param}"]`);
+				if (existingInput) {
+					existingInput.value = value;
+				} else {
+					createHiddenInput(this.form, param, value);
+				}
+			}
+		});
+
 		// === Add hidden inputs ===
 		createHiddenInput(this.form, 'hotelCode', hotelCode);
 		createHiddenInput(this.form, 'startDate', formattedCheckin);
@@ -103,24 +123,9 @@ class IRNMNBookingVerb extends HTMLElement {
 		createHiddenInput(this.form, 'clientId', this.clientId);
 		if (promoCode) createHiddenInput(this.form, 'promoCode', promoCode);
 
-		// === Submit or redirect ===
-		const params = new URLSearchParams({
-			hotelCode,
-			startDate: formattedCheckin,
-			endDate: formattedCheckout,
-			numRooms: roomsTotal,
-			adults: totalAdults,
-			children: totalChildren,
-			clientId: this.clientId,
-            primaryLangId: this.primaryLangId,
-		});
-
-		if (promoCode) params.append('promoCode', promoCode);
-
-        const targetUrl = `https://book.ennismore.com/book/?${params.toString()}`;
-
-		// Redirect instead of form submission (Verb expects GET)
-		window.location.href = targetUrl;
+		// Parse form action URL and create hidden fields based on the URL's search parameters
+        // example of external url : https://book.ennismore.com/?hotelCode={hotelCode}&fromDate={checkin}&toDate={checkout}
+        handleExternalUrl(this.form);
 
     }
 
