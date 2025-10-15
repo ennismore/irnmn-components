@@ -71,9 +71,6 @@ class IRNMNBookingVerb extends HTMLElement {
         // Check if the hotel code is part of the list of supported hotels
         if (!this.hotelCodes.includes(hotelCode)) return;
 
-        // Prevent default so we can adjust parameters
-		event.preventDefault();
-
         // Change date format
         const checkin = formData.get(this.startDateName);
 		const checkout = formData.get(this.endDateName);
