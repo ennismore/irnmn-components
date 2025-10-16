@@ -1,0 +1,10 @@
+:root {
+
+}
+
+irnmn-booking-area {
+
+    irnmn-calendar {
+        display: flex !important;
+    }
+}

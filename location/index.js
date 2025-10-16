@@ -238,14 +238,15 @@ class IRNMNLocation extends HTMLElement {
 
     render() {
         if (!this.locations || this.locations.length === 0) {
-            console.error('No locations provided');
-            return;
+            console.log('No locations provided');
         }
 
-        const options = this.locations.map((location) => ({
-            value: location.hotelCode, // Used as the unique identifier
-            name: location.hotelName, // Used as the display text
-        }));
+        const options = this.locations
+            ? this.locations.map((location) => ({
+                  value: location.hotelCode, // Used as the unique identifier
+                  name: location.hotelName, // Used as the display text
+              }))
+            : null;
 
         // Get the hidden input value or default value
         const preselectedValue =
@@ -258,9 +259,9 @@ class IRNMNLocation extends HTMLElement {
                     id="${this.inputId}"
                     name="${this.inputName}"
                     heading-text="${this.label}"
-                    options='${JSON.stringify(options)}'
+                    options='${options ? JSON.stringify(options) : ''}'
                     placeholder="${this.placeholder}"
-                    preselected="${preselectedValue}"
+                    preselected="${preselectedValue ? preselectedValue : ''}"
                     use-native-select="${this.useNativeSelect}"
                     native-select-breakpoint="${this.nativeSelectBreakpoint}"
                 >
@@ -269,7 +270,7 @@ class IRNMNLocation extends HTMLElement {
                 <input
                     type="hidden"
                     name="${this.inputName}"
-                    value="${preselectedValue}"
+                    value="${preselectedValue ? preselectedValue : ''}"
                     required>
             </div>
         `;
