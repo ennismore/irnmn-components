@@ -69,6 +69,9 @@
         --room-card-title-color: var(--room-card-text-color);
         --room-card-title-padding: 0;
         --room-card-title-letter-spacing: 0rem;
+        --room-card-title-line-height: 1.1;
+        --room-card-title-height: 2lh;
+        --room-card-title-line-clamp: 2;
 
         /* => Description */
         --room-card-description-color: var(--room-card-text-color);
@@ -412,6 +415,14 @@ irnmn-room-card .room-card__title {
     color: var(--room-card-title-color);
     margin: 0;
     padding: var(--room-card-title-padding);
+    /* Fixed 2 line height */
+    display: -webkit-box;   /* -webkit-line-clamp only works with -webkit-box */
+    -webkit-line-clamp: var(--room-card-title-line-clamp);
+    -webkit-box-orient: vertical; /* also needed to work with -webkit-line-clamp */
+    line-clamp: var(--room-card-title-line-clamp); /* Future proofing, once this becomes widely available */
+    overflow: hidden;
+    line-height: var(--room-card-title-line-height);
+    height: var(--room-card-title-height);
 }
 irnmn-room-card .room-card__description {
     color: var(--room-card-description-color);
