@@ -704,6 +704,10 @@ irnmn-room-card .room-modal .room-card__description {
 irnmn-room-card .room-modal .room-card__title {
     font-size: var(--room-modal-title-font-size);
     justify-self: stretch;
+
+    /* Flex and 'height: auto' prevents the line clamping to take effect */
+    display: flex;
+    height: auto;
 }
 
 irnmn-room-card .room-modal .room-card__pricing-cta {
@@ -719,6 +723,7 @@ irnmn-room-card .room-modal .room-modal__header{
 irnmn-room-card .room-modal .room-modal__header .room-card__pricing{
     width: auto !important;
     display: var(--room-modal-cta-header-display);
+    align-self: flex-start;
 }
 irnmn-room-card .room-modal .room-card__content > .room-card__pricing {
     display: var(--room-modal-cta-normal-display);
