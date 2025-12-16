@@ -26,7 +26,8 @@ class IRNMNCarousel extends HTMLElement {
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.get('debugCarousel');
 
-        if (this.debug) console.info('[IRNMNCarousel] Constructor', this.CLASSNAMES);
+        if (this.debug)
+            console.info('[IRNMNCarousel] Constructor', this.CLASSNAMES);
     }
 
     /* ---------------------------------------------------------------------
@@ -64,11 +65,7 @@ class IRNMNCarousel extends HTMLElement {
 
     getGapPx() {
         const cs = getComputedStyle(this.viewport);
-        return (
-            parseFloat(cs.columnGap) ||
-            parseFloat(cs.gap) ||
-            0
-        );
+        return parseFloat(cs.columnGap) || parseFloat(cs.gap) || 0;
     }
 
     getEpsilonPx() {
@@ -86,7 +83,10 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     isAtEnd() {
-        return this.viewport.scrollLeft >= this.getMaxScroll() - this.getEpsilonPx();
+        return (
+            this.viewport.scrollLeft >=
+            this.getMaxScroll() - this.getEpsilonPx()
+        );
     }
 
     /* ---------------------------------------------------------------------
@@ -139,7 +139,9 @@ class IRNMNCarousel extends HTMLElement {
         }
 
         this.viewport = viewport;
-        this.slides = Array.from(viewport.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
 
         this.prevBtn = this.querySelector(this.CLASSNAMES.PREV_BUTTON);
         this.nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
@@ -175,7 +177,8 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     updateTotal() {
-        if (this.pagerTotal) this.pagerTotal.textContent = String(this.slides.length);
+        if (this.pagerTotal)
+            this.pagerTotal.textContent = String(this.slides.length);
         if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
     }
 
@@ -197,9 +200,12 @@ class IRNMNCarousel extends HTMLElement {
         const scrollPaddingLeft = this.getScrollPaddingLeft();
 
         // Convert slide "start" to scrollLeft space.
-        this.snapLefts = this.slides.map((slide) => slide.offsetLeft - scrollPaddingLeft);
+        this.snapLefts = this.slides.map(
+            (slide) => slide.offsetLeft - scrollPaddingLeft,
+        );
 
-        if (this.debug) console.info('[IRNMNCarousel] snapLefts', this.snapLefts);
+        if (this.debug)
+            console.info('[IRNMNCarousel] snapLefts', this.snapLefts);
     }
 
     getLastReachableSnapIndex() {
@@ -286,7 +292,8 @@ class IRNMNCarousel extends HTMLElement {
             slide.classList.toggle('active-slide', i === index);
         });
 
-        if (this.pagerCurrent) this.pagerCurrent.textContent = String(index + 1);
+        if (this.pagerCurrent)
+            this.pagerCurrent.textContent = String(index + 1);
 
         if (this.ariaLiveRegion) {
             this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
@@ -319,7 +326,10 @@ class IRNMNCarousel extends HTMLElement {
         };
 
         const scrollToSnapIndex = (snapIndex) => {
-            const clamped = Math.max(0, Math.min(this.snapLefts.length - 1, snapIndex));
+            const clamped = Math.max(
+                0,
+                Math.min(this.snapLefts.length - 1, snapIndex),
+            );
             scrollToLeft(this.snapLefts[clamped]);
         };
 
@@ -386,7 +396,9 @@ class IRNMNCarousel extends HTMLElement {
     refresh() {
         if (!this.viewport) return;
 
-        this.slides = Array.from(this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
         this.updateTotal();
         this.calculateSnapLefts();
         this.updateActiveFromScroll();
