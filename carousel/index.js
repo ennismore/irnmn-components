@@ -639,7 +639,13 @@ class IRNMNCarousel extends HTMLElement {
             if (!this.contains(document.activeElement)) return;
 
             // Ignore keyboard navigation when user is typing in a form field
-            if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+            if (
+                document.activeElement &&
+                ['INPUT', 'TEXTAREA', 'SELECT'].includes(
+                    document.activeElement.tagName,
+                )
+            )
+                return;
 
             switch (e.key) {
                 case 'ArrowRight':
