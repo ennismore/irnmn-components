@@ -11,11 +11,12 @@
 
 class IRNMNCarousel extends HTMLElement {
     CLASSNAMES = [];
-    eventListeners = [];
 
     slides = [];
     snapLefts = [];
     currentIndex = 0;
+    _abortController = null;
+    _signal = null;
 
     connected = false;
 
@@ -26,13 +27,19 @@ class IRNMNCarousel extends HTMLElement {
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.get('debugCarousel');
 
-        if (this.debug) console.info('[IRNMNCarousel] Constructor', this.CLASSNAMES);
+        if (this.debug)
+            console.info('[IRNMNCarousel] Constructor', this.CLASSNAMES);
     }
 
     /* ---------------------------------------------------------------------
      * Helpers
      * ------------------------------------------------------------------ */
 
+    /**
+     * * Parse the selectors attribute as JSON.
+     *
+     * @returns {Object<string, string>}
+     */
     get selectors() {
         let selectors = this.getAttribute('selectors');
         let classnames = [];
@@ -47,46 +54,159 @@ class IRNMNCarousel extends HTMLElement {
         return classnames;
     }
 
+    /**
+     * Detect if user prefers reduced motion.
+     *
+     * @returns {boolean}
+     */
     get prefersReducedMotion() {
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
-    addListener(element, event, handler, options) {
+    /**
+     * Add an event listener that is automatically cleaned up on disconnect.
+     *
+     * @param {HTMLElement|Window} element
+     * @param {string} event
+     * @param {Function} handler
+     * @param {AddEventListenerOptions} [options={}]
+     */
+    addListener(element, event, handler, options = {}) {
         if (!element) return;
-        element.addEventListener(event, handler, options);
-        this.eventListeners.push({ element, event, handler, options });
+        // Merge options + inject the signal so it auto-cleans up on abort().
+        const mergedOptions = { ...options, signal: this._signal };
+        element.addEventListener(event, handler, mergedOptions);
     }
 
+    /**
+     * Get the scroll-padding-left value of the viewport.
+     *
+     * @returns {number}
+     */
     getScrollPaddingLeft() {
         const cs = getComputedStyle(this.viewport);
         return parseFloat(cs.scrollPaddingLeft) || 0;
     }
 
+    /**
+     * Get the gap size in pixels between slides.
+     *
+     * @returns {number}
+     */
     getGapPx() {
         const cs = getComputedStyle(this.viewport);
-        return (
-            parseFloat(cs.columnGap) ||
-            parseFloat(cs.gap) ||
-            0
-        );
+        return parseFloat(cs.columnGap) || parseFloat(cs.gap) || 0;
     }
 
+    /**
+     * Get a small tolerance value for rounding / snap settling.
+     *
+     * @returns {number}
+     */
     getEpsilonPx() {
         // small tolerance for rounding / snap settling
         const epsFromGap = this.getGapPx() / 2;
         return Math.max(2, Math.min(12, epsFromGap || 6));
     }
 
+    /**
+     * Get the effective scroll position used for snap comparison.
+     * Accounts for scroll-padding-left so snapLefts and scrollLeft
+     * are in the same coordinate space.
+     *
+     * @returns {number}
+     */
+    getScrollPosition() {
+        return this.viewport.scrollLeft;
+    }
+
+    /**
+     * Find the snap index whose snapLeft is closest to the given scroll position.
+     * Uses absolute distance and epsilon tolerance.
+     *
+     * @param {number} pos - current scrollLeft
+     * @returns {number}
+     */
+    getClosestSnapIndex(pos) {
+        let bestIndex = 0;
+        let bestDist = Infinity;
+        const eps = this.getEpsilonPx();
+
+        for (let i = 0; i < this.snapLefts.length; i++) {
+            const d = Math.abs(this.snapLefts[i] - pos);
+
+            // Prefer the *earliest* snap when distances are very close
+            if (d < bestDist - eps) {
+                bestDist = d;
+                bestIndex = i;
+            }
+        }
+
+        return bestIndex;
+    }
+
+    /**
+     * Get the maximum scrollLeft value for the viewport.
+     *
+     * @returns {number}
+     */
     getMaxScroll() {
         return this.viewport.scrollWidth - this.viewport.clientWidth;
     }
 
+    /**
+     * Detects whether the viewport is at the start boundary.
+     *
+     * @returns {boolean}
+     */
     isAtStart() {
         return this.viewport.scrollLeft <= this.getEpsilonPx();
     }
 
+    /**
+     * Detects whether the viewport is at the end boundary.
+     *
+     * @returns {boolean}
+     */
     isAtEnd() {
-        return this.viewport.scrollLeft >= this.getMaxScroll() - this.getEpsilonPx();
+        return (
+            this.viewport.scrollLeft >=
+            this.getMaxScroll() - this.getEpsilonPx()
+        );
+    }
+
+    /**
+     * Detects whether the viewport is horizontally scrollable.
+     * Uses a 1px tolerance to avoid subpixel rounding issues.
+     *
+     * @returns {boolean}
+     */
+    isOverflowing() {
+        if (!this.viewport) return false;
+        return this.viewport.scrollWidth - this.viewport.clientWidth > 1;
+    }
+
+    /**
+     * Sync host/UI state based on overflow:
+     * - toggles `.is-overflowing` on the host (CSS can hide/show controls)
+     * - disables prev/next if there is no overflow
+     *
+     * @returns {void}
+     */
+    syncOverflowState() {
+        const overflowing = this.isOverflowing();
+        this.classList.toggle('is-overflowing', overflowing);
+
+        // If there's no overflow, disable controls entirely.
+        // If there *is* overflow, the start/end logic will be handled elsewhere.
+        if (!overflowing) {
+            if (this.prevBtn) this.prevBtn.disabled = true;
+            if (this.nextBtn) this.nextBtn.disabled = true;
+        }
+
+        if (this.debug) {
+            console.info('[IRNMNCarousel] Overflow:', overflowing);
+        }
     }
 
     /* ---------------------------------------------------------------------
@@ -96,6 +216,8 @@ class IRNMNCarousel extends HTMLElement {
     connectedCallback() {
         if (this.connected) return;
         this.connected = true;
+        this._abortController = new AbortController();
+        this._signal = this._abortController.signal;
 
         this.initCarousel();
 
@@ -116,10 +238,9 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     disconnectedCallback() {
-        this.eventListeners.forEach(({ element, event, handler, options }) => {
-            element.removeEventListener(event, handler, options);
-        });
-        this.eventListeners = [];
+        this._abortController?.abort();
+        this._abortController = null;
+        this._signal = null;
         this.connected = false;
 
         this._resizeObserver?.disconnect();
@@ -139,7 +260,9 @@ class IRNMNCarousel extends HTMLElement {
         }
 
         this.viewport = viewport;
-        this.slides = Array.from(viewport.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
 
         this.prevBtn = this.querySelector(this.CLASSNAMES.PREV_BUTTON);
         this.nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
@@ -150,6 +273,7 @@ class IRNMNCarousel extends HTMLElement {
         this.initSlidesAttributes();
 
         this.calculateSnapLefts();
+        this.syncOverflowState();
 
         this.addScrollListener();
         this.addControlsListeners();
@@ -159,10 +283,12 @@ class IRNMNCarousel extends HTMLElement {
         // Initial sync after layout settles
         requestAnimationFrame(() => {
             this.calculateSnapLefts();
+            this.syncOverflowState();
             this.updateActiveFromScroll();
         });
 
-        window.addEventListener(
+        this.addListener(
+            window,
             'load',
             () => {
                 this.calculateSnapLefts();
@@ -175,7 +301,8 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     updateTotal() {
-        if (this.pagerTotal) this.pagerTotal.textContent = String(this.slides.length);
+        if (this.pagerTotal)
+            this.pagerTotal.textContent = String(this.slides.length);
         if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
     }
 
@@ -197,9 +324,12 @@ class IRNMNCarousel extends HTMLElement {
         const scrollPaddingLeft = this.getScrollPaddingLeft();
 
         // Convert slide "start" to scrollLeft space.
-        this.snapLefts = this.slides.map((slide) => slide.offsetLeft - scrollPaddingLeft);
+        this.snapLefts = this.slides.map(
+            (slide) => slide.offsetLeft - scrollPaddingLeft,
+        );
 
-        if (this.debug) console.info('[IRNMNCarousel] snapLefts', this.snapLefts);
+        if (this.debug)
+            console.info('[IRNMNCarousel] snapLefts', this.snapLefts);
     }
 
     getLastReachableSnapIndex() {
@@ -218,14 +348,23 @@ class IRNMNCarousel extends HTMLElement {
      * Scroll handling
      * ------------------------------------------------------------------ */
 
+    /**
+     * Setup ResizeObserver to recalculate snap points on resize.
+     * @returns {void}
+     */
     setupResizeObserver() {
         this._resizeObserver = new ResizeObserver(() => {
             this.calculateSnapLefts();
+            this.syncOverflowState();
             this.updateActiveFromScroll();
         });
         this._resizeObserver.observe(this.viewport);
     }
 
+    /**
+     * Add scroll listener with requestAnimationFrame throttling.
+     * @returns {void}
+     */
     addScrollListener() {
         let ticking = false;
 
@@ -234,6 +373,7 @@ class IRNMNCarousel extends HTMLElement {
             ticking = true;
 
             requestAnimationFrame(() => {
+                this.syncOverflowState();
                 this.updateActiveFromScroll();
                 ticking = false;
             });
@@ -242,40 +382,54 @@ class IRNMNCarousel extends HTMLElement {
         this.addListener(this.viewport, 'scroll', onScroll, { passive: true });
     }
 
+    /**
+     * Update active index based on current scroll position.
+     * @returns {void}
+     */
     updateActiveFromScroll() {
-        const pos = this.viewport.scrollLeft;
-
         if (!this.snapLefts.length) return;
 
-        // When reaching scroll end, force last slide as active (logical)
+        const pos = this.getScrollPosition();
+
+        // When reaching physical scroll end, force last slide active (logical)
         if (this.isAtEnd()) {
             this.setActiveIndex(this.slides.length - 1);
             this.updateControlsDisabledState();
             return;
         }
 
-        // Otherwise: closest snap point
-        let bestIndex = 0;
-        let bestDist = Infinity;
+        const index = this.getClosestSnapIndex(pos);
 
-        for (let i = 0; i < this.snapLefts.length; i++) {
-            const d = Math.abs(this.snapLefts[i] - pos);
-            if (d < bestDist) {
-                bestDist = d;
-                bestIndex = i;
-            }
-        }
-
-        this.setActiveIndex(bestIndex);
+        this.setActiveIndex(index);
         this.updateControlsDisabledState();
     }
 
+    /**
+     * Disable prev/next based on:
+     * - overflow existence (no overflow => both disabled)
+     * - physical scroll bounds (start/end)
+     *
+     * @returns {void}
+     */
     updateControlsDisabledState() {
+        // If nothing to scroll, keep everything disabled.
+        if (!this.isOverflowing()) {
+            if (this.prevBtn) this.prevBtn.disabled = true;
+            if (this.nextBtn) this.nextBtn.disabled = true;
+            return;
+        }
+
         // Important: disable based on physical scroll limits, not logical index.
         if (this.prevBtn) this.prevBtn.disabled = this.isAtStart();
         if (this.nextBtn) this.nextBtn.disabled = this.isAtEnd();
     }
 
+    /**
+     * Update active index and DOM state.
+     *
+     * @param {number} index
+     * @returns {void}
+     */
     setActiveIndex(index) {
         if (index === this.currentIndex) return;
 
@@ -286,7 +440,8 @@ class IRNMNCarousel extends HTMLElement {
             slide.classList.toggle('active-slide', i === index);
         });
 
-        if (this.pagerCurrent) this.pagerCurrent.textContent = String(index + 1);
+        if (this.pagerCurrent)
+            this.pagerCurrent.textContent = String(index + 1);
 
         if (this.ariaLiveRegion) {
             this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
@@ -310,6 +465,10 @@ class IRNMNCarousel extends HTMLElement {
      * Controls
      * ------------------------------------------------------------------ */
 
+    /**
+     * Add click listeners to prev/next buttons.
+     * @returns {void}
+     */
     addControlsListeners() {
         const scrollToLeft = (left) => {
             this.viewport.scrollTo({
@@ -319,7 +478,10 @@ class IRNMNCarousel extends HTMLElement {
         };
 
         const scrollToSnapIndex = (snapIndex) => {
-            const clamped = Math.max(0, Math.min(this.snapLefts.length - 1, snapIndex));
+            const clamped = Math.max(
+                0,
+                Math.min(this.snapLefts.length - 1, snapIndex),
+            );
             scrollToLeft(this.snapLefts[clamped]);
         };
 
@@ -354,6 +516,10 @@ class IRNMNCarousel extends HTMLElement {
         });
     }
 
+    /**
+     * Add keyboard navigation support.
+     * @returns {void}
+     */
     addKeyboardSupport() {
         this.addListener(this.viewport, 'keydown', (e) => {
             if (!this.contains(document.activeElement)) return;
@@ -386,7 +552,9 @@ class IRNMNCarousel extends HTMLElement {
     refresh() {
         if (!this.viewport) return;
 
-        this.slides = Array.from(this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES));
+        this.slides = Array.from(
+            this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
+        );
         this.updateTotal();
         this.calculateSnapLefts();
         this.updateActiveFromScroll();
