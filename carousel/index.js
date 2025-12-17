@@ -12,11 +12,57 @@
 class IRNMNCarousel extends HTMLElement {
     CLASSNAMES = [];
 
+    // Carousel elements
     slides = [];
     snapLefts = [];
     currentIndex = 0;
+    viewport = null;
+    prevBtn = null;
+    nextBtn = null;
+    pagerCurrent = null;
+    pagerTotal = null;
+    ariaLiveRegion = null;
+
+    // Debug flag
+    debug = false;
+
+    /**
+     * AbortController for event listeners cleanup.
+     * @type {AbortController|null}
+     */
     _abortController = null;
+
+    /**
+     * AbortSignal from the AbortController.
+     * @type {AbortSignal|null}
+     */
     _signal = null;
+
+    /**
+     * ResizeObserver instance for viewport/host resize handling.
+     * @type {ResizeObserver|null}
+     */
+    _resizeObserver = null;
+
+    /**
+     * Last index that was announced to assistive tech (aria-live).
+     * Used to avoid repeating the same announcement.
+     * @type {number|null}
+     */
+    _lastAnnouncedIndex = null;
+
+    /**
+     * Timer id used to detect when scrolling has "settled".
+     * @type {number|null}
+     */
+    _scrollSettledTimer = null;
+
+    /**
+     * Scroll-settle debounce duration in ms.
+     * Should be short enough to feel responsive, long enough to avoid chatter.
+     * @type {number}
+     */
+    _scrollSettledDelay = 120;
 
     connected = false;
 
@@ -209,6 +255,47 @@ class IRNMNCarousel extends HTMLElement {
         }
     }
 
+    /**
+     * Schedule a "scroll settled" callback.
+     * This debounces rapid scroll events so we only announce once the
+     * user has stopped scrolling and the scroll-snap position has stabilized.
+     *
+     * @returns {void}
+     */
+    scheduleScrollSettled() {
+        // Clear any pending settle timer.
+        if (this._scrollSettledTimer) {
+            clearTimeout(this._scrollSettledTimer);
+            this._scrollSettledTimer = null;
+        }
+
+        // Debounce: when no new scroll events happen for a short time,
+        // consider the scroll "settled".
+        this._scrollSettledTimer = window.setTimeout(() => {
+            this._scrollSettledTimer = null;
+
+            // Recompute active index once, then announce if needed.
+            // (We do *not* want to announce mid-scroll.)
+            this.updateActiveFromScroll({ announce: true });
+        }, this._scrollSettledDelay);
+    }
+
+    /**
+     * Announce the given active index via aria-live, but only if it changed
+     * since the last announcement (prevents repetitive chatter).
+     *
+     * @param {number} index
+     * @returns {void}
+     */
+    announceActiveIndex(index) {
+        if (!this.ariaLiveRegion) return;
+
+        if (this._lastAnnouncedIndex === index) return;
+        this._lastAnnouncedIndex = index;
+
+        this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
+    }
+
     /* ---------------------------------------------------------------------
      * Lifecycle
      * ------------------------------------------------------------------ */
@@ -221,7 +308,7 @@ class IRNMNCarousel extends HTMLElement {
 
         this.initCarousel();
 
-        // aria-live (optional)
+        // aria-live creation
         this.ariaLiveRegion = document.createElement('div');
         this.ariaLiveRegion.setAttribute('aria-live', 'polite');
         this.ariaLiveRegion.setAttribute('aria-atomic', 'true');
@@ -260,6 +347,10 @@ class IRNMNCarousel extends HTMLElement {
         }
 
         this.viewport = viewport;
+        this.viewport.setAttribute('tabindex', '0');
+        this.viewport.setAttribute('role', 'region');
+        this.viewport.setAttribute('aria-roledescription', 'carousel');
+
         this.slides = Array.from(
             viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
@@ -268,6 +359,7 @@ class IRNMNCarousel extends HTMLElement {
         this.nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
         this.pagerCurrent = this.querySelector(this.CLASSNAMES.CURRENT_SLIDE);
         this.pagerTotal = this.querySelector(this.CLASSNAMES.TOTAL_SLIDES);
+        this._lastAnnouncedIndex = null;
 
         this.updateTotal();
         this.initSlidesAttributes();
@@ -311,8 +403,10 @@ class IRNMNCarousel extends HTMLElement {
         this.slides.forEach((slide, i) => {
             slide.setAttribute('role', 'group');
             slide.setAttribute('aria-roledescription', 'slide');
-            slide.setAttribute('aria-label', `Item ${i + 1} of ${total}`);
-            slide.setAttribute('tabindex', i === 0 ? '0' : '-1');
+            if (!slide.hasAttribute('aria-label')) {
+                slide.setAttribute('aria-label', `Item ${i + 1} of ${total}`);
+            }
+            slide.removeAttribute('tabindex'); // focus on viewport
         });
     }
 
@@ -374,7 +468,13 @@ class IRNMNCarousel extends HTMLElement {
 
             requestAnimationFrame(() => {
                 this.syncOverflowState();
-                this.updateActiveFromScroll();
+
+                // Update active index silently during scrolling.
+                this.updateActiveFromScroll({ announce: false });
+
+                // Schedule a single announcement once scrolling stops.
+                this.scheduleScrollSettled();
+
                 ticking = false;
             });
         };
@@ -384,23 +484,28 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Update active index based on current scroll position.
+     * By default, does not announce (to avoid chatter while scrolling).
+     *
+     * @param {{ announce?: boolean }} [opts]
      * @returns {void}
      */
-    updateActiveFromScroll() {
+    updateActiveFromScroll(opts = {}) {
+        const { announce = false } = opts;
+
         if (!this.snapLefts.length) return;
 
         const pos = this.getScrollPosition();
 
         // When reaching physical scroll end, force last slide active (logical)
         if (this.isAtEnd()) {
-            this.setActiveIndex(this.slides.length - 1);
+            this.setActiveIndex(this.slides.length - 1, { announce });
             this.updateControlsDisabledState();
             return;
         }
 
         const index = this.getClosestSnapIndex(pos);
 
-        this.setActiveIndex(index);
+        this.setActiveIndex(index, { announce });
         this.updateControlsDisabledState();
     }
 
@@ -428,23 +533,32 @@ class IRNMNCarousel extends HTMLElement {
      * Update active index and DOM state.
      *
      * @param {number} index
+     * @param {{ announce?: boolean }} [opts]
      * @returns {void}
      */
-    setActiveIndex(index) {
-        if (index === this.currentIndex) return;
+    setActiveIndex(index, opts = {}) {
+        const { announce = false } = opts;
+
+        if (index === this.currentIndex) {
+            // Even if index didn't change, we may want to announce on-settle,
+            // but only if it wasn't already announced.
+            if (announce) this.announceActiveIndex(index);
+            return;
+        }
 
         this.currentIndex = index;
 
         this.slides.forEach((slide, i) => {
-            slide.setAttribute('tabindex', i === index ? '0' : '-1');
             slide.classList.toggle('active-slide', i === index);
         });
 
-        if (this.pagerCurrent)
+        if (this.pagerCurrent) {
             this.pagerCurrent.textContent = String(index + 1);
+        }
 
-        if (this.ariaLiveRegion) {
-            this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
+        // Only announce when explicitly requested (scroll-settled / button nav).
+        if (announce) {
+            this.announceActiveIndex(index);
         }
 
         this.dispatchEvent(
@@ -524,6 +638,9 @@ class IRNMNCarousel extends HTMLElement {
         this.addListener(this.viewport, 'keydown', (e) => {
             if (!this.contains(document.activeElement)) return;
 
+            // Ignore keyboard navigation when user is typing in a form field
+            if (document.activeElement && ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) return;
+
             switch (e.key) {
                 case 'ArrowRight':
                     e.preventDefault();
@@ -551,6 +668,7 @@ class IRNMNCarousel extends HTMLElement {
 
     refresh() {
         if (!this.viewport) return;
+        this._lastAnnouncedIndex = null;
 
         this.slides = Array.from(
             this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
