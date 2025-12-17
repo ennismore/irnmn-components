@@ -10,6 +10,10 @@
  */
 
 class IRNMNCarousel extends HTMLElement {
+    /* ---------------------------------------------------------------------
+     * State & configuration
+     * ------------------------------------------------------------------ */
+
     CLASSNAMES = [];
 
     // Carousel elements
@@ -25,6 +29,12 @@ class IRNMNCarousel extends HTMLElement {
 
     // Debug flag
     debug = false;
+
+    /**
+     * Cached RTL scroll behavior type for the current browser.
+     * @type {"negative"|"reverse"|"default"|null}
+     */
+    _rtlScrollType = null;
 
     /**
      * AbortController for event listeners cleanup.
@@ -66,6 +76,10 @@ class IRNMNCarousel extends HTMLElement {
 
     connected = false;
 
+    /**
+     * Create a new IRNMNCarousel instance.
+     * Reads selectors config and optional debug flag from URL.
+     */
     constructor() {
         super();
         this.CLASSNAMES = this.selectors;
@@ -78,11 +92,12 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /* ---------------------------------------------------------------------
-     * Helpers
+     * Computed getters
      * ------------------------------------------------------------------ */
 
     /**
-     * * Parse the selectors attribute as JSON.
+     * Parse the selectors attribute as JSON and return a normalized map
+     * (keys uppercased for internal usage).
      *
      * @returns {Object<string, string>}
      */
@@ -109,6 +124,10 @@ class IRNMNCarousel extends HTMLElement {
         return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     }
 
+    /* ---------------------------------------------------------------------
+     * Low-level helpers
+     * ------------------------------------------------------------------ */
+
     /**
      * Add an event listener that is automatically cleaned up on disconnect.
      *
@@ -116,22 +135,12 @@ class IRNMNCarousel extends HTMLElement {
      * @param {string} event
      * @param {Function} handler
      * @param {AddEventListenerOptions} [options={}]
+     * @returns {void}
      */
     addListener(element, event, handler, options = {}) {
         if (!element) return;
-        // Merge options + inject the signal so it auto-cleans up on abort().
         const mergedOptions = { ...options, signal: this._signal };
         element.addEventListener(event, handler, mergedOptions);
-    }
-
-    /**
-     * Get the scroll-padding-left value of the viewport.
-     *
-     * @returns {number}
-     */
-    getScrollPaddingLeft() {
-        const cs = getComputedStyle(this.viewport);
-        return parseFloat(cs.scrollPaddingLeft) || 0;
     }
 
     /**
@@ -150,45 +159,21 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {number}
      */
     getEpsilonPx() {
-        // small tolerance for rounding / snap settling
         const epsFromGap = this.getGapPx() / 2;
         return Math.max(2, Math.min(12, epsFromGap || 6));
     }
 
-    /**
-     * Get the effective scroll position used for snap comparison.
-     * Accounts for scroll-padding-left so snapLefts and scrollLeft
-     * are in the same coordinate space.
-     *
-     * @returns {number}
-     */
-    getScrollPosition() {
-        return this.viewport.scrollLeft;
-    }
+    /* ---------------------------------------------------------------------
+     * RTL & scroll normalization
+     * ------------------------------------------------------------------ */
 
     /**
-     * Find the snap index whose snapLeft is closest to the given scroll position.
-     * Uses absolute distance and epsilon tolerance.
+     * Detect whether the carousel is in RTL mode.
      *
-     * @param {number} pos - current scrollLeft
-     * @returns {number}
+     * @returns {boolean}
      */
-    getClosestSnapIndex(pos) {
-        let bestIndex = 0;
-        let bestDist = Infinity;
-        const eps = this.getEpsilonPx();
-
-        for (let i = 0; i < this.snapLefts.length; i++) {
-            const d = Math.abs(this.snapLefts[i] - pos);
-
-            // Prefer the *earliest* snap when distances are very close
-            if (d < bestDist - eps) {
-                bestDist = d;
-                bestIndex = i;
-            }
-        }
-
-        return bestIndex;
+    isRTL() {
+        return getComputedStyle(this.viewport).direction === 'rtl';
     }
 
     /**
@@ -201,35 +186,173 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /**
-     * Detects whether the viewport is at the start boundary.
+     * Get a normalized scroll position that always represents
+     * "distance from the left edge" of the scrollable content.
+     *
+     * @returns {number}
+     */
+    getScrollPosition() {
+        const el = this.viewport;
+        const raw = el.scrollLeft;
+
+        if (!this.isRTL()) return raw;
+
+        const maxScroll = this.getMaxScroll();
+        const type = this.getRTLScrollType();
+
+        if (type === 'negative') return -raw;
+        if (type === 'reverse') return maxScroll - raw;
+        return raw;
+    }
+
+    /**
+     * Scroll viewport to a normalized logical position.
+     *
+     * @param {number} logicalLeft
+     * @returns {void}
+     */
+    scrollToLogicalPosition(logicalLeft) {
+        const el = this.viewport;
+        const maxScroll = this.getMaxScroll();
+        const clamped = Math.max(0, Math.min(maxScroll, logicalLeft));
+
+        let target = clamped;
+
+        if (this.isRTL()) {
+            const type = this.getRTLScrollType();
+            if (type === 'negative') target = -clamped;
+            else if (type === 'reverse') target = maxScroll - clamped;
+        }
+
+        el.scrollTo({
+            left: target,
+            behavior: this.prefersReducedMotion ? 'auto' : 'smooth',
+        });
+    }
+
+    /**
+     * Detect the browser's RTL scrollLeft behavior.
+     *
+     * @returns {"negative"|"reverse"|"default"}
+     */
+    getRTLScrollType() {
+        if (this._rtlScrollType) return this._rtlScrollType;
+
+        if (!this.viewport || getComputedStyle(this.viewport).direction !== 'rtl') {
+            this._rtlScrollType = 'default';
+            return this._rtlScrollType;
+        }
+
+        const el = this.viewport;
+        const prev = el.scrollLeft;
+
+        el.scrollLeft = 0;
+        el.scrollLeft = 1;
+
+        if (el.scrollLeft === 0) {
+            this._rtlScrollType = 'negative';
+        } else {
+            const maxScroll = el.scrollWidth - el.clientWidth;
+            el.scrollLeft = maxScroll;
+            this._rtlScrollType =
+                el.scrollLeft === maxScroll ? 'default' : 'reverse';
+        }
+
+        el.scrollLeft = prev;
+        return this._rtlScrollType;
+    }
+
+    /* ---------------------------------------------------------------------
+     * Snap navigation helpers
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Find the nearest snap strictly before the given scroll position.
+     *
+     * @param {number} pos
+     * @returns {number|null}
+     */
+    getPrevSnapPosition(pos) {
+        const eps = this.getEpsilonPx();
+        let candidate = null;
+
+        for (let i = 0; i < this.snapLefts.length; i++) {
+            if (this.snapLefts[i] < pos - eps) {
+                candidate = this.snapLefts[i];
+            }
+        }
+        return candidate;
+    }
+
+    /**
+     * Find the nearest snap strictly after the given scroll position.
+     *
+     * @param {number} pos
+     * @returns {number|null}
+     */
+    getNextSnapPosition(pos) {
+        const eps = this.getEpsilonPx();
+        for (let i = 0; i < this.snapLefts.length; i++) {
+            if (this.snapLefts[i] > pos + eps) {
+                return this.snapLefts[i];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Find the snap index whose snapLeft is closest to the given scroll position.
+     * Prefers the earliest snap when distances are very close.
+     *
+     * @param {number} pos
+     * @returns {number}
+     */
+    getClosestSnapIndex(pos) {
+        let bestIndex = 0;
+        let bestDist = Infinity;
+        const eps = this.getEpsilonPx();
+
+        for (let i = 0; i < this.snapLefts.length; i++) {
+            const d = Math.abs(this.snapLefts[i] - pos);
+            if (d < bestDist - eps) {
+                bestDist = d;
+                bestIndex = i;
+            }
+        }
+        return bestIndex;
+    }
+
+    /* ---------------------------------------------------------------------
+     * Boundary & overflow helpers
+     * ------------------------------------------------------------------ */
+
+    /**
+     * Detect whether the viewport is at the start boundary.
      *
      * @returns {boolean}
      */
     isAtStart() {
-        return this.viewport.scrollLeft <= this.getEpsilonPx();
+        return this.getScrollPosition() <= this.getEpsilonPx();
     }
 
     /**
-     * Detects whether the viewport is at the end boundary.
+     * Detect whether the viewport is at the end boundary.
      *
      * @returns {boolean}
      */
     isAtEnd() {
-        return (
-            this.viewport.scrollLeft >=
-            this.getMaxScroll() - this.getEpsilonPx()
-        );
+        return this.getScrollPosition() >=
+            this.getMaxScroll() - this.getEpsilonPx();
     }
 
     /**
-     * Detects whether the viewport is horizontally scrollable.
-     * Uses a 1px tolerance to avoid subpixel rounding issues.
+     * Detect whether the viewport is horizontally scrollable.
      *
      * @returns {boolean}
      */
     isOverflowing() {
-        if (!this.viewport) return false;
-        return this.viewport.scrollWidth - this.viewport.clientWidth > 1;
+        return this.viewport &&
+            this.viewport.scrollWidth - this.viewport.clientWidth > 1;
     }
 
     /**
@@ -243,72 +366,33 @@ class IRNMNCarousel extends HTMLElement {
         const overflowing = this.isOverflowing();
         this.classList.toggle('is-overflowing', overflowing);
 
-        // If there's no overflow, disable controls entirely.
-        // If there *is* overflow, the start/end logic will be handled elsewhere.
         if (!overflowing) {
             if (this.prevBtn) this.prevBtn.disabled = true;
             if (this.nextBtn) this.nextBtn.disabled = true;
         }
 
-        if (this.debug) {
+        if (this.debug)
             console.info('[IRNMNCarousel] Overflow:', overflowing);
-        }
-    }
-
-    /**
-     * Schedule a "scroll settled" callback.
-     * This debounces rapid scroll events so we only announce once the
-     * user has stopped scrolling and the scroll-snap position has stabilized.
-     *
-     * @returns {void}
-     */
-    scheduleScrollSettled() {
-        // Clear any pending settle timer.
-        if (this._scrollSettledTimer) {
-            clearTimeout(this._scrollSettledTimer);
-            this._scrollSettledTimer = null;
-        }
-
-        // Debounce: when no new scroll events happen for a short time,
-        // consider the scroll "settled".
-        this._scrollSettledTimer = window.setTimeout(() => {
-            this._scrollSettledTimer = null;
-
-            // Recompute active index once, then announce if needed.
-            // (We do *not* want to announce mid-scroll.)
-            this.updateActiveFromScroll({ announce: true });
-        }, this._scrollSettledDelay);
-    }
-
-    /**
-     * Announce the given active index via aria-live, but only if it changed
-     * since the last announcement (prevents repetitive chatter).
-     *
-     * @param {number} index
-     * @returns {void}
-     */
-    announceActiveIndex(index) {
-        if (!this.ariaLiveRegion) return;
-
-        if (this._lastAnnouncedIndex === index) return;
-        this._lastAnnouncedIndex = index;
-
-        this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
     }
 
     /* ---------------------------------------------------------------------
      * Lifecycle
      * ------------------------------------------------------------------ */
 
+    /**
+     * Web Component lifecycle: invoked when added to the DOM.
+     *
+     * @returns {void}
+     */
     connectedCallback() {
         if (this.connected) return;
         this.connected = true;
+
         this._abortController = new AbortController();
         this._signal = this._abortController.signal;
 
         this.initCarousel();
 
-        // aria-live creation
         this.ariaLiveRegion = document.createElement('div');
         this.ariaLiveRegion.setAttribute('aria-live', 'polite');
         this.ariaLiveRegion.setAttribute('aria-atomic', 'true');
@@ -324,21 +408,30 @@ class IRNMNCarousel extends HTMLElement {
         this.appendChild(this.ariaLiveRegion);
     }
 
+    /**
+     * Web Component lifecycle: invoked when removed from the DOM.
+     *
+     * @returns {void}
+     */
     disconnectedCallback() {
         this._abortController?.abort();
-        this._abortController = null;
-        this._signal = null;
+        this._resizeObserver?.disconnect();
         this.connected = false;
 
-        this._resizeObserver?.disconnect();
-
-        if (this.debug) console.info('[IRNMNCarousel] Cleaned up');
+        if (this.debug)
+            console.info('[IRNMNCarousel] Cleaned up');
     }
 
     /* ---------------------------------------------------------------------
-     * Init
+     * Initialization
      * ------------------------------------------------------------------ */
 
+    /**
+     * Initialize carousel: query DOM, set ARIA, compute snaps, bind listeners,
+     * and perform initial sync once layout has settled.
+     *
+     * @returns {void}
+     */
     initCarousel() {
         const viewport = this.querySelector(this.CLASSNAMES.VIEWPORT);
         if (!viewport) {
@@ -351,6 +444,8 @@ class IRNMNCarousel extends HTMLElement {
         this.viewport.setAttribute('role', 'region');
         this.viewport.setAttribute('aria-roledescription', 'carousel');
 
+        this._rtlScrollType = null;
+
         this.slides = Array.from(
             viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
@@ -359,7 +454,6 @@ class IRNMNCarousel extends HTMLElement {
         this.nextBtn = this.querySelector(this.CLASSNAMES.NEXT_BUTTON);
         this.pagerCurrent = this.querySelector(this.CLASSNAMES.CURRENT_SLIDE);
         this.pagerTotal = this.querySelector(this.CLASSNAMES.TOTAL_SLIDES);
-        this._lastAnnouncedIndex = null;
 
         this.updateTotal();
         this.initSlidesAttributes();
@@ -372,32 +466,35 @@ class IRNMNCarousel extends HTMLElement {
         this.addKeyboardSupport();
         this.setupResizeObserver();
 
-        // Initial sync after layout settles
         requestAnimationFrame(() => {
             this.calculateSnapLefts();
             this.syncOverflowState();
             this.updateActiveFromScroll();
         });
 
-        this.addListener(
-            window,
-            'load',
-            () => {
-                this.calculateSnapLefts();
-                this.updateActiveFromScroll();
-            },
-            { once: true },
-        );
-
-        if (this.debug) console.info('[IRNMNCarousel] Initialized');
+        this.addListener(window, 'load', () => {
+            this.calculateSnapLefts();
+            this.updateActiveFromScroll();
+        }, { once: true });
     }
 
+    /**
+     * Update pager UI with total slide count and reset current to 1.
+     *
+     * @returns {void}
+     */
     updateTotal() {
         if (this.pagerTotal)
             this.pagerTotal.textContent = String(this.slides.length);
-        if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
+        if (this.pagerCurrent)
+            this.pagerCurrent.textContent = '1';
     }
 
+    /**
+     * Initialize ARIA attributes on slides.
+     *
+     * @returns {void}
+     */
     initSlidesAttributes() {
         const total = this.slides.length;
         this.slides.forEach((slide, i) => {
@@ -406,36 +503,62 @@ class IRNMNCarousel extends HTMLElement {
             if (!slide.hasAttribute('aria-label')) {
                 slide.setAttribute('aria-label', `Item ${i + 1} of ${total}`);
             }
-            slide.removeAttribute('tabindex'); // focus on viewport
+            slide.removeAttribute('tabindex');
         });
     }
 
     /* ---------------------------------------------------------------------
-     * Geometry
+     * Geometry & snap computation
      * ------------------------------------------------------------------ */
 
-    calculateSnapLefts() {
-        const scrollPaddingLeft = this.getScrollPaddingLeft();
-
-        // Convert slide "start" to scrollLeft space.
-        this.snapLefts = this.slides.map(
-            (slide) => slide.offsetLeft - scrollPaddingLeft,
-        );
-
-        if (this.debug)
-            console.info('[IRNMNCarousel] snapLefts', this.snapLefts);
+    /**
+     * Get the scroll-padding-start value of the viewport.
+     *
+     * @returns {number}
+     */
+    getScrollPaddingStart() {
+        const cs = getComputedStyle(this.viewport);
+        return this.isRTL()
+            ? (parseFloat(cs.scrollPaddingRight) || 0)
+            : (parseFloat(cs.scrollPaddingLeft) || 0);
     }
 
-    getLastReachableSnapIndex() {
-        const maxScroll = this.getMaxScroll();
+    /**
+     * Calculate snapLeft positions for all slides in normalized scroll space.
+     * Uses logical "start" alignment for all slides.
+     *
+     * @returns {void}
+     */
+    calculateSnapLefts() {
+        const isRTL = this.isRTL();
+        const curPos = this.getScrollPosition();
+        const eps = this.getEpsilonPx();
 
-        // Greatest snapLeft <= maxScroll (the last *left-alignable* slide)
-        let lastReachable = 0;
-        for (let i = 0; i < this.snapLefts.length; i++) {
-            if (this.snapLefts[i] <= maxScroll + 1) lastReachable = i;
-            else break;
+        const vpRect = this.viewport.getBoundingClientRect();
+        const padStart = this.getScrollPaddingStart();
+
+        const vpStart = isRTL
+            ? (vpRect.right - padStart)
+            : (vpRect.left + padStart);
+
+        this.snapLefts = this.slides.map((slide) => {
+            const r = slide.getBoundingClientRect();
+            const slideStart = isRTL ? r.right : r.left;
+            const delta = isRTL
+                ? (vpStart - slideStart)
+                : (slideStart - vpStart);
+
+            // IMPORTANT: do NOT clamp to maxScroll here
+            const raw = curPos + delta;
+
+            // Keep negatives tidy
+            if (Math.abs(raw) < eps) return 0;
+            return raw < 0 ? 0 : raw;
+        });
+
+        if (this.debug) {
+            console.info('[IRNMNCarousel] snapLefts (unclamped)', this.snapLefts);
         }
-        return lastReachable;
     }
 
     /* ---------------------------------------------------------------------
@@ -444,6 +567,7 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Setup ResizeObserver to recalculate snap points on resize.
+     *
      * @returns {void}
      */
     setupResizeObserver() {
@@ -457,6 +581,7 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Add scroll listener with requestAnimationFrame throttling.
+     *
      * @returns {void}
      */
     addScrollListener() {
@@ -468,13 +593,8 @@ class IRNMNCarousel extends HTMLElement {
 
             requestAnimationFrame(() => {
                 this.syncOverflowState();
-
-                // Update active index silently during scrolling.
                 this.updateActiveFromScroll({ announce: false });
-
-                // Schedule a single announcement once scrolling stops.
                 this.scheduleScrollSettled();
-
                 ticking = false;
             });
         };
@@ -483,15 +603,31 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /**
+     * Schedule a "scroll settled" callback.
+     *
+     * @returns {void}
+     */
+    scheduleScrollSettled() {
+        if (this._scrollSettledTimer) {
+            clearTimeout(this._scrollSettledTimer);
+        }
+
+        this._scrollSettledTimer = window.setTimeout(() => {
+            this.updateActiveFromScroll({ announce: true });
+        }, this._scrollSettledDelay);
+    }
+
+    /* ---------------------------------------------------------------------
+     * Active state & announcements
+     * ------------------------------------------------------------------ */
+
+    /**
      * Update active index based on current scroll position.
-     * By default, does not announce (to avoid chatter while scrolling).
      *
      * @param {{ announce?: boolean }} [opts]
      * @returns {void}
      */
-    updateActiveFromScroll(opts = {}) {
-        const { announce = false } = opts;
-
+    updateActiveFromScroll({ announce = false } = {}) {
         if (!this.snapLefts.length) return;
 
         const pos = this.getScrollPosition();
@@ -504,27 +640,22 @@ class IRNMNCarousel extends HTMLElement {
         }
 
         const index = this.getClosestSnapIndex(pos);
-
         this.setActiveIndex(index, { announce });
         this.updateControlsDisabledState();
     }
 
     /**
-     * Disable prev/next based on:
-     * - overflow existence (no overflow => both disabled)
-     * - physical scroll bounds (start/end)
+     * Disable prev/next based on physical scroll bounds and overflow.
      *
      * @returns {void}
      */
     updateControlsDisabledState() {
-        // If nothing to scroll, keep everything disabled.
         if (!this.isOverflowing()) {
             if (this.prevBtn) this.prevBtn.disabled = true;
             if (this.nextBtn) this.nextBtn.disabled = true;
             return;
         }
 
-        // Important: disable based on physical scroll limits, not logical index.
         if (this.prevBtn) this.prevBtn.disabled = this.isAtStart();
         if (this.nextBtn) this.nextBtn.disabled = this.isAtEnd();
     }
@@ -536,12 +667,8 @@ class IRNMNCarousel extends HTMLElement {
      * @param {{ announce?: boolean }} [opts]
      * @returns {void}
      */
-    setActiveIndex(index, opts = {}) {
-        const { announce = false } = opts;
-
+    setActiveIndex(index, { announce = false } = {}) {
         if (index === this.currentIndex) {
-            // Even if index didn't change, we may want to announce on-settle,
-            // but only if it wasn't already announced.
             if (announce) this.announceActiveIndex(index);
             return;
         }
@@ -552,117 +679,109 @@ class IRNMNCarousel extends HTMLElement {
             slide.classList.toggle('active-slide', i === index);
         });
 
-        if (this.pagerCurrent) {
+        if (this.pagerCurrent)
             this.pagerCurrent.textContent = String(index + 1);
-        }
 
-        // Only announce when explicitly requested (scroll-settled / button nav).
-        if (announce) {
-            this.announceActiveIndex(index);
-        }
+        if (announce) this.announceActiveIndex(index);
 
-        this.dispatchEvent(
-            new CustomEvent('carouselChange', {
-                bubbles: true,
-                detail: {
-                    currentIndex: index,
-                    currentElement: this.slides[index],
-                    total: this.slides.length,
-                },
-            }),
-        );
+        this.dispatchEvent(new CustomEvent('carouselChange', {
+            bubbles: true,
+            detail: {
+                currentIndex: index,
+                currentElement: this.slides[index],
+                total: this.slides.length,
+            },
+        }));
 
-        if (this.debug) console.info('[IRNMNCarousel] Active index', index);
+        if (this.debug)
+            console.info('[IRNMNCarousel] Active index', index);
+    }
+
+    /**
+     * Announce the given active index via aria-live.
+     *
+     * @param {number} index
+     * @returns {void}
+     */
+    announceActiveIndex(index) {
+        if (!this.ariaLiveRegion) return;
+        if (this._lastAnnouncedIndex === index) return;
+        this._lastAnnouncedIndex = index;
+
+        this.ariaLiveRegion.textContent =
+            `Item ${index + 1} of ${this.slides.length}`;
     }
 
     /* ---------------------------------------------------------------------
-     * Controls
+     * Controls (buttons & keyboard)
      * ------------------------------------------------------------------ */
 
     /**
      * Add click listeners to prev/next buttons.
+     *
      * @returns {void}
      */
     addControlsListeners() {
-        const scrollToLeft = (left) => {
-            this.viewport.scrollTo({
-                left,
-                behavior: this.prefersReducedMotion ? 'auto' : 'smooth',
-            });
-        };
-
-        const scrollToSnapIndex = (snapIndex) => {
-            const clamped = Math.max(
-                0,
-                Math.min(this.snapLefts.length - 1, snapIndex),
-            );
-            scrollToLeft(this.snapLefts[clamped]);
-        };
-
         this.addListener(this.prevBtn, 'click', () => {
-            const lastReachable = this.getLastReachableSnapIndex();
+            const pos = this.getScrollPosition();
+            const eps = this.getEpsilonPx();
 
-            // If we are at END, going prev should go to last reachable snap
-            if (this.isAtEnd() && lastReachable < this.slides.length - 1) {
-                scrollToSnapIndex(lastReachable);
-                return;
+            // Use a slightly larger pos when at END so we can step back
+            const from = this.isAtEnd() ? (this.getMaxScroll() + eps * 2) : pos;
+
+            const prevSnap = this.getPrevSnapPosition(from);
+            if (prevSnap !== null) {
+                this.scrollToLogicalPosition(prevSnap);
             }
-
-            // Otherwise go one snap back from the current snapped slide
-            // Use closest snap (currentIndex) as the working snap index.
-            scrollToSnapIndex(this.currentIndex - 1);
         });
 
         this.addListener(this.nextBtn, 'click', () => {
-            const lastReachable = this.getLastReachableSnapIndex();
+            const pos = this.getScrollPosition();
+            const nextSnap = this.getNextSnapPosition(pos);
 
-            // If we're already at END, nothing to do
-            if (this.isAtEnd()) return;
-
-            // If next snap exists within reachable snaps, go to it
-            if (this.currentIndex < lastReachable) {
-                scrollToSnapIndex(this.currentIndex + 1);
+            if (nextSnap !== null) {
+                this.scrollToLogicalPosition(nextSnap);
                 return;
             }
 
-            // Otherwise, jump to END (maxScroll) so the last slide can become active
-            scrollToLeft(this.getMaxScroll());
+            this.scrollToLogicalPosition(this.getMaxScroll());
         });
     }
 
     /**
      * Add keyboard navigation support.
+     *
      * @returns {void}
      */
     addKeyboardSupport() {
         this.addListener(this.viewport, 'keydown', (e) => {
             if (!this.contains(document.activeElement)) return;
 
-            // Ignore keyboard navigation when user is typing in a form field
             if (
                 document.activeElement &&
                 ['INPUT', 'TEXTAREA', 'SELECT'].includes(
                     document.activeElement.tagName,
                 )
-            )
-                return;
+            ) return;
+
+            const isRTL = this.isRTL();
 
             switch (e.key) {
                 case 'ArrowRight':
                     e.preventDefault();
-                    this.nextBtn?.click();
+                    isRTL ? this.prevBtn?.click() : this.nextBtn?.click();
                     break;
                 case 'ArrowLeft':
                     e.preventDefault();
-                    this.prevBtn?.click();
+                    isRTL ? this.nextBtn?.click() : this.prevBtn?.click();
                     break;
                 case 'Home':
                     e.preventDefault();
-                    this.viewport.scrollTo({ left: 0 });
+                    this.scrollToLogicalPosition(0);
                     break;
                 case 'End':
                     e.preventDefault();
-                    this.viewport.scrollTo({ left: this.getMaxScroll() });
+                    this.scrollToLogicalPosition(this.getMaxScroll());
                     break;
             }
         });
@@ -672,18 +791,25 @@ class IRNMNCarousel extends HTMLElement {
      * Public API
      * ------------------------------------------------------------------ */
 
+    /**
+     * Re-scan slides and recompute geometry/state.
+     *
+     * @returns {void}
+     */
     refresh() {
         if (!this.viewport) return;
-        this._lastAnnouncedIndex = null;
 
+        this._lastAnnouncedIndex = null;
         this.slides = Array.from(
             this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
+
         this.updateTotal();
         this.calculateSnapLefts();
         this.updateActiveFromScroll();
 
-        if (this.debug) console.info('[IRNMNCarousel] Refreshed');
+        if (this.debug)
+            console.info('[IRNMNCarousel] Refreshed');
     }
 }
 
