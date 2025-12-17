@@ -238,7 +238,10 @@ class IRNMNCarousel extends HTMLElement {
     getRTLScrollType() {
         if (this._rtlScrollType) return this._rtlScrollType;
 
-        if (!this.viewport || getComputedStyle(this.viewport).direction !== 'rtl') {
+        if (
+            !this.viewport ||
+            getComputedStyle(this.viewport).direction !== 'rtl'
+        ) {
             this._rtlScrollType = 'default';
             return this._rtlScrollType;
         }
@@ -341,8 +344,10 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {boolean}
      */
     isAtEnd() {
-        return this.getScrollPosition() >=
-            this.getMaxScroll() - this.getEpsilonPx();
+        return (
+            this.getScrollPosition() >=
+            this.getMaxScroll() - this.getEpsilonPx()
+        );
     }
 
     /**
@@ -351,8 +356,10 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {boolean}
      */
     isOverflowing() {
-        return this.viewport &&
-            this.viewport.scrollWidth - this.viewport.clientWidth > 1;
+        return (
+            this.viewport &&
+            this.viewport.scrollWidth - this.viewport.clientWidth > 1
+        );
     }
 
     /**
@@ -371,8 +378,7 @@ class IRNMNCarousel extends HTMLElement {
             if (this.nextBtn) this.nextBtn.disabled = true;
         }
 
-        if (this.debug)
-            console.info('[IRNMNCarousel] Overflow:', overflowing);
+        if (this.debug) console.info('[IRNMNCarousel] Overflow:', overflowing);
     }
 
     /* ---------------------------------------------------------------------
@@ -418,8 +424,7 @@ class IRNMNCarousel extends HTMLElement {
         this._resizeObserver?.disconnect();
         this.connected = false;
 
-        if (this.debug)
-            console.info('[IRNMNCarousel] Cleaned up');
+        if (this.debug) console.info('[IRNMNCarousel] Cleaned up');
     }
 
     /* ---------------------------------------------------------------------
@@ -472,10 +477,15 @@ class IRNMNCarousel extends HTMLElement {
             this.updateActiveFromScroll();
         });
 
-        this.addListener(window, 'load', () => {
-            this.calculateSnapLefts();
-            this.updateActiveFromScroll();
-        }, { once: true });
+        this.addListener(
+            window,
+            'load',
+            () => {
+                this.calculateSnapLefts();
+                this.updateActiveFromScroll();
+            },
+            { once: true },
+        );
     }
 
     /**
@@ -486,8 +496,7 @@ class IRNMNCarousel extends HTMLElement {
     updateTotal() {
         if (this.pagerTotal)
             this.pagerTotal.textContent = String(this.slides.length);
-        if (this.pagerCurrent)
-            this.pagerCurrent.textContent = '1';
+        if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
     }
 
     /**
@@ -519,8 +528,8 @@ class IRNMNCarousel extends HTMLElement {
     getScrollPaddingStart() {
         const cs = getComputedStyle(this.viewport);
         return this.isRTL()
-            ? (parseFloat(cs.scrollPaddingRight) || 0)
-            : (parseFloat(cs.scrollPaddingLeft) || 0);
+            ? parseFloat(cs.scrollPaddingRight) || 0
+            : parseFloat(cs.scrollPaddingLeft) || 0;
     }
 
     /**
@@ -538,15 +547,13 @@ class IRNMNCarousel extends HTMLElement {
         const padStart = this.getScrollPaddingStart();
 
         const vpStart = isRTL
-            ? (vpRect.right - padStart)
-            : (vpRect.left + padStart);
+            ? vpRect.right - padStart
+            : vpRect.left + padStart;
 
         this.snapLefts = this.slides.map((slide) => {
             const r = slide.getBoundingClientRect();
             const slideStart = isRTL ? r.right : r.left;
-            const delta = isRTL
-                ? (vpStart - slideStart)
-                : (slideStart - vpStart);
+            const delta = isRTL ? vpStart - slideStart : slideStart - vpStart;
 
             // IMPORTANT: do NOT clamp to maxScroll here
             const raw = curPos + delta;
@@ -557,7 +564,10 @@ class IRNMNCarousel extends HTMLElement {
         });
 
         if (this.debug) {
-            console.info('[IRNMNCarousel] snapLefts (unclamped)', this.snapLefts);
+            console.info(
+                '[IRNMNCarousel] snapLefts (unclamped)',
+                this.snapLefts,
+            );
         }
     }
 
@@ -684,17 +694,18 @@ class IRNMNCarousel extends HTMLElement {
 
         if (announce) this.announceActiveIndex(index);
 
-        this.dispatchEvent(new CustomEvent('carouselChange', {
-            bubbles: true,
-            detail: {
-                currentIndex: index,
-                currentElement: this.slides[index],
-                total: this.slides.length,
-            },
-        }));
+        this.dispatchEvent(
+            new CustomEvent('carouselChange', {
+                bubbles: true,
+                detail: {
+                    currentIndex: index,
+                    currentElement: this.slides[index],
+                    total: this.slides.length,
+                },
+            }),
+        );
 
-        if (this.debug)
-            console.info('[IRNMNCarousel] Active index', index);
+        if (this.debug) console.info('[IRNMNCarousel] Active index', index);
     }
 
     /**
@@ -708,8 +719,7 @@ class IRNMNCarousel extends HTMLElement {
         if (this._lastAnnouncedIndex === index) return;
         this._lastAnnouncedIndex = index;
 
-        this.ariaLiveRegion.textContent =
-            `Item ${index + 1} of ${this.slides.length}`;
+        this.ariaLiveRegion.textContent = `Item ${index + 1} of ${this.slides.length}`;
     }
 
     /* ---------------------------------------------------------------------
@@ -727,7 +737,7 @@ class IRNMNCarousel extends HTMLElement {
             const eps = this.getEpsilonPx();
 
             // Use a slightly larger pos when at END so we can step back
-            const from = this.isAtEnd() ? (this.getMaxScroll() + eps * 2) : pos;
+            const from = this.isAtEnd() ? this.getMaxScroll() + eps * 2 : pos;
 
             const prevSnap = this.getPrevSnapPosition(from);
             if (prevSnap !== null) {
@@ -762,7 +772,8 @@ class IRNMNCarousel extends HTMLElement {
                 ['INPUT', 'TEXTAREA', 'SELECT'].includes(
                     document.activeElement.tagName,
                 )
-            ) return;
+            )
+                return;
 
             const isRTL = this.isRTL();
 
@@ -808,8 +819,7 @@ class IRNMNCarousel extends HTMLElement {
         this.calculateSnapLefts();
         this.updateActiveFromScroll();
 
-        if (this.debug)
-            console.info('[IRNMNCarousel] Refreshed');
+        if (this.debug) console.info('[IRNMNCarousel] Refreshed');
     }
 }
 
