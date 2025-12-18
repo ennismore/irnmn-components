@@ -238,6 +238,7 @@ class IRNMNCarousel extends HTMLElement {
     getRTLScrollType() {
         if (this._rtlScrollType) return this._rtlScrollType;
 
+        // If not RTL, irrelevant.
         if (
             !this.viewport ||
             getComputedStyle(this.viewport).direction !== 'rtl'
@@ -246,22 +247,46 @@ class IRNMNCarousel extends HTMLElement {
             return this._rtlScrollType;
         }
 
-        const el = this.viewport;
-        const prev = el.scrollLeft;
+        // Create a probe scroller isolated from scroll-snap and layout effects.
+        const probe = document.createElement('div');
+        probe.dir = 'rtl';
+        probe.style.cssText = [
+            'position:absolute',
+            'top:-9999px',
+            'left:-9999px',
+            'width:100px',
+            'height:1px',
+            'overflow:scroll',
+            'scroll-snap-type:none',
+            'contain:layout style paint',
+            'visibility:hidden',
+        ].join(';');
 
-        el.scrollLeft = 0;
-        el.scrollLeft = 1;
+        const inner = document.createElement('div');
+        inner.style.width = '200px';
+        inner.style.height = '1px';
+        probe.appendChild(inner);
+        document.body.appendChild(probe);
 
-        if (el.scrollLeft === 0) {
+        const maxScroll = probe.scrollWidth - probe.clientWidth;
+
+        // 1) Negative model: setting scrollLeft to 1 keeps it at 0 (Chrome/Safari)
+        probe.scrollLeft = 0;
+        probe.scrollLeft = 1;
+
+        if (probe.scrollLeft === 0) {
             this._rtlScrollType = 'negative';
-        } else {
-            const maxScroll = el.scrollWidth - el.clientWidth;
-            el.scrollLeft = maxScroll;
-            this._rtlScrollType =
-                el.scrollLeft === maxScroll ? 'default' : 'reverse';
+            document.body.removeChild(probe);
+            return this._rtlScrollType;
         }
 
-        el.scrollLeft = prev;
+        // 2) Distinguish default vs reverse
+        probe.scrollLeft = maxScroll;
+
+        this._rtlScrollType =
+            probe.scrollLeft === maxScroll ? 'default' : 'reverse';
+
+        document.body.removeChild(probe);
         return this._rtlScrollType;
     }
 
@@ -600,7 +625,6 @@ class IRNMNCarousel extends HTMLElement {
             ticking = true;
 
             requestAnimationFrame(() => {
-                this.syncOverflowState();
                 this.updateActiveFromScroll({ announce: false });
                 this.scheduleScrollSettled();
                 ticking = false;
