@@ -88,6 +88,15 @@ irnmn-carousel .c-carousel__nav--next {
   right: 12px;
 }
 
+[dir="rtl"] irnmn-carousel .c-carousel__nav--prev {
+  right: 12px;
+  left: auto;
+}
+[dir="rtl"] irnmn-carousel .c-carousel__nav--next {
+  left: 12px;
+  right: auto;
+}
+
 /* Pagination */
 irnmn-carousel .c-carousel__pager {
   margin-top: 16px;
