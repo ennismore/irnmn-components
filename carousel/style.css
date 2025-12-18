@@ -18,6 +18,16 @@ irnmn-carousel {
   display: block;
   padding: 32px;
   background: var(--carousel-bg);
+
+}
+
+/* Hide nav and pager if not overflowing */
+irnmn-carousel:not(.is-overflowing) .c-carousel__nav,
+irnmn-carousel:not(.is-overflowing) .c-carousel__pager {
+  display: none;
+}
+irnmn-carousel:not(.is-overflowing) .c-carousel__viewport {
+  justify-content: center;
 }
 
 /* Viewport */
