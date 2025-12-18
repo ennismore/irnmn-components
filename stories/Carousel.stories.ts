@@ -1,12 +1,20 @@
 import type { Meta, StoryObj } from '@storybook/web-components-vite';
 import {html} from "lit";
 import '../carousel/index.js';
+import readme from '../carousel/readme.md?raw';
 import '../carousel/style.css';
 
 const meta: Meta = {
     title: 'Components/Carousel',
     tags: ['autodocs'],
     component: 'irnmn-carousel',
+    parameters: {
+            docs: {
+                description: {
+                component: readme,
+                },
+            },
+        },
     render: () => {
         return html`
         <irnmn-carousel
