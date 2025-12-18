@@ -373,8 +373,8 @@ class IRNMNCarousel extends HTMLElement {
         const overflowing = this.isOverflowing();
         this.classList.toggle('is-overflowing', overflowing);
 
-        if (this.prevBtn) this.prevBtn.disabled = !overflowing
-        if (this.nextBtn) this.nextBtn.disabled = !overflowing
+        if (this.prevBtn) this.prevBtn.disabled = !overflowing;
+        if (this.nextBtn) this.nextBtn.disabled = !overflowing;
 
         if (this.debug) console.info('[IRNMNCarousel] Overflow:', overflowing);
     }
