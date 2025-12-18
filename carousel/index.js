@@ -239,7 +239,10 @@ class IRNMNCarousel extends HTMLElement {
         if (this._rtlScrollType) return this._rtlScrollType;
 
         // If not RTL, irrelevant.
-        if (!this.viewport || getComputedStyle(this.viewport).direction !== 'rtl') {
+        if (
+            !this.viewport ||
+            getComputedStyle(this.viewport).direction !== 'rtl'
+        ) {
             this._rtlScrollType = 'default';
             return this._rtlScrollType;
         }
@@ -280,7 +283,8 @@ class IRNMNCarousel extends HTMLElement {
         // 2) Distinguish default vs reverse
         probe.scrollLeft = maxScroll;
 
-        this._rtlScrollType = (probe.scrollLeft === maxScroll) ? 'default' : 'reverse';
+        this._rtlScrollType =
+            probe.scrollLeft === maxScroll ? 'default' : 'reverse';
 
         document.body.removeChild(probe);
         return this._rtlScrollType;
