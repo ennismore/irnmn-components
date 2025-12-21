@@ -1,4 +1,4 @@
-import{x as t}from"./iframe-Dp2vCPKT.js";const a=`# IRNMNSlider Component
+import{x as t}from"./iframe-DzaPSySP.js";const a=`# IRNMNSlider Component
 
 **Version:** 1.0
 
