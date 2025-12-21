@@ -516,7 +516,7 @@ class IRNMNCarousel extends HTMLElement {
 
         // Force initial scroll position to 0 BEFORE any snap calculations
         // (fix safari know issue for snap scroll restauration)
-        this.viewport.scrollLeft = 0;
+        this.scrollToLogicalPosition(0);
 
         // Read pager mode from attribute
         const modeAttr = this.getAttribute('pager-mode');
@@ -684,7 +684,7 @@ class IRNMNCarousel extends HTMLElement {
         const pages = [
             {
                 snapPosition: 0,
-                slideIndices: [0],
+                slideIndices: this.getVisibleSlideIndices(0),
             },
         ];
 
@@ -739,28 +739,29 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {number[]}
      */
     getVisibleSlideIndices(scrollPos) {
-        const viewportWidth = this.viewport.clientWidth;
         const eps = this.getEpsilonPx();
 
-        // Calculate viewport bounds in normalized space
-        const viewportStart = scrollPos;
-        const viewportEnd = scrollPos + viewportWidth;
+        // Current viewport geometry in pixels
+        const vpRect = this.viewport.getBoundingClientRect();
+        const vpStartPx = vpRect.left;
+        const vpEndPx = vpRect.right;
+
+        // How much would content shift if we were at scrollPos?
+        // (in logical LTR space)
+        const curPos = this.getScrollPosition();
+        const dx = scrollPos - curPos;
 
         const indices = [];
 
         this.slides.forEach((slide, i) => {
-            const snapPos = this.snapLefts[i];
-            const slideWidth = slide.offsetWidth;
+            const r = slide.getBoundingClientRect();
 
-            // Slide occupies space from snapPos to snapPos + slideWidth
-            const slideStart = snapPos;
-            const slideEnd = snapPos + slideWidth;
+            // Predict the slide rect at scrollPos by shifting horizontally
+            const predictedLeft = r.left - dx;
+            const predictedRight = r.right - dx;
 
-            // Check if slide overlaps with viewport (with epsilon tolerance)
-            if (
-                slideEnd > viewportStart + eps &&
-                slideStart < viewportEnd - eps
-            ) {
+            // Overlap test with viewport
+            if (predictedRight > vpStartPx + eps && predictedLeft < vpEndPx - eps) {
                 indices.push(i);
             }
         });
@@ -980,6 +981,14 @@ class IRNMNCarousel extends HTMLElement {
 
         if (this.debug)
             console.info('[IRNMNCarousel] Active page index', pageIndex);
+    }
+
+    announceActivePageIndex(pageIndex) {
+        if (!this.ariaLiveRegion) return;
+        if (this._lastAnnouncedIndex === pageIndex) return;
+        this._lastAnnouncedIndex = pageIndex;
+
+        this.ariaLiveRegion.textContent = `Page ${pageIndex + 1} of ${this.virtualPages.length}`;
     }
 
     /**
