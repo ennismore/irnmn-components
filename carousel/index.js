@@ -761,7 +761,10 @@ class IRNMNCarousel extends HTMLElement {
             const predictedRight = r.right - dx;
 
             // Overlap test with viewport
-            if (predictedRight > vpStartPx + eps && predictedLeft < vpEndPx - eps) {
+            if (
+                predictedRight > vpStartPx + eps &&
+                predictedLeft < vpEndPx - eps
+            ) {
                 indices.push(i);
             }
         });
