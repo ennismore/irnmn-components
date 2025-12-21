@@ -576,7 +576,9 @@ class IRNMNCarousel extends HTMLElement {
     updateTotal() {
         if (this.pagerMode === 'pages') {
             if (this.pagerTotal)
-                this.pagerTotal.textContent = String(this.virtualPages.length || 1);
+                this.pagerTotal.textContent = String(
+                    this.virtualPages.length || 1,
+                );
             if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
         } else {
             // Original slides mode
@@ -679,10 +681,12 @@ class IRNMNCarousel extends HTMLElement {
         const eps = this.getEpsilonPx();
 
         // First page always starts at position 0
-        const pages = [{
-            snapPosition: 0,
-            slideIndices: [0]
-        }];
+        const pages = [
+            {
+                snapPosition: 0,
+                slideIndices: [0],
+            },
+        ];
 
         let currentPos = 0;
 
@@ -695,7 +699,7 @@ class IRNMNCarousel extends HTMLElement {
                 if (currentPos < maxScroll - eps) {
                     pages.push({
                         snapPosition: maxScroll,
-                        slideIndices: [this.slides.length - 1]
+                        slideIndices: [this.slides.length - 1],
                     });
                 }
                 break;
@@ -706,7 +710,7 @@ class IRNMNCarousel extends HTMLElement {
 
             pages.push({
                 snapPosition: nextSnap,
-                slideIndices: visibleSlideIndices
+                slideIndices: visibleSlideIndices,
             });
 
             currentPos = nextSnap;
@@ -715,8 +719,15 @@ class IRNMNCarousel extends HTMLElement {
         this.virtualPages = pages;
 
         if (this.debug) {
-            console.info('[IRNMNCarousel] Virtual pages:', this.virtualPages.length, this.virtualPages);
-            console.info('[IRNMNCarousel] Viewport width:', this.viewport.clientWidth);
+            console.info(
+                '[IRNMNCarousel] Virtual pages:',
+                this.virtualPages.length,
+                this.virtualPages,
+            );
+            console.info(
+                '[IRNMNCarousel] Viewport width:',
+                this.viewport.clientWidth,
+            );
             console.info('[IRNMNCarousel] Max scroll:', this.getMaxScroll());
         }
     }
@@ -746,7 +757,10 @@ class IRNMNCarousel extends HTMLElement {
             const slideEnd = snapPos + slideWidth;
 
             // Check if slide overlaps with viewport (with epsilon tolerance)
-            if (slideEnd > viewportStart + eps && slideStart < viewportEnd - eps) {
+            if (
+                slideEnd > viewportStart + eps &&
+                slideStart < viewportEnd - eps
+            ) {
                 indices.push(i);
             }
         });
@@ -964,7 +978,8 @@ class IRNMNCarousel extends HTMLElement {
 
         if (announce) this.announceActivePageIndex(pageIndex);
 
-        if (this.debug) console.info('[IRNMNCarousel] Active page index', pageIndex);
+        if (this.debug)
+            console.info('[IRNMNCarousel] Active page index', pageIndex);
     }
 
     /**
