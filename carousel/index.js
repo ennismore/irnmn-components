@@ -31,6 +31,20 @@ class IRNMNCarousel extends HTMLElement {
     debug = false;
 
     /**
+     * Pager mode: 'slides' shows current slide / total slides
+     * 'pages' shows current page / total pages (based on navigation clicks needed)
+     * @type {'slides'|'pages'}
+     */
+    pagerMode = 'pages'; // default to pages mode
+
+    /**
+     * Cached virtual pages data
+     * @type {Array<{snapPosition: number, slideIndices: number[]}>}
+     */
+    virtualPages = [];
+    currentPageIndex = 0;
+
+    /**
      * Cached RTL scroll behavior type for the current browser.
      * Types:
      * - "negative": Chrome/Safari (scrollLeft goes negative when scrolling right in RTL)
@@ -504,6 +518,12 @@ class IRNMNCarousel extends HTMLElement {
         // (fix safari know issue for snap scroll restauration)
         this.viewport.scrollLeft = 0;
 
+        // Read pager mode from attribute
+        const modeAttr = this.getAttribute('pager-mode');
+        if (modeAttr === 'slides' || modeAttr === 'pages') {
+            this.pagerMode = modeAttr;
+        }
+
         this._rtlScrollType = null;
 
         this.slides = Array.from(
@@ -515,10 +535,10 @@ class IRNMNCarousel extends HTMLElement {
         this.pagerCurrent = this.querySelector(this.CLASSNAMES.CURRENT_SLIDE);
         this.pagerTotal = this.querySelector(this.CLASSNAMES.TOTAL_SLIDES);
 
-        this.updateTotal();
         this.initSlidesAttributes();
 
         this.calculateSnapLefts();
+        this.calculateVirtualPages();
         this.syncOverflowState();
 
         this.addScrollListener();
@@ -528,6 +548,8 @@ class IRNMNCarousel extends HTMLElement {
 
         requestAnimationFrame(() => {
             this.calculateSnapLefts();
+            this.calculateVirtualPages();
+            this.updateTotal();
             this.syncOverflowState();
             this.updateActiveFromScroll();
         });
@@ -537,6 +559,8 @@ class IRNMNCarousel extends HTMLElement {
             'load',
             () => {
                 this.calculateSnapLefts();
+                this.calculateVirtualPages();
+                this.updateTotal();
                 this.updateActiveFromScroll();
             },
             { once: true },
@@ -544,14 +568,22 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /**
-     * Update pager UI with total slide count and reset current to 1.
+     * Update pager UI with total count and reset current to 1.
+     * Uses either slides or pages depending on pagerMode.
      *
      * @returns {void}
      */
     updateTotal() {
-        if (this.pagerTotal)
-            this.pagerTotal.textContent = String(this.slides.length);
-        if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
+        if (this.pagerMode === 'pages') {
+            if (this.pagerTotal)
+                this.pagerTotal.textContent = String(this.virtualPages.length || 1);
+            if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
+        } else {
+            // Original slides mode
+            if (this.pagerTotal)
+                this.pagerTotal.textContent = String(this.slides.length);
+            if (this.pagerCurrent) this.pagerCurrent.textContent = '1';
+        }
     }
 
     /**
@@ -626,6 +658,102 @@ class IRNMNCarousel extends HTMLElement {
         }
     }
 
+    /**
+     * Calculate virtual pages based on viewport width and navigation clicks needed.
+     * A "page" represents what you see after one navigation action (next button click).
+     *
+     * @returns {void}
+     */
+    calculateVirtualPages() {
+        if (this.pagerMode !== 'pages') {
+            this.virtualPages = [];
+            return;
+        }
+
+        if (!this.snapLefts.length) {
+            this.virtualPages = [];
+            return;
+        }
+
+        const maxScroll = this.getMaxScroll();
+        const eps = this.getEpsilonPx();
+
+        // First page always starts at position 0
+        const pages = [{
+            snapPosition: 0,
+            slideIndices: [0]
+        }];
+
+        let currentPos = 0;
+
+        // Simulate navigation clicks to discover all meaningful page stops
+        while (currentPos < maxScroll - eps) {
+            const nextSnap = this.getNextSnapPosition(currentPos);
+
+            if (nextSnap === null) {
+                // No more snaps, add final page at maxScroll if not already there
+                if (currentPos < maxScroll - eps) {
+                    pages.push({
+                        snapPosition: maxScroll,
+                        slideIndices: [this.slides.length - 1]
+                    });
+                }
+                break;
+            }
+
+            // Find which slides would be visible at this snap position
+            const visibleSlideIndices = this.getVisibleSlideIndices(nextSnap);
+
+            pages.push({
+                snapPosition: nextSnap,
+                slideIndices: visibleSlideIndices
+            });
+
+            currentPos = nextSnap;
+        }
+
+        this.virtualPages = pages;
+
+        if (this.debug) {
+            console.info('[IRNMNCarousel] Virtual pages:', this.virtualPages.length, this.virtualPages);
+            console.info('[IRNMNCarousel] Viewport width:', this.viewport.clientWidth);
+            console.info('[IRNMNCarousel] Max scroll:', this.getMaxScroll());
+        }
+    }
+
+    /**
+     * Get indices of slides that are visible (at least partially) at a given scroll position.
+     *
+     * @param {number} scrollPos - Normalized scroll position
+     * @returns {number[]}
+     */
+    getVisibleSlideIndices(scrollPos) {
+        const viewportWidth = this.viewport.clientWidth;
+        const eps = this.getEpsilonPx();
+
+        // Calculate viewport bounds in normalized space
+        const viewportStart = scrollPos;
+        const viewportEnd = scrollPos + viewportWidth;
+
+        const indices = [];
+
+        this.slides.forEach((slide, i) => {
+            const snapPos = this.snapLefts[i];
+            const slideWidth = slide.offsetWidth;
+
+            // Slide occupies space from snapPos to snapPos + slideWidth
+            const slideStart = snapPos;
+            const slideEnd = snapPos + slideWidth;
+
+            // Check if slide overlaps with viewport (with epsilon tolerance)
+            if (slideEnd > viewportStart + eps && slideStart < viewportEnd - eps) {
+                indices.push(i);
+            }
+        });
+
+        return indices;
+    }
+
     /* ---------------------------------------------------------------------
      * Scroll handling
      * ------------------------------------------------------------------ */
@@ -641,6 +769,8 @@ class IRNMNCarousel extends HTMLElement {
             if (!this.connected) return;
 
             this.calculateSnapLefts();
+            this.calculateVirtualPages();
+            this.updateTotal();
             this.syncOverflowState();
             this.updateActiveFromScroll();
         });
@@ -696,6 +826,14 @@ class IRNMNCarousel extends HTMLElement {
     updateActiveFromScroll({ announce = false } = {}) {
         if (!this.snapLefts.length) return;
 
+        // Handle pages mode
+        if (this.pagerMode === 'pages') {
+            this.updateActivePageFromScroll({ announce });
+            this.updateControlsDisabledState();
+            return;
+        }
+
+        // Original slides mode
         const pos = this.getScrollPosition();
         const maxScroll = this.getMaxScroll();
         const eps = this.getEpsilonPx();
@@ -764,6 +902,69 @@ class IRNMNCarousel extends HTMLElement {
         );
 
         if (this.debug) console.info('[IRNMNCarousel] Active index', index);
+    }
+
+    /**
+     * Update current page index based on scroll position (pages mode only).
+     *
+     * @param {{ announce?: boolean }} [opts]
+     * @returns {void}
+     */
+    updateActivePageFromScroll({ announce = false } = {}) {
+        if (this.pagerMode !== 'pages' || !this.virtualPages.length) return;
+
+        const pos = this.getScrollPosition();
+        const maxScroll = this.getMaxScroll();
+        const eps = this.getEpsilonPx();
+
+        // If we only have one page, always select it
+        if (this.virtualPages.length === 1) {
+            this.setActivePageIndex(0, { announce });
+            return;
+        }
+
+        // If at end, force last page
+        if (pos >= maxScroll - eps) {
+            this.setActivePageIndex(this.virtualPages.length - 1, { announce });
+            return;
+        }
+
+        // Find closest page
+        let closestPageIndex = 0;
+        let closestDist = Infinity;
+
+        this.virtualPages.forEach((page, i) => {
+            const dist = Math.abs(page.snapPosition - pos);
+            if (dist < closestDist) {
+                closestDist = dist;
+                closestPageIndex = i;
+            }
+        });
+
+        this.setActivePageIndex(closestPageIndex, { announce });
+    }
+
+    /**
+     * Set the active page index and update UI.
+     *
+     * @param {number} pageIndex
+     * @param {{ announce?: boolean }} [opts]
+     * @returns {void}
+     */
+    setActivePageIndex(pageIndex, { announce = false } = {}) {
+        if (pageIndex === this.currentPageIndex && this.pagerMode === 'pages') {
+            if (announce) this.announceActivePageIndex(pageIndex);
+            return;
+        }
+
+        this.currentPageIndex = pageIndex;
+
+        if (this.pagerCurrent)
+            this.pagerCurrent.textContent = String(pageIndex + 1);
+
+        if (announce) this.announceActivePageIndex(pageIndex);
+
+        if (this.debug) console.info('[IRNMNCarousel] Active page index', pageIndex);
     }
 
     /**
@@ -873,8 +1074,9 @@ class IRNMNCarousel extends HTMLElement {
             this.viewport.querySelectorAll(this.CLASSNAMES.SLIDES),
         );
 
-        this.updateTotal();
         this.calculateSnapLefts();
+        this.calculateVirtualPages();
+        this.updateTotal();
         this.updateActiveFromScroll();
 
         if (this.debug) console.info('[IRNMNCarousel] Refreshed');
