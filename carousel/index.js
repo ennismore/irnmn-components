@@ -500,6 +500,10 @@ class IRNMNCarousel extends HTMLElement {
         this.viewport.setAttribute('role', 'region');
         this.viewport.setAttribute('aria-roledescription', 'carousel');
 
+        // Force initial scroll position to 0 BEFORE any snap calculations
+        // (fix safari know issue for snap scroll restauration)
+        this.viewport.scrollLeft = 0;
+
         this._rtlScrollType = null;
 
         this.slides = Array.from(
