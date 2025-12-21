@@ -38,7 +38,8 @@ class LiveRegionAnnouncer {
         this.host = host;
 
         // Avoid double-mount
-        if (this.ariaLiveRegion && this.host.contains(this.ariaLiveRegion)) return;
+        if (this.ariaLiveRegion && this.host.contains(this.ariaLiveRegion))
+            return;
 
         this.ariaLiveRegion = document.createElement('div');
         this.ariaLiveRegion.setAttribute('aria-live', 'polite');
@@ -62,7 +63,11 @@ class LiveRegionAnnouncer {
      * @returns {void}
      */
     unmount() {
-        if (this.host && this.ariaLiveRegion && this.host.contains(this.ariaLiveRegion)) {
+        if (
+            this.host &&
+            this.ariaLiveRegion &&
+            this.host.contains(this.ariaLiveRegion)
+        ) {
             this.host.removeChild(this.ariaLiveRegion);
         }
 
@@ -116,7 +121,10 @@ class LiveRegionAnnouncer {
      */
     announcePage(pageIndexZeroBased, totalPages) {
         const idx = pageIndexZeroBased + 1;
-        this.announce(`page:${idx}/${totalPages}`, `Page ${idx} of ${totalPages}`);
+        this.announce(
+            `page:${idx}/${totalPages}`,
+            `Page ${idx} of ${totalPages}`,
+        );
     }
 }
 

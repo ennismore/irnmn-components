@@ -31,9 +31,9 @@ class IRNMNCarousel extends HTMLElement {
     pagerTotal = null;
 
     // Helpers
-    scroll = null;     // ScrollAdapter
-    snap = null;       // SnapModel
-    announcer = null;  // LiveRegionAnnouncer
+    scroll = null; // ScrollAdapter
+    snap = null; // SnapModel
+    announcer = null; // LiveRegionAnnouncer
 
     // Debug flag
     debug = false;
@@ -305,7 +305,7 @@ class IRNMNCarousel extends HTMLElement {
 
         if (this.pagerMode === 'pages') {
             this.pagerTotal.textContent = String(
-                this.snap?.virtualPages?.length || 1
+                this.snap?.virtualPages?.length || 1,
             );
         } else {
             this.pagerTotal.textContent = String(this.slides.length);
@@ -394,16 +394,16 @@ class IRNMNCarousel extends HTMLElement {
      * @param {*} options
      */
     updateActivePageFromScroll({ announce = false } = {}) {
-        if (this.pagerMode !== 'pages' || !this.snap?.virtualPages?.length) return;
+        if (this.pagerMode !== 'pages' || !this.snap?.virtualPages?.length)
+            return;
         const pos = this.scroll.getScrollPosition();
         const maxScroll = this.scroll.getMaxScroll();
         const eps = this.scroll.getEpsilonPx();
 
         if (pos >= maxScroll - eps) {
-            this.setActivePageIndex(
-                this.snap.virtualPages.length - 1,
-                { announce },
-            );
+            this.setActivePageIndex(this.snap.virtualPages.length - 1, {
+                announce,
+            });
             return;
         }
 
@@ -536,11 +536,11 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /**
-    * Update disabled state of prev/next buttons.
-    * No scroll → both disabled
-    * At start → prev disabled
-    * At end → next disabled
-    */
+     * Update disabled state of prev/next buttons.
+     * No scroll → both disabled
+     * At start → prev disabled
+     * At end → next disabled
+     */
     updateControlsDisabledState() {
         if (!this.scroll?.isOverflowing()) {
             if (this.prevBtn) this.prevBtn.disabled = true;

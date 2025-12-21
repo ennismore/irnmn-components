@@ -41,7 +41,9 @@ export default class SnapModel {
         const vpRect = this.viewport.getBoundingClientRect();
         const padStart = this.scroll.getScrollPaddingStart();
 
-        const vpStart = isRTL ? vpRect.right - padStart : vpRect.left + padStart;
+        const vpStart = isRTL
+            ? vpRect.right - padStart
+            : vpRect.left + padStart;
 
         this.snapLefts = slides.map((slide) => {
             const r = slide.getBoundingClientRect();
@@ -57,7 +59,10 @@ export default class SnapModel {
         });
 
         if (this.debug) {
-            console.info('[IRNMNCarousel] snapLefts (unclamped)', this.snapLefts);
+            console.info(
+                '[IRNMNCarousel] snapLefts (unclamped)',
+                this.snapLefts,
+            );
         }
 
         return this.snapLefts;
@@ -233,7 +238,10 @@ export default class SnapModel {
             const predictedRight = r.right - dx;
 
             // Overlap test with viewport
-            if (predictedRight > vpStartPx + eps && predictedLeft < vpEndPx - eps) {
+            if (
+                predictedRight > vpStartPx + eps &&
+                predictedLeft < vpEndPx - eps
+            ) {
                 indices.push(i);
             }
         });

@@ -20,7 +20,8 @@ export default class ScrollAdapter {
         this.debug = Boolean(options.debug);
         this._prefersReducedMotion =
             options.prefersReducedMotion ||
-            (() => window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+            (() =>
+                window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
         /**
          * Cached RTL scroll behavior type for the current browser.
@@ -100,7 +101,10 @@ export default class ScrollAdapter {
         if (this._rtlScrollType) return this._rtlScrollType;
 
         // If not RTL, irrelevant.
-        if (!this.viewport || getComputedStyle(this.viewport).direction !== 'rtl') {
+        if (
+            !this.viewport ||
+            getComputedStyle(this.viewport).direction !== 'rtl'
+        ) {
             this._rtlScrollType = 'default';
             return this._rtlScrollType;
         }
@@ -141,7 +145,8 @@ export default class ScrollAdapter {
             // 2) Distinguish default vs reverse
             probe.scrollLeft = maxScroll;
 
-            this._rtlScrollType = probe.scrollLeft === maxScroll ? 'default' : 'reverse';
+            this._rtlScrollType =
+                probe.scrollLeft === maxScroll ? 'default' : 'reverse';
             return this._rtlScrollType;
         } finally {
             document.body.removeChild(probe);
@@ -189,8 +194,7 @@ export default class ScrollAdapter {
         }
 
         const behavior =
-            opts.behavior ||
-            (this._prefersReducedMotion() ? 'auto' : 'smooth');
+            opts.behavior || (this._prefersReducedMotion() ? 'auto' : 'smooth');
 
         el.scrollTo({ left: target, behavior });
     }
@@ -224,7 +228,10 @@ export default class ScrollAdapter {
      * @returns {boolean}
      */
     isAtEnd() {
-        return this.getScrollPosition() >= this.getMaxScroll() - this.getEpsilonPx();
+        return (
+            this.getScrollPosition() >=
+            this.getMaxScroll() - this.getEpsilonPx()
+        );
     }
 
     /**
