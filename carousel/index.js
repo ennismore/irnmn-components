@@ -32,6 +32,10 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Cached RTL scroll behavior type for the current browser.
+     * Types:
+     * - "negative": Chrome/Safari (scrollLeft goes negative when scrolling right in RTL)
+     * - "reverse": Firefox (scrollLeft=0 at right, scrollLeft=maxScroll at left)
+     * - "default": IE/Edge legacy (scrollLeft=0 at left, same as LTR)
      * @type {"negative"|"reverse"|"default"|null}
      */
     _rtlScrollType = null;
@@ -74,6 +78,12 @@ class IRNMNCarousel extends HTMLElement {
      */
     _scrollSettledDelay = 120;
 
+    /**
+     * RequestAnimationFrame ID for scroll throttling cleanup.
+     * @type {number|null}
+     */
+    _scrollRafId = null;
+
     connected = false;
 
     /**
@@ -103,11 +113,12 @@ class IRNMNCarousel extends HTMLElement {
      */
     get selectors() {
         let selectors = this.getAttribute('selectors');
-        let classnames = [];
+        let classnames = {};
         try {
             selectors = JSON.parse(selectors);
         } catch (error) {
             console.error('[IRNMNCarousel] Error parsing selectors:', error);
+            return classnames;
         }
         for (let key in selectors) {
             classnames[key.toUpperCase()] = selectors[key];
@@ -116,7 +127,7 @@ class IRNMNCarousel extends HTMLElement {
     }
 
     /**
-     * Detect if user prefers reduced motion.
+     * Detect if user prefers reduced motion (A11y).
      *
      * @returns {boolean}
      */
@@ -129,7 +140,7 @@ class IRNMNCarousel extends HTMLElement {
      * ------------------------------------------------------------------ */
 
     /**
-     * Add an event listener that is automatically cleaned up on disconnect.
+     * Add an event listener that is automatically cleaned up on disconnect (via AbortController).
      *
      * @param {HTMLElement|Window} element
      * @param {string} event
@@ -159,8 +170,8 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {number}
      */
     getEpsilonPx() {
-        const epsFromGap = this.getGapPx() / 2;
-        return Math.max(2, Math.min(12, epsFromGap || 6));
+        const epsFromGap = this.getGapPx() / 2 || 6; // fallback to 6 if gap is 0
+        return Math.max(2, Math.min(12, epsFromGap)); // clamp between 2 and 12px
     }
 
     /* ---------------------------------------------------------------------
@@ -268,26 +279,29 @@ class IRNMNCarousel extends HTMLElement {
         probe.appendChild(inner);
         document.body.appendChild(probe);
 
-        const maxScroll = probe.scrollWidth - probe.clientWidth;
+        try {
+            const maxScroll = probe.scrollWidth - probe.clientWidth;
 
-        // 1) Negative model: setting scrollLeft to 1 keeps it at 0 (Chrome/Safari)
-        probe.scrollLeft = 0;
-        probe.scrollLeft = 1;
+            // 1) Negative model: setting scrollLeft to 1 keeps it at 0 (Chrome/Safari)
+            probe.scrollLeft = 0;
+            probe.scrollLeft = 1;
 
-        if (probe.scrollLeft === 0) {
-            this._rtlScrollType = 'negative';
-            document.body.removeChild(probe);
+            if (probe.scrollLeft === 0) {
+                this._rtlScrollType = 'negative';
+                return this._rtlScrollType;
+            }
+
+            // 2) Distinguish default vs reverse
+            probe.scrollLeft = maxScroll;
+
+            this._rtlScrollType =
+                probe.scrollLeft === maxScroll ? 'default' : 'reverse';
+
             return this._rtlScrollType;
+        } finally {
+            // Always clean up probe element, even if error occurs
+            document.body.removeChild(probe);
         }
-
-        // 2) Distinguish default vs reverse
-        probe.scrollLeft = maxScroll;
-
-        this._rtlScrollType =
-            probe.scrollLeft === maxScroll ? 'default' : 'reverse';
-
-        document.body.removeChild(probe);
-        return this._rtlScrollType;
     }
 
     /* ---------------------------------------------------------------------
@@ -302,14 +316,14 @@ class IRNMNCarousel extends HTMLElement {
      */
     getPrevSnapPosition(pos) {
         const eps = this.getEpsilonPx();
-        let candidate = null;
 
-        for (let i = 0; i < this.snapLefts.length; i++) {
+        // Iterate from end to find the closest previous snap
+        for (let i = this.snapLefts.length - 1; i >= 0; i--) {
             if (this.snapLefts[i] < pos - eps) {
-                candidate = this.snapLefts[i];
+                return this.snapLefts[i];
             }
         }
-        return candidate;
+        return null;
     }
 
     /**
@@ -443,8 +457,22 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {void}
      */
     disconnectedCallback() {
+        // Clean up timers
+        if (this._scrollSettledTimer) {
+            clearTimeout(this._scrollSettledTimer);
+            this._scrollSettledTimer = null;
+        }
+
+        // Clean up RAF
+        if (this._scrollRafId) {
+            cancelAnimationFrame(this._scrollRafId);
+            this._scrollRafId = null;
+        }
+
+        // Clean up observers and controllers
         this._abortController?.abort();
         this._resizeObserver?.disconnect();
+
         this.connected = false;
 
         if (this.debug) console.info('[IRNMNCarousel] Cleaned up');
@@ -605,6 +633,9 @@ class IRNMNCarousel extends HTMLElement {
      */
     setupResizeObserver() {
         this._resizeObserver = new ResizeObserver(() => {
+            // Guard against observer firing after disconnect
+            if (!this.connected) return;
+
             this.calculateSnapLefts();
             this.syncOverflowState();
             this.updateActiveFromScroll();
@@ -618,16 +649,14 @@ class IRNMNCarousel extends HTMLElement {
      * @returns {void}
      */
     addScrollListener() {
-        let ticking = false;
-
         const onScroll = () => {
-            if (ticking) return;
-            ticking = true;
+            // Cancel any pending RAF to avoid stacking
+            if (this._scrollRafId) return;
 
-            requestAnimationFrame(() => {
+            this._scrollRafId = requestAnimationFrame(() => {
                 this.updateActiveFromScroll({ announce: false });
                 this.scheduleScrollSettled();
-                ticking = false;
+                this._scrollRafId = null;
             });
         };
 
@@ -646,6 +675,7 @@ class IRNMNCarousel extends HTMLElement {
 
         this._scrollSettledTimer = window.setTimeout(() => {
             this.updateActiveFromScroll({ announce: true });
+            this._scrollSettledTimer = null;
         }, this._scrollSettledDelay);
     }
 
@@ -663,9 +693,11 @@ class IRNMNCarousel extends HTMLElement {
         if (!this.snapLefts.length) return;
 
         const pos = this.getScrollPosition();
+        const maxScroll = this.getMaxScroll();
+        const eps = this.getEpsilonPx();
 
         // When reaching physical scroll end, force last slide active (logical)
-        if (this.isAtEnd()) {
+        if (pos >= maxScroll - eps) {
             this.setActiveIndex(this.slides.length - 1, { announce });
             this.updateControlsDisabledState();
             return;
