@@ -339,7 +339,10 @@ class IRNMNCarousel extends HTMLElement {
                     : this.snap.getClosestSnapIndex(pos);
 
             // Apply active-slide class without messing with page pagerCurrent
-            this.setActiveIndex(slideIndex, { announce: false, updatePager: false });
+            this.setActiveIndex(slideIndex, {
+                announce: false,
+                updatePager: false,
+            });
 
             this.updateControlsDisabledState();
             return;
@@ -356,8 +359,6 @@ class IRNMNCarousel extends HTMLElement {
         this.setActiveIndex(index, { announce });
         this.updateControlsDisabledState();
     }
-
-
 
     /**
      * Set the active slide index.
