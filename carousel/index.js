@@ -22,8 +22,8 @@ class IRNMNCarousel extends HTMLElement {
 
     // Carousel elements
     slides = [];
-    currentIndex = 0;
-    currentPageIndex = 0;
+    currentIndex = -1;
+    currentPageIndex = -1;
     viewport = null;
     prevBtn = null;
     nextBtn = null;
@@ -324,17 +324,29 @@ class IRNMNCarousel extends HTMLElement {
     updateActiveFromScroll({ announce = false } = {}) {
         if (!this.snap?.snapLefts?.length) return;
 
-        // Handle pages mode
-        if (this.pagerMode === 'pages') {
-            this.updateActivePageFromScroll({ announce });
-            this.updateControlsDisabledState();
-            return;
-        }
-
-        // Slides mode
         const pos = this.scroll.getScrollPosition();
         const maxScroll = this.scroll.getMaxScroll();
         const eps = this.scroll.getEpsilonPx();
+
+        // Handle pages mode
+        if (this.pagerMode === 'pages') {
+            this.updateActivePageFromScroll({ announce });
+
+            // Keep "last slide active at physical end" behavior in pages mode too
+            const slideIndex =
+                pos >= maxScroll - eps
+                    ? this.slides.length - 1
+                    : this.snap.getClosestSnapIndex(pos);
+
+            // Apply active-slide class without messing with page pagerCurrent
+            this.setActiveIndex(slideIndex, {
+                announce: false,
+                updatePager: false,
+            });
+
+            this.updateControlsDisabledState();
+            return;
+        }
 
         // When reaching physical scroll end, force last slide active (logical)
         if (pos >= maxScroll - eps) {
@@ -354,7 +366,7 @@ class IRNMNCarousel extends HTMLElement {
      * @param {number} index
      * @param {*} options
      */
-    setActiveIndex(index, { announce = false } = {}) {
+    setActiveIndex(index, { announce = false, updatePager = true } = {}) {
         if (index === this.currentIndex) {
             if (announce) {
                 this.announcer.announceSlide(index, this.slides.length);
@@ -368,7 +380,8 @@ class IRNMNCarousel extends HTMLElement {
             slide.classList.toggle('active-slide', i === index);
         });
 
-        if (this.pagerCurrent) {
+        // Only update pagerCurrent when in "slides" mode (or when explicitly allowed)
+        if (updatePager && this.pagerCurrent) {
             this.pagerCurrent.textContent = String(index + 1);
         }
 
