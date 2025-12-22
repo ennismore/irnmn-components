@@ -1,26 +1,41 @@
 # IRNMNCarousel
 
-`<irnmn-carousel>` is a scroll-snap based, variable-width carousel implemented as a Web Component.
-It uses native scrolling + CSS scroll-snap, and provides button/keyboard navigation, RTL support, and an aria-live announcement of the active item.
+`<irnmn-carousel>` is a **scroll-snap based, variable-width carousel Web Component**.
+
+It relies on **native scrolling + CSS scroll-snap** and adds a logical navigation layer on top: buttons, keyboard support, RTL normalization, pager handling (slides or pages), and accessible announcements.
+
+The component is intentionally **layout-agnostic**: it does not impose markup or styles beyond what it queries via selectors.
+
+---
 
 ## Features
 
-- Native horizontal scroll with `scroll-snap`
+- Native horizontal scrolling with CSS `scroll-snap`
 - Variable-width slides
-- Active slide = closest **start** snap point
+- **Active slide = closest left snap point**
 - When reaching physical scroll end, **last slide becomes active** (logical)
-- Prev/Next navigation supports a virtual **END** step (`maxScroll`)
-- RTL scroll normalization (Chrome/Safari negative model, Firefox reverse model)
-- Keyboard support: Arrow keys, Home/End
+- Prev / Next navigation with a virtual **END step** (`maxScroll`)
+- Pager modes:
+  - `slides` → slide-based indexing
+  - `pages` → virtual page indexing
+- RTL scroll normalization (Chrome / Safari / Firefox models)
+- Keyboard support: Arrow keys, Home / End
 - `aria-live` announcements (polite)
+- Resize-aware (recomputes geometry on resize)
+- Public API for refresh / navigation
+- Emits a `carouselChange` event on active change
+
+---
 
 ## Expected markup
 
-The component queries internal elements using a `selectors` attribute (JSON).
+The component discovers its internal elements through a `selectors` attribute (JSON).
+
 Example:
 
 ```html
 <irnmn-carousel
+  pager-mode="slides"
   selectors='{
     "viewport": ".carousel__viewport",
     "slides": ".carousel__slide",
@@ -37,7 +52,6 @@ Example:
     <div class="carousel__slide">Slide 1</div>
     <div class="carousel__slide">Slide 2</div>
     <div class="carousel__slide">Slide 3</div>
-    <!-- ... -->
   </div>
 
   <div class="carousel__pager" aria-hidden="true">
@@ -47,29 +61,32 @@ Example:
 </irnmn-carousel>
 ```
 
-### Required CSS (minimum)
+---
 
-You must apply horizontal layout + scroll-snap on the viewport and snap points on slides:
+## Required CSS (minimum)
+
+You are responsible for applying scroll-snap and layout styles.
 
 ```css
 .carousel__viewport {
   overflow-x: auto;
   overflow-y: hidden;
+  display: flex;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
-  display: flex;
-  gap: 16px; /* used for epsilon heuristics */
+
+  gap: 16px; /* used internally for epsilon heuristics */
   scroll-padding-left: 0px;
-  scroll-padding-right: 0px; /* for RTL start padding */
+  scroll-padding-right: 0px;
 }
 
 .carousel__slide {
-  scroll-snap-align: start;
   flex: 0 0 auto;
+  scroll-snap-align: start;
 }
 ```
 
-Optional: hide controls when not overflowing via the host class:
+Optional: hide controls when the carousel is not overflowing.
 
 ```css
 irnmn-carousel:not(.is-overflowing) .carousel__prev,
@@ -78,20 +95,31 @@ irnmn-carousel:not(.is-overflowing) .carousel__next {
 }
 ```
 
+---
+
 ## Configuration
 
 ### `selectors` (attribute)
 
-A JSON object mapping internal roles to CSS selectors. Keys are uppercased internally.
+JSON mapping internal roles to CSS selectors.
 
-Supported keys (by this implementation):
+Supported keys:
 
-- `viewport`
+- `viewport` (required)
 - `slides`
 - `prev_button`
 - `next_button`
 - `current_slide`
 - `total_slides`
+
+---
+
+### `pager-mode` (attribute)
+
+- `slides`
+- `pages`
+
+---
 
 ## Behavior notes
 
@@ -125,6 +153,8 @@ When the viewport (or any element inside the component) is focused:
 
 Keyboard navigation is ignored when focus is inside `input`, `textarea`, or `select`.
 
+---
+
 ## Events
 
 ### `carouselChange`
@@ -137,22 +167,21 @@ carousel.addEventListener('carouselChange', (e) => {
 });
 ```
 
-`detail`:
-
-- `currentIndex` (number)
-- `currentElement` (HTMLElement)
-- `total` (number)
+---
 
 ## Public API
 
 ### `refresh()`
-
-Re-scans slides and recomputes geometry/state.
+### `next()`
+### `prev()`
 
 ```js
-document.querySelector('irnmn-carousel')?.refresh();
+carousel.refresh();
+carousel.next();
+carousel.prev();
 ```
 
+---
 ## Debugging
 
 Add `?debugCarousel=1` to the URL to enable console logging.
@@ -161,7 +190,3 @@ Add `?debugCarousel=1` to the URL to enable console logging.
 
 - Snap calculations rely on `getBoundingClientRect()` and current scroll position; heavy layout shifts during smooth scrolling can cause transient snap noise.
 - RTL scroll type detection temporarily writes to `scrollLeft` to detect the browser model.
-
-## License
-
-Internal / project-specific.
