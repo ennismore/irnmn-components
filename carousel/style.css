@@ -1,0 +1,107 @@
+/* ============================================================
+   Minimal style.css for <irnmn-carousel>
+   Purpose:
+   - scroll-snap carousel
+   - fixed-height slides
+   - arrows + pagination always visible
+   - no responsive logic yet
+============================================================ */
+
+/* Host */
+irnmn-carousel {
+  --carousel-height: 380px;
+  --carousel-gap: 24px;
+  --carousel-bg: #f3f0ea;
+  --carousel-radius: 2px;
+
+  position: relative;
+  display: block;
+  padding: 32px;
+  background: var(--carousel-bg);
+
+}
+
+/* Hide nav and pager if not overflowing */
+irnmn-carousel:not(.is-overflowing) .c-carousel__nav,
+irnmn-carousel:not(.is-overflowing) .c-carousel__pager {
+  display: none;
+}
+irnmn-carousel:not(.is-overflowing) .c-carousel__viewport {
+  justify-content: center;
+}
+
+/* Viewport */
+irnmn-carousel .c-carousel__viewport {
+  display: flex;
+  gap: var(--carousel-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar */
+irnmn-carousel .c-carousel__viewport::-webkit-scrollbar {
+  display: none;
+}
+irnmn-carousel .c-carousel__viewport {
+  scrollbar-width: none;
+}
+
+/* Slides */
+irnmn-carousel .c-carousel__slide {
+  flex: 0 0 auto;
+  height: var(--carousel-height);
+  scroll-snap-align: start;
+  border-radius: var(--carousel-radius);
+  overflow: hidden;
+  background: #ddd;
+}
+
+irnmn-carousel .c-carousel__slide > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Navigation arrows */
+irnmn-carousel .c-carousel__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  cursor: pointer;
+  font-size: 22px;
+  line-height: 1;
+}
+
+irnmn-carousel .c-carousel__nav--prev {
+  left: 12px;
+}
+
+irnmn-carousel .c-carousel__nav--next {
+  right: 12px;
+}
+
+[dir="rtl"] irnmn-carousel .c-carousel__nav--prev {
+  right: 12px;
+  left: auto;
+}
+[dir="rtl"] irnmn-carousel .c-carousel__nav--next {
+  left: 12px;
+  right: auto;
+}
+
+/* Pagination */
+irnmn-carousel .c-carousel__pager {
+  margin-top: 16px;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  font: 500 14px/1 system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+}
