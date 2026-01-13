@@ -235,9 +235,7 @@ class IRNMNCarousel extends HTMLElement {
         this.announcer = new LiveRegionAnnouncer();
         this.announcer.mount(this);
 
-        // Safari snap restoration fix
-        this.scroll.resetToStartInstant();
-
+        // Pager mode
         const modeAttr = this.getAttribute('pager-mode');
         if (modeAttr === 'slides' || modeAttr === 'pages') {
             this.pagerMode = modeAttr;
@@ -265,6 +263,9 @@ class IRNMNCarousel extends HTMLElement {
         this.addControlsListeners();
         this.addKeyboardSupport();
         this.setupResizeObserver();
+
+        // Safari snap restoration fix (force scrollLeft=0 on init)
+        this.scroll.resetToStartInstant();
 
         // Initial active slide/page
         requestAnimationFrame(() => {
