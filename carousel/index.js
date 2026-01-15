@@ -88,7 +88,6 @@ class IRNMNCarousel extends HTMLElement {
      */
     constructor() {
         super();
-        this.CLASSNAMES = this.selectors;
 
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.has('debugCarousel');
@@ -165,6 +164,8 @@ class IRNMNCarousel extends HTMLElement {
         this._abortController = new AbortController();
         this._signal = this._abortController.signal;
 
+        this.CLASSNAMES = this.selectors;
+
         const ok = this.initCarousel(); // return boolean
         this.connected = ok;
     }
@@ -191,6 +192,32 @@ class IRNMNCarousel extends HTMLElement {
 
         if (this.debug) {
             console.info('[IRNMNCarousel] Cleaned up');
+        }
+    }
+
+    static get observedAttributes() {
+        return ['selectors', 'pager-mode'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+
+        if (name === 'selectors') {
+            this.CLASSNAMES = this.selectors;
+
+            // If already initialized, re-bind or refresh safely
+            if (this.connected && this.viewport) {
+                this.refresh?.();
+            }
+        }
+
+        if (name === 'pager-mode') {
+            if (newValue === 'slides' || newValue === 'pages') {
+                this.pagerMode = newValue;
+                if (this.connected && this.viewport) {
+                    this.refresh?.();
+                }
+            }
         }
     }
 
