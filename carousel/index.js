@@ -64,6 +64,12 @@ class IRNMNCarousel extends HTMLElement {
     _resizeObserver = null;
 
     /**
+     * MutationObserver for dynamic slide changes ( see setupMutationObserver )
+     * @type {MutationObserver|null}
+     */
+    _mutationObserver = null;
+
+    /**
      * Scroll-settle timer id.
      * @type {number|null}
      */
@@ -187,6 +193,7 @@ class IRNMNCarousel extends HTMLElement {
         // Clean up observers and controllers
         this._abortController?.abort();
         this._resizeObserver?.disconnect();
+        this._mutationObserver?.disconnect();
 
         this.connected = false;
 
@@ -290,6 +297,7 @@ class IRNMNCarousel extends HTMLElement {
         this.addControlsListeners();
         this.addKeyboardSupport();
         this.setupResizeObserver();
+        this.setupMutationObserver();
 
         // Safari snap restoration fix (force scrollLeft=0 on init)
         this.scroll.resetToStartInstant();
@@ -615,14 +623,68 @@ class IRNMNCarousel extends HTMLElement {
         this._resizeObserver = new ResizeObserver(() => {
             if (!this.connected) return;
 
-            this.snap.calculateSnapLefts();
-            this.snap.calculateVirtualPages(this.pagerMode);
-            this.updateTotal();
-            this.syncOverflowState();
-            this.updateActiveFromScroll();
+            this.refresh();
         });
 
         this._resizeObserver.observe(this.viewport);
+    }
+
+    /**
+     * Setup MutationObserver on viewport to detect slide changes.
+     * This will refresh the carousel when slides are added/removed.
+     * Since this component is not generating slides itself (no html rendering), this is necessary
+     * to keep the carousel in sync with dynamic content changes,
+     * bacause we can't rely and observed attributes.
+     */
+    setupMutationObserver() {
+        if (!this.viewport) return;
+
+        this._mutationObserver = new MutationObserver((mutations) => {
+            let shouldRefresh = false;
+
+            // Loop through mutations to check for added/removed slide items
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    // Check if any added/removed nodes match the slides selector
+                    if (
+                        this.slideItemUpdateCheck(mutation.addedNodes) ||
+                        this.slideItemUpdateCheck(mutation.removedNodes)
+                    ) {
+                        shouldRefresh = true;
+                    }
+                }
+            }
+
+            // If slides were added/removed, refresh the carousel
+            if (shouldRefresh) {
+                if (this.debug) {
+                    console.info('[IRNMNCarousel] Slides changed – refreshing');
+                }
+                this.refresh();
+            }
+        });
+
+        // Start observing the viewport for childList changes
+        this._mutationObserver.observe(this.viewport, {
+            childList: true,
+            subtree: true,
+        });
+    }
+
+    /**
+     * Check if any nodes in a NodeList match the slides selector.
+     * Used to detect when slides are added or removed from the carousel.
+     *
+     * @param {NodeList} nodes - The nodes to check (from MutationObserver)
+     * @returns {boolean} True if any node matches the slides selector
+     */
+    slideItemUpdateCheck(nodes) {
+        for (const node of nodes) {
+            if (node.nodeType === 1 && node.matches?.(this.CLASSNAMES.SLIDES)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -667,6 +729,7 @@ class IRNMNCarousel extends HTMLElement {
         this.snap.calculateSnapLefts();
         this.snap.calculateVirtualPages(this.pagerMode);
         this.updateTotal();
+        this.syncOverflowState();
         this.updateActiveFromScroll();
         this.announcer?.reset();
     }
