@@ -64,7 +64,7 @@ class IRNMNCarousel extends HTMLElement {
     _resizeObserver = null;
 
     /**
-     * MutationObserver for dynamic slide changes
+     * MutationObserver for dynamic slide changes ( see setupMutationObserver )
      * @type {MutationObserver|null}
      */
     _mutationObserver = null;
@@ -631,6 +631,10 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Setup MutationObserver on viewport to detect slide changes.
+     * This will refresh the carousel when slides are added/removed.
+     * Since this component is not generating slides itself (no html rendering), this is necessary
+     * to keep the carousel in sync with dynamic content changes,
+     * bacause we can't rely and observed attributes.
      */
     setupMutationObserver() {
         if (!this.viewport) return;
@@ -638,30 +642,20 @@ class IRNMNCarousel extends HTMLElement {
         this._mutationObserver = new MutationObserver((mutations) => {
             let shouldRefresh = false;
 
+            // Loop through mutations to check for added/removed slide items
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
-                    // Check added nodes
-                    mutation.addedNodes.forEach((node) => {
-                        if (
-                            node.nodeType === 1 &&
-                            node.matches?.(this.CLASSNAMES.SLIDES)
-                        ) {
-                            shouldRefresh = true;
-                        }
-                    });
-
-                    // Check removed nodes
-                    mutation.removedNodes.forEach((node) => {
-                        if (
-                            node.nodeType === 1 &&
-                            node.matches?.(this.CLASSNAMES.SLIDES)
-                        ) {
-                            shouldRefresh = true;
-                        }
-                    });
+                    // Check if any added/removed nodes match the slides selector
+                    if (
+                        this.slideItemUpdateCheck(mutation.addedNodes) ||
+                        this.slideItemUpdateCheck(mutation.removedNodes)
+                    ) {
+                        shouldRefresh = true;
+                    }
                 }
             }
 
+            // If slides were added/removed, refresh the carousel
             if (shouldRefresh) {
                 if (this.debug) {
                     console.info('[IRNMNCarousel] Slides changed – refreshing');
@@ -670,10 +664,27 @@ class IRNMNCarousel extends HTMLElement {
             }
         });
 
+        // Start observing the viewport for childList changes
         this._mutationObserver.observe(this.viewport, {
             childList: true,
             subtree: true,
         });
+    }
+
+    /**
+     * Check if any nodes in a NodeList match the slides selector.
+     * Used to detect when slides are added or removed from the carousel.
+     *
+     * @param {NodeList} nodes - The nodes to check (from MutationObserver)
+     * @returns {boolean} True if any node matches the slides selector
+     */
+    slideItemUpdateCheck(nodes) {
+        for (const node of nodes) {
+            if (node.nodeType === 1 && node.matches?.(this.CLASSNAMES.SLIDES)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
