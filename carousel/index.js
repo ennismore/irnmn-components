@@ -64,7 +64,7 @@ class IRNMNCarousel extends HTMLElement {
     _resizeObserver = null;
 
     /**
-     * MutationObserver for dynamic slide changes
+     * MutationObserver for dynamic slide changes ( see setupMutationObserver )
      * @type {MutationObserver|null}
      */
     _mutationObserver = null;
@@ -631,6 +631,10 @@ class IRNMNCarousel extends HTMLElement {
 
     /**
      * Setup MutationObserver on viewport to detect slide changes.
+     * This will refresh the carousel when slides are added/removed.
+     * Since this component is not generating slides itself (no html rendering), this is necessary
+     * to keep the carousel in sync with dynamic content changes,
+     * bacause we can't rely and observed attributes.
      */
     setupMutationObserver() {
         if (!this.viewport) return;
@@ -640,7 +644,7 @@ class IRNMNCarousel extends HTMLElement {
 
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
-                    // Check added nodes
+                    // Check for added nodes that match slides selector ( to detect newly added slides )
                     mutation.addedNodes.forEach((node) => {
                         if (
                             node.nodeType === 1 &&
@@ -650,7 +654,7 @@ class IRNMNCarousel extends HTMLElement {
                         }
                     });
 
-                    // Check removed nodes
+                    // Check for removed nodes that match slides selector ( to detect removed slides )
                     mutation.removedNodes.forEach((node) => {
                         if (
                             node.nodeType === 1 &&
@@ -662,6 +666,7 @@ class IRNMNCarousel extends HTMLElement {
                 }
             }
 
+            // If slides were added/removed, refresh the carousel so we can recalculate snaps and pager info
             if (shouldRefresh) {
                 if (this.debug) {
                     console.info('[IRNMNCarousel] Slides changed – refreshing');
@@ -670,6 +675,7 @@ class IRNMNCarousel extends HTMLElement {
             }
         });
 
+        // Start observing the viewport for childList changes (slides added/removed)
         this._mutationObserver.observe(this.viewport, {
             childList: true,
             subtree: true,
