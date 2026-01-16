@@ -1,4 +1,4 @@
-import{x as h}from"./iframe-CrMPBTju.js";import"./style-C-nl4KuI.js";const z=`@layer base{
+import{x as h}from"./iframe-qVODnSlx.js";import"./style-C09WyMJo.js";const z=`@layer base{
     :root,
     body {
         /* => Spacing scale */
@@ -197,9 +197,9 @@ irnmn-room-card .room-card__slider-slide {
     margin-left: -1px; /* Fixes a 1px gap issue in some browsers */
     cursor: grab;
     padding: 0;
-    &.active-slide{
-        z-index: 2;
-    }
+}
+irnmn-room-card .room-card__slider-slide.active-slide{
+    z-index: 2;
 }
 irnmn-room-card .room-card__slider-slide figure {
     aspect-ratio: var(--room-card-image-aspect-ratio);
