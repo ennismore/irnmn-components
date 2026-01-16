@@ -680,10 +680,7 @@ class IRNMNCarousel extends HTMLElement {
      */
     slideItemUpdateCheck(nodes) {
         for (const node of nodes) {
-            if (
-                node.nodeType === 1 &&
-                node.matches?.(this.CLASSNAMES.SLIDES)
-            ) {
+            if (node.nodeType === 1 && node.matches?.(this.CLASSNAMES.SLIDES)) {
                 return true;
             }
         }
