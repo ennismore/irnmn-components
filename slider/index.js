@@ -7,16 +7,8 @@ class IRNMNSlider extends HTMLElement {
 
     constructor() {
         super();
-        this.CLASSNAMES = this.selectors;
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.get('debugSlider');
-        // Debug: Log constructor initialization
-        if (this.debug) {
-            console.info(
-                '[IRNMNSlider] Constructor called, CLASSNAMES:',
-                this.CLASSNAMES,
-            );
-        }
     }
 
     /**
@@ -59,6 +51,16 @@ class IRNMNSlider extends HTMLElement {
     }
 
     connectedCallback() {
+        this.CLASSNAMES = this.selectors;
+
+        // Debug: Log constructor initialization
+        if (this.debug) {
+            console.info(
+                '[IRNMNSlider] Constructor called, CLASSNAMES:',
+                this.CLASSNAMES,
+            );
+        }
+
         // Wait for visibility before initializing
         const observer = new IntersectionObserver(
             ([entry], obs) => {
@@ -94,6 +96,19 @@ class IRNMNSlider extends HTMLElement {
             whiteSpace: 'nowrap',
         });
         this.appendChild(this.ariaLiveRegion);
+    }
+
+    static get observedAttributes() {
+        return ['selectors'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+
+        if (name === 'selectors') {
+            this.CLASSNAMES = this.selectors;
+            this.refresh?.();
+        }
     }
 
     /**

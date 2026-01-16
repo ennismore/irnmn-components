@@ -64,6 +64,12 @@ class IRNMNCarousel extends HTMLElement {
     _resizeObserver = null;
 
     /**
+     * MutationObserver for dynamic slide changes
+     * @type {MutationObserver|null}
+     */
+    _mutationObserver = null;
+
+    /**
      * Scroll-settle timer id.
      * @type {number|null}
      */
@@ -88,7 +94,6 @@ class IRNMNCarousel extends HTMLElement {
      */
     constructor() {
         super();
-        this.CLASSNAMES = this.selectors;
 
         const urlParams = new URLSearchParams(window.location.search);
         this.debug = urlParams.has('debugCarousel');
@@ -165,6 +170,8 @@ class IRNMNCarousel extends HTMLElement {
         this._abortController = new AbortController();
         this._signal = this._abortController.signal;
 
+        this.CLASSNAMES = this.selectors;
+
         const ok = this.initCarousel(); // return boolean
         this.connected = ok;
     }
@@ -186,11 +193,38 @@ class IRNMNCarousel extends HTMLElement {
         // Clean up observers and controllers
         this._abortController?.abort();
         this._resizeObserver?.disconnect();
+        this._mutationObserver?.disconnect();
 
         this.connected = false;
 
         if (this.debug) {
             console.info('[IRNMNCarousel] Cleaned up');
+        }
+    }
+
+    static get observedAttributes() {
+        return ['selectors', 'pager-mode'];
+    }
+
+    attributeChangedCallback(name, oldValue, newValue) {
+        if (oldValue === newValue) return;
+
+        if (name === 'selectors') {
+            this.CLASSNAMES = this.selectors;
+
+            // If already initialized, re-bind or refresh safely
+            if (this.connected && this.viewport) {
+                this.refresh?.();
+            }
+        }
+
+        if (name === 'pager-mode') {
+            if (newValue === 'slides' || newValue === 'pages') {
+                this.pagerMode = newValue;
+                if (this.connected && this.viewport) {
+                    this.refresh?.();
+                }
+            }
         }
     }
 
@@ -235,9 +269,7 @@ class IRNMNCarousel extends HTMLElement {
         this.announcer = new LiveRegionAnnouncer();
         this.announcer.mount(this);
 
-        // Safari snap restoration fix
-        this.scroll.resetToStartInstant();
-
+        // Pager mode
         const modeAttr = this.getAttribute('pager-mode');
         if (modeAttr === 'slides' || modeAttr === 'pages') {
             this.pagerMode = modeAttr;
@@ -265,6 +297,10 @@ class IRNMNCarousel extends HTMLElement {
         this.addControlsListeners();
         this.addKeyboardSupport();
         this.setupResizeObserver();
+        this.setupMutationObserver();
+
+        // Safari snap restoration fix (force scrollLeft=0 on init)
+        this.scroll.resetToStartInstant();
 
         // Initial active slide/page
         requestAnimationFrame(() => {
@@ -587,14 +623,57 @@ class IRNMNCarousel extends HTMLElement {
         this._resizeObserver = new ResizeObserver(() => {
             if (!this.connected) return;
 
-            this.snap.calculateSnapLefts();
-            this.snap.calculateVirtualPages(this.pagerMode);
-            this.updateTotal();
-            this.syncOverflowState();
-            this.updateActiveFromScroll();
+            this.refresh();
         });
 
         this._resizeObserver.observe(this.viewport);
+    }
+
+    /**
+     * Setup MutationObserver on viewport to detect slide changes.
+     */
+    setupMutationObserver() {
+        if (!this.viewport) return;
+
+        this._mutationObserver = new MutationObserver((mutations) => {
+            let shouldRefresh = false;
+
+            for (const mutation of mutations) {
+                if (mutation.type === 'childList') {
+                    // Check added nodes
+                    mutation.addedNodes.forEach((node) => {
+                        if (
+                            node.nodeType === 1 &&
+                            node.matches?.(this.CLASSNAMES.SLIDES)
+                        ) {
+                            shouldRefresh = true;
+                        }
+                    });
+
+                    // Check removed nodes
+                    mutation.removedNodes.forEach((node) => {
+                        if (
+                            node.nodeType === 1 &&
+                            node.matches?.(this.CLASSNAMES.SLIDES)
+                        ) {
+                            shouldRefresh = true;
+                        }
+                    });
+                }
+            }
+
+            if (shouldRefresh) {
+                if (this.debug) {
+                    console.info('[IRNMNCarousel] Slides changed – refreshing');
+                }
+                this.refresh();
+            }
+        });
+
+        this._mutationObserver.observe(this.viewport, {
+            childList: true,
+            subtree: true,
+        });
     }
 
     /**
@@ -639,6 +718,7 @@ class IRNMNCarousel extends HTMLElement {
         this.snap.calculateSnapLefts();
         this.snap.calculateVirtualPages(this.pagerMode);
         this.updateTotal();
+        this.syncOverflowState();
         this.updateActiveFromScroll();
         this.announcer?.reset();
     }
