@@ -642,31 +642,20 @@ class IRNMNCarousel extends HTMLElement {
         this._mutationObserver = new MutationObserver((mutations) => {
             let shouldRefresh = false;
 
+            // Loop through mutations to check for added/removed slide items
             for (const mutation of mutations) {
                 if (mutation.type === 'childList') {
-                    // Check for added nodes that match slides selector ( to detect newly added slides )
-                    mutation.addedNodes.forEach((node) => {
-                        if (
-                            node.nodeType === 1 &&
-                            node.matches?.(this.CLASSNAMES.SLIDES)
-                        ) {
-                            shouldRefresh = true;
-                        }
-                    });
-
-                    // Check for removed nodes that match slides selector ( to detect removed slides )
-                    mutation.removedNodes.forEach((node) => {
-                        if (
-                            node.nodeType === 1 &&
-                            node.matches?.(this.CLASSNAMES.SLIDES)
-                        ) {
-                            shouldRefresh = true;
-                        }
-                    });
+                    // Check if any added/removed nodes match the slides selector
+                    if (
+                        this.slideItemUpdateCheck(mutation.addedNodes) ||
+                        this.slideItemUpdateCheck(mutation.removedNodes)
+                    ) {
+                        shouldRefresh = true;
+                    }
                 }
             }
 
-            // If slides were added/removed, refresh the carousel so we can recalculate snaps and pager info
+            // If slides were added/removed, refresh the carousel
             if (shouldRefresh) {
                 if (this.debug) {
                     console.info('[IRNMNCarousel] Slides changed – refreshing');
@@ -675,11 +664,30 @@ class IRNMNCarousel extends HTMLElement {
             }
         });
 
-        // Start observing the viewport for childList changes (slides added/removed)
+        // Start observing the viewport for childList changes
         this._mutationObserver.observe(this.viewport, {
             childList: true,
             subtree: true,
         });
+    }
+
+    /**
+     * Check if any nodes in a NodeList match the slides selector.
+     * Used to detect when slides are added or removed from the carousel.
+     *
+     * @param {NodeList} nodes - The nodes to check (from MutationObserver)
+     * @returns {boolean} True if any node matches the slides selector
+     */
+    slideItemUpdateCheck(nodes) {
+        for (const node of nodes) {
+            if (
+                node.nodeType === 1 &&
+                node.matches?.(this.CLASSNAMES.SLIDES)
+            ) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
