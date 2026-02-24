@@ -7,9 +7,54 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.19 [2026-01-16]
+### fix - irnmn-carousel
+- Refresh carousel slides on add/ remove of slide items
+
+------
+## v1.3.18 [2026-01-15]
+### fix - irnmn-carousel
+- Removed nested CSS (IRNMN-4155)
+- Selector classname issue when swithching between pager | slide mode
+
+------
+## v1.3.17 [2026-01-13]
+### fix - irnmn-carousel
+- Issue with scroll snap left alignment
+
+------
+## v1.3.16 [2026-01-05]
+### add - irnmn-carousel
+- New carousel component with scroll-snap based navigation
+- RTL support
+- Pager mode (slides and pages variants)
+- Adds active slide class in pager mode
+- Live region announcer for accessibility
+- Unit tests
+
+------
+## v1.3.15 [2025-11-24]
+### fix - room-card
+- Room modal title now behaves as expected (IRNMN-4127)
+- Room modal CTA is now positioned correctly
+
+------
+## v1.3.14 [2025-11-06]
+### update - room-card
+- Room card title height is now always 2 lines tall (IRNMN-3993)
+- Title line-clamp is now a CSS custom property
+
+------
 ## v1.3.13 [2025-10-16]
 ### update - booking-verb
-- Upodates to component for verb booking engine
+- Updates to component for verb booking engine
+
+------
+## v1.3.12 [2025-10-09]
+### update - irnmn-guests-selector
+- Conditional rendering for Max Guests label (IRNMN-3853)
+### update - irnmn-rooms-selector
+- Conditional rendering for Max Guests label (IRNMN-3853)
 
 ------
 ## v1.3.11 [2025-10-08]
