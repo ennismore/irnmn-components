@@ -10,9 +10,9 @@ class IRNMNBookingAIC extends HTMLElement {
         this.form = document.getElementById(this.formId);
 
         if (!this.form) return;
-        this.form.addEventListener('submit', (event) =>
-            this.handleAICBookingEngine(event),
-        );
+        this.form.addEventListener('submit', (event) => {
+            this.handleAICBookingEngine(event)
+        });
     }
 
     disconnectedCallback() {
@@ -87,21 +87,14 @@ class IRNMNBookingAIC extends HTMLElement {
         createHiddenInput(this.form, 'remainingGuests', remainingGuests);
         createHiddenInput(this.form, 'nights', nights);
 
-        // Change form action URL if we're on language other than EN, that AIC support ( list from AIC documentation )
-        const currentLang = this.getCurrentLanguage();
-        if (!currentLang) return;
-        const baseUrl = 'https://allinclusive-collection.com';
-        const supportedLangs = {
-            fr: `${baseUrl}/fr/reservation/${hotelCode}/chambre/`,
-            de: `${baseUrl}/de/buchung/${hotelCode}/schlafzimmer/`,
-            tr: `${baseUrl}/tr/rezervasyon/${hotelCode}/yatak-odasi/`,
-            ru: `${baseUrl}/ru/Бронирование/${hotelCode}/cпальня/`,
-            en: `${baseUrl}/en/booking/${hotelCode}/room/`,
-        };
+        // AIC seem to have changed their language handling and now require the language to be part of the URL, so we need to update the form action URL to include the current language
+        // no longer converts url params from english to native language.
+        const baseUrl = 'https://allinclusive-collection.com'
+        const currentLang = this.getCurrentLanguage() ?? 'en';
+        const actionUrl = `${baseUrl}/${currentLang}/booking/${hotelCode}/room/`;
 
-        if (supportedLangs[currentLang]) {
-            this.form.action = supportedLangs[currentLang];
-        }
+        this.form.action = actionUrl;
+
     }
 
     /**
@@ -111,6 +104,7 @@ class IRNMNBookingAIC extends HTMLElement {
      */
     getCurrentLanguage() {
         const langAttr = document.documentElement.lang;
+                console.log('heelo then?');
         if (!langAttr) return null;
         return langAttr.split('-')[0]; //Split at the dash and return the first part
     }
