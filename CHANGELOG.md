@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.20 [2026-03-02]
+### update - booking-aic
+- Change url output to remove local lang from url. Keep english naming.
+
+------
 ## v1.3.19 [2026-01-16]
 ### fix - irnmn-carousel
 - Refresh carousel slides on add/ remove of slide items
