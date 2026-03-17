@@ -507,13 +507,8 @@ class IRNMNCarousel extends HTMLElement {
 
     goPrev() {
         const pos = this.scroll.getScrollPosition();
-        const eps = this.scroll.getEpsilonPx();
+        const prevSnap = this.snap.getPrevSnapPosition(pos);
 
-        const from = this.scroll.isAtEnd()
-            ? this.scroll.getMaxScroll() + eps * 2
-            : pos;
-
-        const prevSnap = this.snap.getPrevSnapPosition(from);
         if (prevSnap !== null) {
             this.scroll.scrollToLogicalPosition(prevSnap);
         }
