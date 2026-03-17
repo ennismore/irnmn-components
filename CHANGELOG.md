@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.21 [2026-17-03]
+### update - carousel
+- Update carousel goPrev function to fix unresponding click on prev button when slides fit perfectly the container.
+
+------
 ## v1.3.20 [2026-03-02]
 ### update - booking-aic
 - Change url output to remove local lang from url. Keep english naming.
