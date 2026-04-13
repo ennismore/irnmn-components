@@ -559,8 +559,8 @@ class IrnmnRoomCard extends HTMLElement {
                 <div class="room-card__content">
                     <h2 class="room-card__title">${this.title}</h2>
                     ${this.renderExtras(true)}
-                    ${roomPricingHTML}
                     <p class="room-card__description">${this.description}</p>
+                    ${roomPricingHTML}
                 </div>
             </div>
 
