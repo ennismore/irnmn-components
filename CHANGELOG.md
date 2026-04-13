@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.22 [2026-13-04]
+### update - room-card
+- Updated room card layout by moving description to be above Book button on 1 column layout
+
+------
 ## v1.3.21 [2026-17-03]
 ### update - carousel
 - Update carousel goPrev function to fix unresponding click on prev button when slides fit perfectly the container.
