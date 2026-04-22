@@ -9,11 +9,6 @@ import { CLASS_NAMES } from './utils/constants.js';
 export default class IRNMNText extends HTMLElement {
     constructor() {
         super();
-        this.label = this.getAttribute('label') || 'Text';
-        this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
-        this.name = this.getAttribute('name');
-        this.value = this.getAttribute('value') || ''; // Holds the input value
-        this.storageKey = `${this.name}-text`; // Key for session storage
     }
 
     // Getter for id (from the id attribute)
@@ -22,6 +17,16 @@ export default class IRNMNText extends HTMLElement {
     }
 
     connectedCallback() {
+        /*
+            These initial value setters were in the constructor(), but for some reason on HYDE the value were not ready
+            at the time we are trying to fetch these values. Moving them here solves that issue.
+         */
+        this.label = this.getAttribute('label') || 'Text';
+        this.placeholder = this.getAttribute('placeholder') || 'Enter Text';
+        this.name = this.getAttribute('name');
+        this.value = this.getAttribute('value') || ''; // Holds the input value
+        this.storageKey = `${this.name}-text`; // Key for session storage
+
         this.render();
         this.loadFromSessionStorage();
 
