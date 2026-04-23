@@ -7,7 +7,7 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
-## v1.3.22 [2026-13-04]
+## v1.3.23 [2026-23-04]
 ### fix - irnmn-text
 - Fixed irnmn-text not being initialized correctly in certain loading conditions (HYDE promo code)
 
