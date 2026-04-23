@@ -8,6 +8,11 @@ All new releases are documented in this file. The semantic versioning should fol
 
 ------
 ## v1.3.22 [2026-13-04]
+### fix - irnmn-text
+- Fixed irnmn-text not being initialized correctly in certain loading conditions (HYDE promo code)
+
+------
+## v1.3.22 [2026-13-04]
 ### update - room-card
 - Updated room card layout by moving description to be above Book button on 1 column layout
 
