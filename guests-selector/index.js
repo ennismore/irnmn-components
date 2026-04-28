@@ -35,6 +35,11 @@ class IRNMNGuestsSelector extends HTMLElement {
                 childrenAges: [],
             };
         }
+
+        this.errorObserver = this.createErrorObserver();
+        this.errorObserverConfig = {
+            attributes: true
+        }
     }
 
     static get observedAttributes() {
@@ -46,8 +51,34 @@ class IRNMNGuestsSelector extends HTMLElement {
             'children-number',
             'max-child-age',
             'enable-children',
-            'enable-children-ages',
+            'enable-children-ages'
         ];
+    }
+
+    createErrorObserver(element) {
+
+        return new MutationObserver((mutationList) => {
+            for (const mutation of mutationList) {
+                const ErrorState = mutation.target.getAttribute("show-error");
+                const PreviousState = mutation.oldValue;
+                if(ErrorState != PreviousState) {
+                    this.renderErrorMessage(mutation.target, ErrorState);
+                }
+
+            }
+        });
+    }
+
+    observeChildAgeSelectors() {
+        //console.log("observeChildAgeSelectors()");
+        // Making sure this exists, if it doesn't create it
+        if(this.errorObserver == null) this.errorObserver = this.createErrorObserver();
+
+        const ChildAgeSelectors = this.querySelectorAll(`.${CLASS_NAMES.childAgeWrapper}`);
+
+        Array.from(ChildAgeSelectors).forEach(element => {
+            this.errorObserver.observe(element, this.errorObserverConfig);
+        });
     }
 
     attributeChangedCallback(name, oldValue, newValue) {
@@ -83,6 +114,7 @@ class IRNMNGuestsSelector extends HTMLElement {
         this.enableChildrenAges = this.getEnableChildrenAges();
         this.maxChildAge = this.getMaxChildAge();
         this.maxGuestsLabel = this.getMaxGuestsLabel();
+        this.childrenDefaultAge = this.getChildDefaultAge();
     }
 
     updateState() {
@@ -146,6 +178,18 @@ class IRNMNGuestsSelector extends HTMLElement {
                 enableChildrenAttr !== 'null' &&
                 enableChildrenAttr)
         );
+    }
+
+    /**
+     * Get the child default age clamped value between 0-{maxChildAge} or -1 if the attribute doesn't exist or not a number
+     * @return {Number} Returns the age or -1 if invalid
+     */
+    getChildDefaultAge() {
+        const ChildDefaultAge = parseInt(this.getAttribute('child-default-age')) || -1;
+        if(ChildDefaultAge < 1) return ChildDefaultAge;
+
+        const ClampedChildDefaultAge = Math.min(Math.max(ChildDefaultAge, 0), this.maxChildAge);
+        return ClampedChildDefaultAge;
     }
 
     /**
@@ -249,6 +293,36 @@ class IRNMNGuestsSelector extends HTMLElement {
         return enableMaxGuestsLabel == 'true'
             ? `(max ${this.maxTotalGuests} ${this.labels.guests})`
             : ``;
+    }
+
+    /**
+     * Get the wrapper element for the child age dropdowns
+     * @return {Element} Element for the child age dropdowns
+     */
+    getChildAgeContainerElement() {
+        return this.querySelector(
+            `.${CLASS_NAMES.childrenAgeDropdowns}`,
+        );
+    }
+
+
+    // Created or removes the error message for a given element
+    renderErrorMessage(element, errorState) {
+        if(errorState === 'true') {
+            // If the element already exist we don't create it again
+            if(!element?.querySelector(`.${CLASS_NAMES.errorMessage}`)) {
+                const ErrorMessage = element.getAttribute("error-message");
+                const errorMessageElement = document.createElement('div');
+                errorMessageElement.classList.add(CLASS_NAMES.errorMessage);
+                errorMessageElement.textContent = ErrorMessage;
+                element.appendChild(errorMessageElement);
+            }
+
+        } else {
+            // Remove it if it exists
+            element?.querySelector(`.${CLASS_NAMES.errorMessage}`)?.remove();
+        }
+
     }
 
     render() {
@@ -405,10 +479,9 @@ class IRNMNGuestsSelector extends HTMLElement {
         if (!this.enableChildren || !this.enableChildrenAges) {
             return;
         }
-        const childAgeContainer = this.querySelector(
-            `.${CLASS_NAMES.childrenAgeDropdowns}`,
-        );
+        const childAgeContainer = this.getChildAgeContainerElement();
         childAgeContainer.innerHTML = ''; // Clear existing dropdowns
+
 
         for (let i = 1; i <= this.state.children; i++) {
             const ageDropdown = document.createElement('select');
@@ -417,6 +490,7 @@ class IRNMNGuestsSelector extends HTMLElement {
                 'name',
                 `${this.name}.childrenAges[${i - 1}]`,
             );
+            ageDropdown.setAttribute("required", true);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childrenAges[i - 1] to 1 if not already set
@@ -424,11 +498,19 @@ class IRNMNGuestsSelector extends HTMLElement {
                 this.state.childrenAges[i - 1] = 1; // Set default age to 1
             }
 
-            ageDropdown.value = this.state.childrenAges[i - 1]; // Set the dropdown value to the initialized age
+            //ageDropdown.value = this.state.childrenAges[i - 1]; // Set the dropdown value to the initialized age
 
             // Dispatch event on change
             ageDropdown.addEventListener('change', () => {
-                this.state.childrenAges[i - 1] = parseInt(ageDropdown.value);
+                const Value = parseInt(ageDropdown.value);
+                this.state.childrenAges[i - 1] = Value;
+
+                // If the error is shown and we selected a valid value we'll remove the error message.
+                const ParentElement = ageDropdown.closest(`.${CLASS_NAMES.childAgeWrapper}`);
+                if(ParentElement?.getAttribute("show-error") === 'true' && !isNaN(Value)) {
+                    ParentElement.setAttribute("show-error", false);
+                    //this.renderErrorMessage(ParentElement, false);
+                }
 
                 // Emit custom event with the entire childrenAges array when any child age changes
                 this.dispatchEvent(
@@ -437,13 +519,20 @@ class IRNMNGuestsSelector extends HTMLElement {
                     }),
                 );
             });
+
+
+
+
             // create a label for the child age select
             const label = document.createElement('label');
             label.textContent = `${this.labels.childAge} (${i})`;
             // create a wrapper for label and select
             const ageWrapper = document.createElement('div');
-            ageWrapper.classList.add('irnmn-child-age-wrapper');
+            ageWrapper.classList.add(CLASS_NAMES.childAgeWrapper);
             ageWrapper.appendChild(label);
+            // Adding the error message so the validation script in irnmn-parent can validate these fields
+            ageWrapper.setAttribute("error-message", "Please select a child age");
+            ageWrapper.setAttribute("show-error",false);
             // create a wrapper for label and select
             const selectWrapper = document.createElement('div');
             selectWrapper.classList.add('irnmn-child-age-select-wrapper');
@@ -469,10 +558,16 @@ class IRNMNGuestsSelector extends HTMLElement {
                 detail: this.state,
             }),
         );
+
+        this.observeChildAgeSelectors();
     }
 
     generateAgeOptions(maxAge) {
         let options = '';
+        console.log("generate age options");
+
+        options += `<option value="">Select</option>`;
+
         for (let i = 1; i <= maxAge; i++) {
             options += `<option value="${i}">${i}</option>`;
         }
