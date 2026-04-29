@@ -45,7 +45,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
         this.enableMaxGuestsLabel = this.getEnableMaxGuestsLabel();
-        this.childDefaultAge = this.getChildDefaultAge();
+        this.childAgePreselected = this.getChildAgePreselected();
     }
 
     static get observedAttributes() {
@@ -180,16 +180,12 @@ class IRNMNRoomsSelector extends HTMLElement {
     }
 
     /**
-     * Get the child default age clamped value between 0-{maxChildAge} or -1 if the attribute doesn't exist or not a number
-     * @return {Number} Returns the age or -1 if invalid
+     * Get the child pre-selected attribute value
+     * @return {Boolean} Returns the age or -1 if invalid
      */
-    getChildDefaultAge() {
-        const ChildDefaultAge = parseInt(this.getAttribute('child-default-age')) || -1;
-        if(ChildDefaultAge < 1) return ChildDefaultAge;
+    getChildAgePreselected() {
+        return this.getAttribute('child-age-preselected') || true;
 
-        const ClampedChildDefaultAge = Math.min(Math.max(ChildDefaultAge, 0), this.maxChildAge);
-
-        return ClampedChildDefaultAge;
     }
 
     /**
@@ -357,7 +353,7 @@ class IRNMNRoomsSelector extends HTMLElement {
                 enable-children="${this.enableChildren}"
                 enable-children-ages="${this.enableChildrenAges}"
                 enable-max-guests-label="${this.enableMaxGuestsLabel}"
-                child-default-age="${this.childDefaultAge}"
+                child-age-preselected="${this.childAgePreselected}"
             >
             </irnmn-guests-selector>
         `;
