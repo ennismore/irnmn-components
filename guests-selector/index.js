@@ -68,7 +68,6 @@ class IRNMNGuestsSelector extends HTMLElement {
     }
 
     observeChildAgeSelectors() {
-        //console.log("observeChildAgeSelectors()");
         // Making sure this exists, if it doesn't create it
         if (this.errorObserver == null)
             this.errorObserver = this.createErrorObserver();
@@ -183,10 +182,11 @@ class IRNMNGuestsSelector extends HTMLElement {
 
     /**
      * Get the child pre-selected attribute value
-     * @return {Boolean} Returns the age or -1 if invalid
+     * @return {Boolean} Returns the value of the attribute or true
      */
     getChildAgePreselected() {
-        return this.getAttribute('child-age-preselected') || true;
+        const childAgePreselectedAttr = this.getAttribute('child-age-preselected') || true;
+        return  childAgePreselectedAttr === 'true' || childAgePreselectedAttr === true;
     }
 
     /**
@@ -266,7 +266,7 @@ class IRNMNGuestsSelector extends HTMLElement {
             ariaLabelLessAdults: 'Remove one adult',
             ariaLabelMoreChildren: 'Add one child',
             ariaLabelLessChildren: 'Remove one child',
-            childAgeValidation: 'Please select a child age'
+            childAgeValidation: 'Please select a child age',
         };
         const customLabels = JSON.parse(this.getAttribute('labels')) || {};
         return { ...defaultLabels, ...customLabels };
@@ -482,12 +482,12 @@ class IRNMNGuestsSelector extends HTMLElement {
                 'name',
                 `${this.name}.childrenAges[${i - 1}]`,
             );
-            if (this.childAgePreselected === 'false') ageDropdown.setAttribute('required', true);
+            if (this.childAgePreselected === false) ageDropdown.setAttribute('required', true);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childrenAges[i - 1] to 1 if not already set
             if (!this.state.childrenAges[i - 1]) {
-                if (this.childAgePreselected === 'true') {
+                if (this.childAgePreselected === true) {
                     this.state.childrenAges[i - 1] = 1; // Set default age to 1
                 } else {
                     this.state.childrenAges[i - 1] = ''; // Set the age to be an empty string which will match the placeholder
@@ -525,14 +525,14 @@ class IRNMNGuestsSelector extends HTMLElement {
             const label = document.createElement('label');
             label.textContent = `${this.labels.childAge} (${i})`;
             // Appends * if this field is required
-            if(this.childAgePreselected === 'false') label.textContent += '*';
+            if (this.childAgePreselected === false) label.textContent += '*';
             // create a wrapper for label and select
             const ageWrapper = document.createElement('div');
             ageWrapper.classList.add(CLASS_NAMES.childAgeWrapper);
             ageWrapper.appendChild(label);
 
             // Adding the error message so the validation script in irnmn-parent can validate these fields
-            if (this.childAgePreselected === 'false') {
+            if (this.childAgePreselected === false) {
                 ageWrapper.setAttribute(
                     'error-message',
                     this.labels.childAgeValidation,
@@ -571,9 +571,8 @@ class IRNMNGuestsSelector extends HTMLElement {
 
     generateAgeOptions(maxAge) {
         let options = '';
-        console.log('generate age options');
 
-        if (this.childAgePreselected === 'false')
+        if (this.childAgePreselected === false)
             options += `<option value="">Select</option>`;
 
         for (let i = 1; i <= maxAge; i++) {
