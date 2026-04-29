@@ -185,7 +185,6 @@ class IRNMNRoomsSelector extends HTMLElement {
      */
     getChildAgePreselected() {
         return this.getAttribute('child-age-preselected') || true;
-
     }
 
     /**
