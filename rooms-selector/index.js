@@ -45,6 +45,7 @@ class IRNMNRoomsSelector extends HTMLElement {
         this.maxChildAge = this.getMaxChildAge();
         this.labels = this.getLabels();
         this.enableMaxGuestsLabel = this.getEnableMaxGuestsLabel();
+        this.childAgePreselected = this.getChildAgePreselected();
     }
 
     static get observedAttributes() {
@@ -176,6 +177,15 @@ class IRNMNRoomsSelector extends HTMLElement {
      */
     getMaxChildAge() {
         return parseInt(this.getAttribute('max-child-age')) || 17;
+    }
+
+    /**
+     * Get the child pre-selected attribute value
+     * @return {Boolean} Returns the value of the attribute
+     */
+    getChildAgePreselected() {
+        const childAgePreselectedAttr = this.getAttribute('child-age-preselected') || true;
+        return  childAgePreselectedAttr === 'true' || childAgePreselectedAttr === true;
     }
 
     /**
@@ -329,6 +339,7 @@ class IRNMNRoomsSelector extends HTMLElement {
                 childrenAges: [], // Initialize empty array for child ages
             });
         }
+
         const roomGuestsHTML = `
             <irnmn-guests-selector
                 init-state='${JSON.stringify(roomState)}'
@@ -342,6 +353,7 @@ class IRNMNRoomsSelector extends HTMLElement {
                 enable-children="${this.enableChildren}"
                 enable-children-ages="${this.enableChildrenAges}"
                 enable-max-guests-label="${this.enableMaxGuestsLabel}"
+                child-age-preselected="${this.childAgePreselected}"
             >
             </irnmn-guests-selector>
         `;

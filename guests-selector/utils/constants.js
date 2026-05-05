@@ -7,7 +7,9 @@ export const CLASS_NAMES = {
     removeRoomBtn: `${prefix}__remove-room-btn`,
     guestControls: `${prefix}__guest-controls`,
     childrenAgeDropdowns: `${prefix}__children-age-dropdowns`,
+    childAgeWrapper: `irnmn-child-age-wrapper`,
     // from number-picker
     decrementBtn: `irnmn-number-picker__decrement-btn`,
     incrementBtn: `irnmn-number-picker__increment-btn`,
+    errorMessage: `validation-message`
 };
