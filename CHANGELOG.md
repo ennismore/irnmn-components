@@ -7,6 +7,11 @@ All new releases are documented in this file. The semantic versioning should fol
 - Description of the changes
 
 ------
+## v1.3.25 [2026-23-06]
+### feat - irnmn-rooms-card
+- Added option to handle room pricing via template slot ( with fallback to previous rendered CTA )
+
+------
 ## v1.3.24 [2026-05-05]
 ### feat - irnmn-rooms-selector, irnmn-guests-selector
 - Added option for child age pre-selection to irnmn-guests-selector
