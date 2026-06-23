@@ -82,7 +82,11 @@ const renderCard = () => html`
         room-amenities='["Malin+Goetz shower amenities","High-def smart TV", "Mini-bar", "Safe", "Lavazza coffee and tea"]'
         hotel-amenities='["Spa & Wellness", "High-Speed wifi", "Luxury Concierge", "Private Parking", "Bicycle rental"]'
         labels='{"placeholder":"Add dates for prices","heading":"Select date for prices","from":"From","night":"Night","legalText":"(inc taxes and fees)","noRates":"No availability on those dates","noRatesMessage":"Please select different dates"}'
-    ></irnmn-room-card>
+    >
+        <template slot="room-pricing">
+            TEST ROOM PRICING
+        </template>
+    </irnmn-room-card>
 `;
 
 export const Default: Story = {
