@@ -184,8 +184,12 @@ class IRNMNRoomsSelector extends HTMLElement {
      * @return {Boolean} Returns the value of the attribute
      */
     getChildAgePreselected() {
-        const childAgePreselectedAttr = this.getAttribute('child-age-preselected') || true;
-        return  childAgePreselectedAttr === 'true' || childAgePreselectedAttr === true;
+        const childAgePreselectedAttr =
+            this.getAttribute('child-age-preselected') || true;
+        return (
+            childAgePreselectedAttr === 'true' ||
+            childAgePreselectedAttr === true
+        );
     }
 
     /**

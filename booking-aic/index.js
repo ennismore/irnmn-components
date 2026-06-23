@@ -11,7 +11,7 @@ class IRNMNBookingAIC extends HTMLElement {
 
         if (!this.form) return;
         this.form.addEventListener('submit', (event) => {
-            this.handleAICBookingEngine(event)
+            this.handleAICBookingEngine(event);
         });
     }
 
@@ -89,12 +89,11 @@ class IRNMNBookingAIC extends HTMLElement {
 
         // AIC seem to have changed their language handling and now require the language to be part of the URL, so we need to update the form action URL to include the current language
         // no longer converts url params from english to native language.
-        const baseUrl = 'https://allinclusive-collection.com'
+        const baseUrl = 'https://allinclusive-collection.com';
         const currentLang = this.getCurrentLanguage() ?? 'en';
         const actionUrl = `${baseUrl}/${currentLang}/booking/${hotelCode}/room/`;
 
         this.form.action = actionUrl;
-
     }
 
     /**
@@ -104,7 +103,7 @@ class IRNMNBookingAIC extends HTMLElement {
      */
     getCurrentLanguage() {
         const langAttr = document.documentElement.lang;
-                console.log('heelo then?');
+        console.log('heelo then?');
         if (!langAttr) return null;
         return langAttr.split('-')[0]; //Split at the dash and return the first part
     }

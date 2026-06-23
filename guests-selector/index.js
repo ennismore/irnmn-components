@@ -185,8 +185,12 @@ class IRNMNGuestsSelector extends HTMLElement {
      * @return {Boolean} Returns the value of the attribute or true
      */
     getChildAgePreselected() {
-        const childAgePreselectedAttr = this.getAttribute('child-age-preselected') || true;
-        return  childAgePreselectedAttr === 'true' || childAgePreselectedAttr === true;
+        const childAgePreselectedAttr =
+            this.getAttribute('child-age-preselected') || true;
+        return (
+            childAgePreselectedAttr === 'true' ||
+            childAgePreselectedAttr === true
+        );
     }
 
     /**
@@ -482,7 +486,8 @@ class IRNMNGuestsSelector extends HTMLElement {
                 'name',
                 `${this.name}.childrenAges[${i - 1}]`,
             );
-            if (this.childAgePreselected === false) ageDropdown.setAttribute('required', true);
+            if (this.childAgePreselected === false)
+                ageDropdown.setAttribute('required', true);
             ageDropdown.innerHTML = this.generateAgeOptions(this.maxChildAge);
 
             // Initialize childrenAges[i - 1] to 1 if not already set
