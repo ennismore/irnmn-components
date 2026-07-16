@@ -597,6 +597,8 @@ class IRNMNCalendar extends HTMLElement {
                 'keydown',
                 this.handleEscKey.bind(this),
             );
+            // To restore focus to the calendar input
+            this.inputElement.focus();
         }
     }
 
