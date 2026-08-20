@@ -34,6 +34,18 @@ class IRNMNSlider extends HTMLElement {
     }
 
     /**
+     * Get the attribute 'disable-cloning'.
+     * Useful for sliders that don't slide but fade, since we don't need fake slides
+     */
+    get disableCloning() {
+        const disableCloningAttr = this.getAttribute('disable-cloning') || false;
+        return (
+            disableCloningAttr === 'true' ||
+            disableCloningAttr === true
+        );
+    }
+
+    /**
      * Get the transition value from the attribute or fallback.
      * Automatically disables transition for users who prefer reduced motion.
      *
@@ -197,13 +209,15 @@ class IRNMNSlider extends HTMLElement {
         }
         this.dataset.sliderInitialized = 'true';
 
-        this.cloneSlides(swipeContainer);
+        const bDisableCloning = this.disableCloning;
+
+        if(!bDisableCloning) this.cloneSlides(swipeContainer);
         this.calculateSlideOffsets(swipeContainer);
         this.updateTotalSlides(totalSlides);
         this.initializePosition(swipeContainer);
         this.addEventListeners(swipeContainer, totalSlides);
         this.initSlidesAttributes();
-        this.updateSlidesAttributes(1); // Start with the first slide as active
+        this.updateSlidesAttributes(!bDisableCloning ? 1 : 0); // Start with the first slide as active
 
         // Debug: Log initialization complete
         if (this.debug) {
@@ -313,6 +327,15 @@ class IRNMNSlider extends HTMLElement {
     }
 
     /**
+     * Retrieves all the cloned slides
+     */
+    get clonedSlides() {
+        return this.slides.filter((slide) => {
+            return slide.classList.contains('clone-slide');
+        });
+    }
+
+    /**
      * Calculates the cumulative offsets for all slides based on their widths.
      * These offsets are used to determine the correct translation amount for
      * centering each slide, especially when slides have varying widths.
@@ -414,7 +437,8 @@ class IRNMNSlider extends HTMLElement {
      * @returns {void}
      */
     addEventListeners(swipeContainer, totalSlides) {
-        const clonedSlidesCount = this.slides.length;
+        const clonedSlidesCount = this.clonedSlides.length;
+        console.log("cloned slides count", clonedSlidesCount);
 
         const updateSlides = () =>
             this.updateSlides(swipeContainer, clonedSlidesCount, totalSlides);
@@ -516,12 +540,17 @@ class IRNMNSlider extends HTMLElement {
                 slide.removeAttribute('aria-roledescription');
                 slide.removeAttribute('aria-label');
             } else {
+                /**
+                 * If the cloning is disabled we need to add +1 since the index will be off by 1
+                 * due to missing cloned elements
+                 */
+                let adjustedIndex = !this.disableCloning ? i : i + 1;
                 slide.setAttribute('role', 'group');
                 slide.setAttribute('aria-roledescription', 'slide');
                 if (!slide.hasAttribute('aria-label')) {
                     slide.setAttribute(
                         'aria-label',
-                        `Slide ${i} of ${totalSlides}`,
+                        `Slide ${adjustedIndex} of ${totalSlides}`,
                     );
                 }
             }

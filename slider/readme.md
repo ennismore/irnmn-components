@@ -12,6 +12,7 @@ The `IRNMNSlider` web component is a dynamic, accessible, and responsive slider 
 |----------------|--------------------------------------------------------------------------------------------------|------------------------------|
 | `selectors`    | A JSON string that defines the class names for key slider elements.                              | N/A (required)               |
 | `transition`   | The CSS transition for slide movement. Automatically disables for users preferring reduced motion.| `0.3s ease`                  |
+| `disable-cloning`   | Disable cloning for when we don't need it, eg.: Slider that fades instead of slides | `false`                  |
 
 ### Example `selectors` JSON
 
